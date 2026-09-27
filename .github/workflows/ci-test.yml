@@ -118,7 +118,7 @@ jobs:
             # redirection is the most primitive capture there is.
             $outFile = Join-Path $env:RUNNER_TEMP "$testName.out"
             $errFile = Join-Path $env:RUNNER_TEMP "$testName.err"
-            cmd /c """$exe"" >"$outFile" 2>"$errFile""
+            cmd /c "$exe > $outFile 2> $errFile"
             Write-Host "===== exit code: $LASTEXITCODE"
             Write-Host "===== stdout ($(Get-Item $outFile | Select-Object -ExpandProperty Length) bytes):"
             Get-Content $outFile | ForEach-Object { Write-Host $_ }
