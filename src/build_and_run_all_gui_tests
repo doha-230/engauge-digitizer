@@ -60,9 +60,12 @@ do
 	# A hanging Engauge process, for example one showing a modal dialog because an
 	# image format plugin is missing, would otherwise consume the whole CI job until
 	# its timeout. Bound each case and report the hang instead.
+	# The application path is overridable so this suite can also run against a build
+	# tree on Windows, for example ENGAUGE_HARNESS_EXECUTABLE=../build-windows-ci/bin/Engauge.exe
+	ENGAUGE_APP=${ENGAUGE_HARNESS_EXECUTABLE:-../bin/Engauge}
 	GUI_TEST_TIMEOUT=${ENGAUGE_GUI_TEST_TIMEOUT:-120}
 	timeout --signal=TERM --kill-after=10 "$GUI_TEST_TIMEOUT" \
-	    ../bin/Engauge $commandLineArgs 2>&1 | grep -v 'Failed to get selection owner'
+	    "$ENGAUGE_APP" $commandLineArgs 2>&1 | grep -v 'Failed to get selection owner'
 	GUI_TEST_STATUS=${PIPESTATUS[0]}
 	if [ "$GUI_TEST_STATUS" == 124 ]; then
 	    echo -e "$(tput setaf 1)TIMEOUT$(tput sgr0): $root (exceeded ${GUI_TEST_TIMEOUT}s)"
