@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"
       - "v*.*.*.*"
+  # Manual re-run: dispatch this workflow with the tag as the ref
+  # (for example ref = v12.11.1) so GITHUB_REF_NAME matches the source version.
+  workflow_dispatch:
 
 permissions:
   contents: write
