@@ -87,8 +87,8 @@ jobs:
         if: failure()
         shell: pwsh
         run: |
-          & (Join-Path $visualStudioRoot "Common7\Tools\Launch-VsDevShell.ps1") `
-            -Arch amd64 -HostArch amd64 -SkipAutomaticLocation
+          # The tests are already built, so only the Qt runtime needs to be on the path. The Visual
+          # Studio environment belongs to the build step and is not available here.
           $env:Path = "$env:QT_ROOT\bin;$env:Path"
           $env:QT_QPA_PLATFORM = "offscreen"
           ctest --preset windows-msvc-release -V

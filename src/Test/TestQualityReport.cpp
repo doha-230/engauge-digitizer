@@ -6,6 +6,7 @@
 
 #include "QualityReport.h"
 #include <QtTest/QtTest>
+#include <QDebug>
 #include <QStringList>
 #include "Test/TestQualityReport.h"
 
@@ -89,6 +90,10 @@ TestQualityReport::TestQualityReport(QObject *parent) :
 
 void TestQualityReport::initTestCase ()
 {
+  // Temporary diagnostic while the failure of this test is being tracked down: it shows whether the
+  // test process reaches the first test at all, since the failing assertion is not appearing in the
+  // continuous integration log.
+  qWarning ("TestQualityReport started, Qt %s", qVersion ());
 }
 
 void TestQualityReport::cleanupTestCase ()
