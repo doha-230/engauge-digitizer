@@ -100,6 +100,22 @@ jobs:
           # is the shortest path to the assertion text if the full verbose run is too noisy to read.
           ctest --preset windows-msvc-release --rerun-failed -V
 
+          # Direct run of every failing test binary, without ctest in between. ctest swallows or
+          # summarizes the child output in some failure modes (a crash before the test framework
+          # writes anything, for example), so this is the ground truth: everything the test writes
+          # and its raw exit code.
+          ctest --preset windows-msvc-release --rerun-failed -N |
+            Select-String -Pattern "Test\s+#\d+:\s+unit\.(\S+)" |
+            ForEach-Object { $_.Matches[0].Groups[1].Value } |
+            Sort-Object -Unique |
+            ForEach-Object {
+              $exe = Join-Path (Join-Path (Get-Location) "cmake-build\windows-msvc-release\bin") ("Test" + ($_ -replace "^unit\.", "") + ".exe")
+              Write-Host "===== direct: $exe"
+              $output = & $exe 2>&1
+              $output | ForEach-Object { Write-Host "$_" }
+              Write-Host "===== exit code: $LASTEXITCODE"
+            }
+
       - name: Verify build products
         shell: pwsh
         run: |
