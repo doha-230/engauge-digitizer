@@ -23,6 +23,11 @@ jobs:
     timeout-minutes: 45
     env:
       ENGAUGE_EXECUTABLE: ../bin/Engauge
+      # The drag_and_drop_http case downloads an image from an external web site
+      # that no longer exists (HTTP 404). CI must not depend on the internet, so
+      # network-dependent regression cases are skipped; the harness keeps running
+      # them by default outside CI.
+      ENGAUGE_SKIP_NETWORK_TESTS: "1"
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -43,6 +48,7 @@ jobs:
             python3-pandas \
             qt6-base-dev \
             qt6-documentation-tools \
+            qt6-image-formats-plugins \
             qt6-l10n-tools \
             qt6-tools-dev \
             xvfb

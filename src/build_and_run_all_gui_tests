@@ -24,6 +24,9 @@ done
 
 SCRIPTS=`find ../test -name "*.test.commandline" | sort`
 
+FAILURES=0
+TIMEOUTS=0
+
 for script in $SCRIPTS
 do
 
@@ -45,7 +48,26 @@ do
 	    echo " "
 	    echo "engauge $commandLineArgs"
 	fi
-	../bin/Engauge $commandLineArgs 2>&1 | grep -v 'Failed to get selection owner'
+
+	# Tests that fetch an image over http cannot be relied upon: they depend on an
+	# external web site that may disappear, and a closed network has no access at
+	# all. Set ENGAUGE_SKIP_NETWORK_TESTS=1 to skip them (opt-in, default runs all).
+	if [ "${ENGAUGE_SKIP_NETWORK_TESTS:-0}" == 1 ] && [[ "$commandLineArgs" == *http* ]]; then
+	    echo "SKIPPED (network): $root"
+	    continue
+	fi
+
+	# A hanging Engauge process, for example one showing a modal dialog because an
+	# image format plugin is missing, would otherwise consume the whole CI job until
+	# its timeout. Bound each case and report the hang instead.
+	GUI_TEST_TIMEOUT=${ENGAUGE_GUI_TEST_TIMEOUT:-120}
+	timeout --signal=TERM --kill-after=10 "$GUI_TEST_TIMEOUT" \
+	    ../bin/Engauge $commandLineArgs 2>&1 | grep -v 'Failed to get selection owner'
+	GUI_TEST_STATUS=${PIPESTATUS[0]}
+	if [ "$GUI_TEST_STATUS" == 124 ]; then
+	    echo -e "$(tput setaf 1)TIMEOUT$(tput sgr0): $root (exceeded ${GUI_TEST_TIMEOUT}s)"
+	    TIMEOUTS=$((TIMEOUTS+1))
+	fi
 
 	# Compare actual and desired output files. There is one pair for each coordinate system
 	scriptfile=`basename $script`
@@ -89,6 +111,7 @@ do
 		else
 		    echo -e "$(tput setaf 1)FAIL$(tput sgr0)   : $root $COUNTERSTRING"
 		    diff -C2 .expected .actual
+		    FAILURES=$((FAILURES+1))
 		fi
 	    else
 		# Branch for failed OSX testing
@@ -98,4 +121,10 @@ do
 	done
     fi
 done
+
+echo ""
+echo "GUI regression summary: $FAILURES failed, $TIMEOUTS timed out"
+if [ $((FAILURES + TIMEOUTS)) -gt 0 ]; then
+    exit 1
+fi
 
