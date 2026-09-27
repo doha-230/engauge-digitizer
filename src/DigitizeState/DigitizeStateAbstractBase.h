@@ -66,7 +66,8 @@ public:
   /// Handle a key press that was intercepted earlier.
   virtual void handleKeyPress (CmdMediator *cmdMediator,
                                Qt::Key key,
-                               bool atLeastOneSelectedItem) = 0;
+                               bool atLeastOneSelectedItem,
+                               Qt::KeyboardModifiers modifiers) = 0;
 
   /// Handle a mouse move. This is part of an experiment to see if augmenting the cursor in Point Match mode is worthwhile
   virtual void handleMouseMove (CmdMediator *cmdMediator,
@@ -107,7 +108,8 @@ protected:
   /// If the key is an arrow (left, right, up, down) then move currently selected items
   virtual void handleKeyPressArrow (CmdMediator *cmdMediator,
                                     Qt::Key key,
-                                    bool atLeastOneSelectedItem);
+                                    bool atLeastOneSelectedItem,
+                                    Qt::KeyboardModifiers modifiers);
 
   /// Display text for down arrow
   QString moveTextDown () const;
@@ -125,7 +127,8 @@ private:
   DigitizeStateAbstractBase();
 
   void keyPressArrow (CmdMediator *cmdMediator,
-                      Qt::Key key);
+                      Qt::Key key,
+                      Qt::KeyboardModifiers modifiers);
   double zoomedToUnzoomedScreenX () const;
   double zoomedToUnzoomedScreenY () const;
 

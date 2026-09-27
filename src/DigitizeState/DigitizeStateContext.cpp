@@ -135,11 +135,13 @@ void DigitizeStateContext::handleCurveChange (CmdMediator *cmdMediator)
 
 void DigitizeStateContext::handleKeyPress (CmdMediator *cmdMediator,
                                            Qt::Key key,
-                                           bool atLeastOneSelectedItem)
+                                           bool atLeastOneSelectedItem,
+                                           Qt::KeyboardModifiers modifiers)
 {
   m_states [m_currentState]->handleKeyPress (cmdMediator,
                                              key,
-                                             atLeastOneSelectedItem);
+                                             atLeastOneSelectedItem,
+                                             modifiers);
 
   completeRequestedStateTransitionIfExists(cmdMediator);
 

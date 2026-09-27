@@ -359,7 +359,7 @@ private slots:
   void slotGuidelineDragged(QString, double, bool, GuidelineState);
   void slotHelpAbout();
   void slotHelpTutorial();
-  void slotKeyPress (Qt::Key, bool);
+  void slotKeyPress (Qt::Key, bool, Qt::KeyboardModifiers);
   void slotLanguageSelected (QAction *action);
   void slotLoadStartupFiles ();
   void slotMouseMove (QPointF);

@@ -208,7 +208,8 @@ void DigitizeStatePointMatch::handleCurveChange(CmdMediator * /* cmdMediator */)
 
 void DigitizeStatePointMatch::handleKeyPress (CmdMediator *cmdMediator,
                                               Qt::Key key,
-                                              bool /* atLeastOneSelectedItem */)
+                                              bool /* atLeastOneSelectedItem */
+                                                                                        Qt::KeyboardModifiers /* modifiers */)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStatePointMatch::handleKeyPress"
                               << " key=" << QKeySequence (key).toString ().toLatin1 ().data ();

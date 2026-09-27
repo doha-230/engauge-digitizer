@@ -34,7 +34,8 @@ public:
                                             const QStringList &pointIdentifiers);
   virtual void handleKeyPress (CmdMediator *cmdMediator,
                                Qt::Key key,
-                               bool atLeastOneSelectedItem);
+                               bool atLeastOneSelectedItem
+                                                              Qt::KeyboardModifiers modifiers);
   virtual void handleMouseMove (CmdMediator *cmdMediator,
                                 QPointF posScreen);
   virtual void handleMousePress (CmdMediator *cmdMediator,

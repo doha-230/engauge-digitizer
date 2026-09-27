@@ -71,7 +71,7 @@ signals:
   void signalDraggedImageUrl (QUrl);
 
   /// Send keypress to MainWindow for eventual processing by DigitizeStateAbstractBase subclasses.
-  void signalKeyPress (Qt::Key, bool atLeastOneSelectedItem);
+  void signalKeyPress (Qt::Key, bool atLeastOneSelectedItem, Qt::KeyboardModifiers modifiers);
 
   /// Send mouse move to MainWindow for eventual display of cursor coordinates in StatusBar
   void signalMouseMove (QPointF);

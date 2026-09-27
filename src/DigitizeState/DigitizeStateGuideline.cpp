@@ -125,7 +125,8 @@ void DigitizeStateGuideline::handleCurveChange(CmdMediator * /* cmdMediator */)
 
 void DigitizeStateGuideline::handleKeyPress (CmdMediator * /* cmdMediator */,
                                              Qt::Key key,
-                                             bool atLeastOneSelectedItem)
+                                             bool atLeastOneSelectedItem,
+                                             Qt::KeyboardModifiers /* modifiers */)
 {
   m_context->handleKeyPress (key,
                              atLeastOneSelectedItem);

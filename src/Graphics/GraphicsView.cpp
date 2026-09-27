@@ -37,7 +37,7 @@ GraphicsView::GraphicsView(QGraphicsScene *scene,
   connect (this, SIGNAL (signalDraggedDigFile (QString)), &mainWindow, SLOT (slotFileOpenDraggedDigFile (QString)));
   connect (this, SIGNAL (signalDraggedImage (QImage)), &mainWindow, SLOT (slotFileImportDraggedImage (QImage)));
   connect (this, SIGNAL (signalDraggedImageUrl (QUrl)), &mainWindow, SLOT (slotFileImportDraggedImageUrl (QUrl)));
-  connect (this, SIGNAL (signalKeyPress (Qt::Key, bool)), &mainWindow, SLOT (slotKeyPress (Qt::Key, bool)));
+  connect (this, SIGNAL (signalKeyPress (Qt::Key, bool, Qt::KeyboardModifiers)), &mainWindow, SLOT (slotKeyPress (Qt::Key, bool, Qt::KeyboardModifiers)));
   connect (this, SIGNAL (signalMouseMove(QPointF)), &mainWindow, SLOT (slotMouseMove (QPointF)));
   connect (this, SIGNAL (signalMousePress (QPointF)), &mainWindow, SLOT (slotMousePress (QPointF)));
   connect (this, SIGNAL (signalMouseRelease (QPointF)), &mainWindow, SLOT (slotMouseRelease (QPointF)));
@@ -220,7 +220,7 @@ void GraphicsView::keyPressEvent (QKeyEvent *event)
       key == Qt::Key_Escape ||
       ((event->modifiers() & Qt::ControlModifier) && (key == Qt::Key_Z))) {
 
-    emit signalKeyPress (key, atLeastOneSelectedItem);
+    emit signalKeyPress (key, atLeastOneSelectedItem, event->modifiers());
     event->accept();
 
   } else {

@@ -3119,15 +3119,18 @@ void MainWindow::slotHelpTutorial()
 }
 
 void MainWindow::slotKeyPress (Qt::Key key,
-                               bool atLeastOneSelectedItem)
+                               bool atLeastOneSelectedItem,
+                               Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotKeyPress"
                               << " key=" << QKeySequence (key).toString().toLatin1 ().data ()
-                              << " atLeastOneSelectedItem=" << (atLeastOneSelectedItem ? "true" : "false");
+                              << " atLeastOneSelectedItem=" << (atLeastOneSelectedItem ? "true" : "false")
+                              << " modifiers=" << (int) modifiers;
 
   m_digitizeStateContext->handleKeyPress (m_cmdMediator,
                                           key,
-                                          atLeastOneSelectedItem);
+                                          atLeastOneSelectedItem,
+                                          modifiers);
 }
 
 void MainWindow::slotLoadStartupFiles ()

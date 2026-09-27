@@ -80,7 +80,8 @@ void DigitizeStateEmpty::handleCurveChange(CmdMediator * /* cmdMediator */)
 
 void DigitizeStateEmpty::handleKeyPress (CmdMediator * /* cmdMediator */,
                                          Qt::Key key,
-                                         bool /* atLeastOneSelectedItem */)
+                                         bool /* atLeastOneSelectedItem */
+                                                                                   Qt::KeyboardModifiers /* modifiers */)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateEmpty::handleKeyPress"
                               << " key=" << QKeySequence (key).toString ().toLatin1 ().data ();

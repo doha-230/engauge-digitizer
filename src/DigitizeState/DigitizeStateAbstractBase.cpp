@@ -61,10 +61,12 @@ const DigitizeStateContext &DigitizeStateAbstractBase::context() const
 
 void DigitizeStateAbstractBase::handleKeyPressArrow (CmdMediator *cmdMediator,
                                                      Qt::Key key,
-                                                     bool atLeastOneSelectedItem)
+                                                     bool atLeastOneSelectedItem,
+                                                     Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAbstractBase::handleKeyPressArrow"
-                              << " key=" << QKeySequence (key).toString ().toLatin1 ().data ();
+                              << " key=" << QKeySequence (key).toString ().toLatin1 ().data ()
+                              << " modifiers=" << (int) modifiers;
 
   if (atLeastOneSelectedItem) {
 
@@ -74,35 +76,46 @@ void DigitizeStateAbstractBase::handleKeyPressArrow (CmdMediator *cmdMediator,
       key == Qt::Key_Right) {
 
       keyPressArrow (cmdMediator,
-                     key);
+                     key,
+                     modifiers);
 
     }
   }
 }
 
 void DigitizeStateAbstractBase::keyPressArrow (CmdMediator *cmdMediator,
-                                               Qt::Key key)
+                                               Qt::Key key,
+                                               Qt::KeyboardModifiers modifiers)
 {
+  // Step size in unzoomed screen pixels: one pixel for a plain arrow key (the upstream behavior),
+  // ten pixels for Shift and fifty for Control, for the fast and the very fast lane
+  double step = 1.0;
+  if (modifiers & Qt::ShiftModifier) {
+    step = 10.0;
+  } else if (modifiers & Qt::ControlModifier) {
+    step = 50.0;
+  }
+
   QPointF deltaScreen;
   QString moveText;
   switch (key) {
     case Qt::Key_Down:
-      deltaScreen = QPointF (0, zoomedToUnzoomedScreenY ());
+      deltaScreen = QPointF (0, step * zoomedToUnzoomedScreenY ());
       moveText = moveTextDown();
       break;
 
     case Qt::Key_Left:
-      deltaScreen = QPointF (-1 * zoomedToUnzoomedScreenX (), 0);
+      deltaScreen = QPointF (-step * zoomedToUnzoomedScreenX (), 0);
       moveText = moveTextLeft();
       break;
 
     case Qt::Key_Right:
-      deltaScreen = QPointF (zoomedToUnzoomedScreenX (), 0);
+      deltaScreen = QPointF (step * zoomedToUnzoomedScreenX (), 0);
       moveText = moveTextRight();
       break;
 
     case Qt::Key_Up:
-      deltaScreen = QPointF (0, -1 * zoomedToUnzoomedScreenY ());
+      deltaScreen = QPointF (0, -step * zoomedToUnzoomedScreenY ());
       moveText = moveTextUp();
       break;
 

@@ -63,7 +63,8 @@ public:
   /// See DigitizeStateAbstractBase::handleKeyPress.
   void handleKeyPress (CmdMediator *cmdMediator,
                        Qt::Key key,
-                       bool atLeastOneSelectedItem);
+                       bool atLeastOneSelectedItem,
+                       Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
   /// See DigitizeStateAbstractBase::handleMouseMove.
   void handleMouseMove (CmdMediator *cmdMediator,
