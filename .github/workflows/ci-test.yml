@@ -109,7 +109,9 @@ jobs:
             ForEach-Object { $_.Matches[0].Groups[1].Value } |
             Sort-Object -Unique |
             ForEach-Object {
-              $exe = Join-Path (Join-Path (Get-Location) "cmake-build\windows-msvc-release\bin") ("Test" + ($_ -replace "^unit\.", "") + ".exe")
+              # The captured name is already the executable name (unit.TestQualityReport ->
+              # TestQualityReport), so it must not get a second Test prefix
+              $exe = Join-Path (Join-Path (Get-Location) "cmake-build\windows-msvc-release\bin") ("$_.exe")
               Write-Host "===== direct: $exe"
               $output = & $exe 2>&1
               $output | ForEach-Object { Write-Host "$_" }
