@@ -41,9 +41,6 @@ public:
   /// Text of the summary that was written, one line per processed file plus a result line
   const QStringList &summary () const;
 
-private:
-  BatchProcessor ();
-
   /// Apply the template knowledge to the current document
   void applyTemplate (MainWindow &mainWindow,
                       const QString &templateFile);
