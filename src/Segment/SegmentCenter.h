@@ -9,6 +9,7 @@
 
 #include <QList>
 #include <QPoint>
+#include "SegmentCenterStrategy.h"
 
 class QImage;
 

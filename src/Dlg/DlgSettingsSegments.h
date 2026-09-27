@@ -47,6 +47,7 @@ private slots:
   void slotAutoCurveCenterStrategy (const QString &);
   void slotAutoCurveMaxGap (const QString &);
   void slotAutoCurveMaxTurn (const QString &);
+  void slotAutoCurveFunctionAssumption (int state);
   void slotInactiveOpacity (const QString &);
   void slotLineColor (const QString &);
   void slotLineWidthActive (int);
