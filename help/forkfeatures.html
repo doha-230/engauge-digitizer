@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>Engauge Digitizer - New Features in This Fork</TITLE>
+<META NAME="keywords" CONTENT="Engauge Digitizer, fork features, quality report, autosave, automated points, point origin, closed network, offline">
+<META NAME="description" CONTENT="Features added to Engauge Digitizer in this fork">
+</HEAD>
+<BODY>
+<H2>
+  <A HREF="index.html">
+    <IMG SRC="animation.png" ALIGN=MIDDLE ALT="" STYLE="border: 0px"></A>
+  Engauge Digitizer - New Features in This Fork</H2>
+<HR WIDTH="100%">
+<P>This fork of Engauge Digitizer adds a few opt-in features on top of the upstream application. Every
+  one of them is off by default, so a fresh installation behaves exactly like the upstream release until
+  each feature is turned on in the settings.</P>
+
+<H3>Digitizing quality report</H3>
+<P>The <B>Digitize &gt; Quality Report...</B> entry lists the digitized points that deserve a second
+  look, so a curve does not have to be checked by eye point by point. The candidates are:</P>
+<UL>
+  <LI>Points whose x value repeats the previous point, or goes backwards. These are candidates rather
+    than errors, since a curve that is digitized as a relation may legitimately revisit the same x.</LI>
+  <LI>Points where the slope changes abruptly compared to the typical change of the curve, which
+    catches a wrong point on an otherwise smooth curve.</LI>
+  <LI>Points that sit on top of a point of another curve, which usually means one curve was digitized
+    twice.</LI>
+  <LI>Points outside the range covered by the axis points.</LI>
+</UL>
+<P>The report can be saved as a comma separated file, which is useful after changing the color filter
+  or the grid removal settings, or before exporting the data.</P>
+
+<H3>Point origin, and deleting automated points</H3>
+<P>Two options in <B>Settings &gt; General</B> work together:</P>
+<UL>
+  <LI><B>Show which points were placed automatically</B> draws points that were created by the Segment
+    Fill or Point Match tools with a dashed outline, so they can be told apart from the points placed
+    by hand. The curve colors are not changed. The dashed points are exactly the ones that were derived
+    from the filter settings, which makes them the ones to review after the filter changed.</LI>
+  <LI><B>Enable commands that work on automatically placed points</B> adds <B>Edit &gt; Delete Automated
+    Points</B>, which removes every automated point while keeping the points placed by hand, in a single
+    undoable step. Digitize the affected curves again afterwards. This is the quick way to re-digitize
+    after the color filter or the grid removal settings changed.</LI>
+</UL>
+
+<H3>Auto-save and crash recovery</H3>
+<P>The option <B>Auto-save a recovery file while the document is modified</B> in <B>Settings &gt;
+  General</B> writes a recovery copy of the document at a chosen interval while there are unsaved
+  changes. If Engauge exits unexpectedly, the next start offers to recover the copy, so the digitizing
+  work is not lost. The recovery file is a normal Engauge document that contains the image, so recovering
+  does not depend on the original image file. The copy is removed as soon as the document is saved or
+  closed normally.</P>
+
+<H3>Closed network deployments</H3>
+<P>This fork is built for use on machines without internet access:</P>
+<UL>
+  <LI>The installer and the portable package contain every runtime file, including the redistributable,
+    the help file and the translations, so nothing is downloaded at run time.</LI>
+  <LI>The quality report, the recovery files and the settings are all local file access. Nothing is
+    sent anywhere.</LI>
+</UL>
+
+<H3>Other fixes</H3>
+<UL>
+  <LI>The Guidelines tool uses Shift+F9, which no longer collides with the Scale Bar tool.</LI>
+  <LI>The Help &gt; Language menu switches the user interface language, including Korean.</LI>
+</UL>
+</BODY>
+</HTML>
