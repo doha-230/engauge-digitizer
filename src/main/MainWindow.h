@@ -24,6 +24,7 @@
 #include "ZoomControl.h"
 #include "ZoomFactor.h"
 #include "ZoomFactorInitial.h"
+#include <QElapsedTimer>
 
 class BackgroundStateContext;
 class ChecklistGuide;
@@ -80,6 +81,7 @@ class QPushButton;
 class QSettings;
 class QSignalMapper;
 class QTextStream;
+class QElapsedTimer;
 class QTimer;
 class QToolBar;
 class StatusBar;
@@ -377,7 +379,9 @@ private slots:
   void slotSettingsMainWindow ();
   void slotSettingsPointMatch ();
   void slotSettingsSegments ();
+  void slotAutosave ();
   void slotTableStatusChange ();
+  void slotTimeoutRecoveryPrompt ();
   void slotTimeoutChecklistGuideWizard ();
   void slotTimeoutRegressionErrorReport ();
   void slotTimeoutRegressionFileCmdScript ();
@@ -765,6 +769,18 @@ private:
 
   // Timer for delayed execution of ChecklistGuideWizard after call to import handler
   QTimer *m_timerChecklistGuideWizard;
+
+  // Timer for the opt-in autosave, plus the time of the last recovery file that was written
+  QTimer *m_timerAutosave;
+  QElapsedTimer m_lastAutosave;
+
+  // Write the current document to an arbitrary path, without touching the document identity,
+  // the recent file list, the undo stack or the status bar. Used by the autosave.
+  bool saveDocumentToPath (const QString &fileName);
+
+  // Key that identifies the document being edited for the recovery file. Empty for a document
+  // that has never been saved.
+  QString documentIdentity () const;
 };
 
 #endif // MAIN_WINDOW_H

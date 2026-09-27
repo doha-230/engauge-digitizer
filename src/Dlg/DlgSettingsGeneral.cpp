@@ -8,6 +8,7 @@
 #include "CmdMediator.h"
 #include "CmdSettingsGeneral.h"
 #include "DlgSettingsGeneral.h"
+#include "AutosaveRecovery.h"
 #include <QCheckBox>
 #include "EngaugeAssert.h"
 #include "Logger.h"
@@ -85,6 +86,28 @@ void DlgSettingsGeneral::createControls (QGridLayout *layout,
                                           "the dashed points are the ones that were derived from those settings."));
   connect (m_chkShowPointOrigin, SIGNAL (toggled (bool)), this, SLOT (slotShowPointOrigin (bool)));
   layout->addWidget (m_chkShowPointOrigin, row++, 1, 1, 2);
+
+  m_chkAutosave = new QCheckBox (tr ("Auto-save a recovery file while the document is modified"));
+  m_chkAutosave->setWhatsThis (tr ("Auto-save Recovery File\n\n"
+                                   "Writes a recovery copy of the document at the interval below while there are "
+                                   "unsaved changes, so an unexpected exit does not lose the digitizing work. "
+                                   "The copy is a normal Engauge document that contains the image, and it is "
+                                   "removed as soon as the document is saved or closed normally.\n\n"
+                                   "Nothing leaves the machine: recovery files are written to the application data "
+                                   "directory, or next to the application for a portable installation."));
+  connect (m_chkAutosave, SIGNAL (toggled (bool)), this, SLOT (slotAutosave (bool)));
+  layout->addWidget (m_chkAutosave, row++, 1, 1, 2);
+
+  QLabel *labelAutosaveInterval = new QLabel (QString ("%1:").arg (tr ("Auto-save interval (minutes)")));
+  layout->addWidget (labelAutosaveInterval, row, 1);
+
+  m_spinAutosaveInterval = new QSpinBox;
+  m_spinAutosaveInterval->setMinimum (1);
+  m_spinAutosaveInterval->setMaximum (60);
+  m_spinAutosaveInterval->setWhatsThis (tr ("Auto-save Interval\n\n"
+                                            "Minutes between recovery file updates while the document is modified."));
+  connect (m_spinAutosaveInterval, SIGNAL (valueChanged (int)), this, SLOT (slotAutosaveInterval (int)));
+  layout->addWidget (m_spinAutosaveInterval, row++, 2);
 
   m_chkEnableRedigitize = new QCheckBox (tr ("Enable commands that work on automatically placed points"));
   m_chkEnableRedigitize->setWhatsThis (tr ("Enable Commands For Automatically Placed Points\n\n"
@@ -167,6 +190,11 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
     QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
     settings.beginGroup (SETTINGS_GROUP_GENERAL);
 
+    m_chkAutosave->setChecked (settings.value (SETTINGS_GENERAL_AUTOSAVE_ENABLED,
+                                               QVariant (false)).toBool ());
+    m_spinAutosaveInterval->setValue (AutosaveRecovery::intervalMinutes ());
+    m_spinAutosaveInterval->setEnabled (m_chkAutosave->isChecked ());
+
     m_chkShowPointOrigin->setChecked (settings.value (SETTINGS_GENERAL_SHOW_POINT_ORIGIN,
                                                       QVariant (false)).toBool ());
     m_chkEnableRedigitize->setChecked (settings.value (SETTINGS_GENERAL_ENABLE_REDIGITIZE,
@@ -180,6 +208,30 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
 void DlgSettingsGeneral::setSmallDialogs(bool /* smallDialogs */)
 {
+}
+
+void DlgSettingsGeneral::slotAutosave (bool autosave)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotAutosave";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  settings.setValue (SETTINGS_GENERAL_AUTOSAVE_ENABLED,
+                     autosave);
+  settings.endGroup ();
+
+  m_spinAutosaveInterval->setEnabled (autosave);
+}
+
+void DlgSettingsGeneral::slotAutosaveInterval (int minutes)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotAutosaveInterval";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  settings.setValue (SETTINGS_GENERAL_AUTOSAVE_INTERVAL_MINUTES,
+                     minutes);
+  settings.endGroup ();
 }
 
 void DlgSettingsGeneral::slotShowPointOrigin (bool show)

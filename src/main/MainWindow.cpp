@@ -12,6 +12,7 @@
 #include "CmdCopy.h"
 #include "CmdCut.h"
 #include "CallbackAutomatedPoints.h"
+#include "AutosaveRecovery.h"
 #include "CmdDelete.h"
 #include "CmdGuidelineAddXT.h"
 #include "CmdGuidelineAddYR.h"
@@ -99,6 +100,8 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDebug>
+#include <QDir>
+#include <QElapsedTimer>
 #include <QDesktopServices>
 #include <QDockWidget>
 #include <QDomDocument>
@@ -190,7 +193,8 @@ MainWindow::MainWindow(const QString &errorReportFile,
   m_isExportOnly (isExportOnly),
   m_isExtractImageOnly (isExtractImageOnly),
   m_extractImageOnlyExtension (extractImageOnlyExtension),
-  m_timerChecklistGuideWizard (nullptr)
+  m_timerChecklistGuideWizard (nullptr),
+  m_timerAutosave (nullptr)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::MainWindow"
                               << " curDir=" << QDir::currentPath().toLatin1().data();
@@ -255,6 +259,16 @@ MainWindow::MainWindow(const QString &errorReportFile,
     m_loadStartupFiles = loadStartupFiles;
   }
   QDir::setCurrent (originalPath);
+
+  // Opt-in autosave. The timer ticks once a minute and the slot decides whether the configured
+  // interval has elapsed, so enabling the preference takes effect without restarting.
+  m_timerAutosave = new QTimer (this);
+  connect (m_timerAutosave, SIGNAL (timeout ()), this, SLOT (slotAutosave ()));
+  m_lastAutosave.start ();
+  m_timerAutosave->start (60000);
+
+  // Delayed so the window exists before any dialog appears
+  QTimer::singleShot (0, this, SLOT (slotTimeoutRecoveryPrompt ()));
 }
 
 MainWindow::~MainWindow()
@@ -338,6 +352,10 @@ void MainWindow::applyZoomFactorAfterLoad()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   if (maybeSave()) {
+
+    // The user saved or deliberately discarded the changes, so the recovery copy is finished
+    AutosaveRecovery::removeRecoveryFile (documentIdentity ());
+
     settingsWrite ();
     event->accept ();
   } else {
@@ -1521,6 +1539,11 @@ bool MainWindow::saveDocumentFile (const QString &fileName)
 
   setCurrentFile(fileName);
   m_engaugeFile = fileName;
+
+  // The document is safely stored, so the recovery copies are no longer needed
+  AutosaveRecovery::removeRecoveryFile (fileName);
+  AutosaveRecovery::removeRecoveryFile (QString ());
+
   updateAfterCommand (); // Enable Save button now that m_engaugeFile is set
   m_statusBar->showTemporaryMessage("File saved");
 
@@ -2489,6 +2512,122 @@ void MainWindow::slotEditCut ()
                               pointIdentifiers);
     m_digitizeStateContext->appendNewCmd (m_cmdMediator,
                                           cmd);
+  }
+}
+
+QString MainWindow::documentIdentity () const
+{
+  // A document that has never been saved has no path yet, so all such documents share one
+  // recovery file
+  return (m_engaugeFile == EMPTY_FILENAME) ? QString () : m_engaugeFile;
+}
+
+bool MainWindow::saveDocumentToPath (const QString &fileName)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::saveDocumentToPath fileName=" << fileName.toLatin1().data();
+
+  if (m_cmdMediator == nullptr) {
+    return false;
+  }
+
+  QFile file (fileName);
+  if (!file.open (QFile::WriteOnly)) {
+    LOG4CPP_WARN_S ((*mainCat)) << "MainWindow::saveDocumentToPath cannot write" << fileName.toLatin1().data();
+    return false;
+  }
+
+  QXmlStreamWriter writer (&file);
+  writer.setAutoFormatting (true);
+  writer.writeStartDocument ();
+  writer.writeDTD ("<!DOCTYPE engauge>");
+  m_cmdMediator->document().saveXml (writer);
+  writer.writeEndDocument ();
+
+  return true;
+}
+
+void MainWindow::slotAutosave ()
+{
+  if ((m_cmdMediator == nullptr) ||
+      !AutosaveRecovery::enabled () ||
+      !isWindowModified ()) {
+    return;
+  }
+
+  // The timer ticks every minute, and the configured interval decides when a recovery file is due
+  if (m_lastAutosave.isValid () &&
+      (m_lastAutosave.elapsed () < AutosaveRecovery::intervalMinutes () * 60000)) {
+    return;
+  }
+
+  const QString directory = AutosaveRecovery::recoveryDirectory ();
+  if (directory.isEmpty ()) {
+    return; // No writable location, so recovery is not possible
+  }
+
+  QDir ().mkpath (directory);
+
+  const QString fileName = AutosaveRecovery::recoveryFilePath (documentIdentity ());
+  if (saveDocumentToPath (fileName)) {
+
+    m_lastAutosave.restart ();
+
+    LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotAutosave wrote recovery file"
+                                << fileName.toLatin1().data();
+  }
+}
+
+void MainWindow::slotTimeoutRecoveryPrompt ()
+{
+  // Only prompt when a recovery file is actually present, so an ordinary start is unchanged
+  const QStringList recoveryFiles = AutosaveRecovery::recoveryFiles ();
+  if (recoveryFiles.isEmpty ()) {
+    return;
+  }
+
+  // The list is newest first, and only the newest one is offered. The others are left alone
+  // rather than deleted, since they may hold work the user still wants.
+  const QString recoveryFile = recoveryFiles.at (0);
+
+  QString message = tr ("Engauge exited before the last document was saved.\n\nRecover the autosaved copy?\n\n%1");
+  if (recoveryFiles.count () > 1) {
+    message += tr ("\n\n%1 other autosaved copies are also waiting.").arg (recoveryFiles.count () - 1);
+  }
+  message = message.arg (QFileInfo (recoveryFile).fileName ());
+
+  QMessageBox::StandardButton answer = QMessageBox::question (this,
+                                                              engaugeWindowTitle (),
+                                                              message,
+                                                              QMessageBox::Yes | QMessageBox::No,
+                                                              QMessageBox::Yes);
+  if (answer == QMessageBox::Yes) {
+
+    // The recovered document is loaded like any other document, and keeps its own recovery file
+    // until the user saves it
+    loadDocumentFile (recoveryFile);
+
+    // The copy lives in the recovery directory, so it is not treated as the document location:
+    // the next save asks the user where to store it. The recovery file is left in place until then.
+    m_engaugeFile = EMPTY_FILENAME;
+    m_currentFile = EMPTY_FILENAME;
+    setWindowFilePath (QString ());
+    setWindowModified (true);
+
+    // Keep the internal recovery file out of the recent file list
+    {
+      QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+      QStringList recentFilePaths = settings.value (SETTINGS_RECENT_FILE_LIST).toStringList ();
+      recentFilePaths.removeAll (recoveryFile);
+      settings.setValue (SETTINGS_RECENT_FILE_LIST, recentFilePaths);
+    }
+    updateRecentFileList ();
+
+  } else {
+
+    if (QFile::remove (recoveryFile)) {
+      LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotTimeoutRecoveryPrompt discarded"
+                                  << recoveryFile.toLatin1().data();
+    }
   }
 }
 
