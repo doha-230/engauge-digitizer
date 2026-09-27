@@ -329,6 +329,7 @@ if(BUILD_TESTING)
     TestMatrix
     TestPointOrigin
     TestProjectedPoint
+    TestQualityReport
     TestSpline
     TestSplineDrawer
     TestTransformation

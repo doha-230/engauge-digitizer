@@ -26,6 +26,7 @@ testsAvailable=( \
     TestMatrix \
     TestPointOrigin \
     TestProjectedPoint \
+    TestQualityReport \
     TestSpline \
     TestSplineDrawer \
     TestTransformation \
