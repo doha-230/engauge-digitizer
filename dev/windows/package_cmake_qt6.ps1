@@ -254,6 +254,37 @@ try {
         throw "Missing deployed translations: $($missingTranslations -join ', ')."
     }
 
+    # Air-gapped deployment hardening. windeployqt deploys the generic Qt plugin
+    # set, which includes networking, TLS and server database drivers that this
+    # build does not use: the Windows build compiles with ENGAUGE_ENABLE_NETWORK=OFF
+    # (so NetworkClient is not even built), and none of the shipped binaries import
+    # Qt6Network.dll. The help engine only needs the SQLite driver. Removing these
+    # keeps a closed network deployment free of unused network components; the
+    # smoke test further down proves the application still starts afterwards.
+    $airGapRemovals = @(
+        "Qt6Network.dll",
+        "networkinformation",
+        "tls",
+        "sqldrivers\qsqlmimer.dll",
+        "sqldrivers\qsqlodbc.dll",
+        "sqldrivers\qsqlpsql.dll"
+    )
+    foreach ($airGapRemoval in $airGapRemovals) {
+        $removalPath = Join-Path $stageDirectoryPath $airGapRemoval
+        if (Test-Path $removalPath) {
+            Remove-Item -LiteralPath $removalPath -Recurse -Force
+        }
+    }
+
+    $networkLeftovers = Get-ChildItem -Path $stageDirectoryPath -Recurse -Force -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like "*Network*" -or $_.Name -like "*tls*" }
+    if ($networkLeftovers) {
+        throw "Network artifacts remain in the staged deployment: $($networkLeftovers.FullName -join ', ')."
+    }
+    if (-not (Test-Path (Join-Path $stageDirectoryPath "sqldrivers\qsqlite.dll") -PathType Leaf)) {
+        throw "The SQLite driver required by the help engine is missing."
+    }
+
     if ($SmokeTestSeconds -gt 0) {
         $savedPath = $env:Path
         $savedQtPluginPath = $env:QT_PLUGIN_PATH
