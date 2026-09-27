@@ -3,6 +3,7 @@ name: CI build and test
 on:
   push:
     branches:
+      - main
       - master
       - gh-actions-test
   pull_request:
