@@ -43,4 +43,13 @@ PointOrigin pointOriginFromString (const QString &name);
 /// True when the origin means the point was created by automation rather than by hand
 bool pointOriginIsAutomated (PointOrigin origin);
 
+/// True when automated points should be drawn differently so they can be told apart
+/// from hand-placed points. Opt-in general preference, off by default so the rendering
+/// is identical to previous builds.
+bool pointOriginDisplayEnabled ();
+
+/// True when the automated-point commands (delete automated points, re-digitize) are
+/// enabled. Opt-in general preference, off by default.
+bool pointOriginCommandsEnabled ();
+
 #endif // POINT_ORIGIN_H

@@ -5,6 +5,9 @@
  ******************************************************************************************************/
 
 #include "PointOrigin.h"
+#include "Settings.h"
+#include <QSettings>
+#include <QVariant>
 
 const QString POINT_ORIGIN_VALUE_UNKNOWN ("Unknown");
 const QString POINT_ORIGIN_VALUE_MANUAL ("Manual");
@@ -52,4 +55,20 @@ bool pointOriginIsAutomated (PointOrigin origin)
 {
   return (origin == POINT_ORIGIN_SEGMENT_FILL) ||
          (origin == POINT_ORIGIN_POINT_MATCH);
+}
+
+bool pointOriginDisplayEnabled ()
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  return settings.value (SETTINGS_GENERAL_SHOW_POINT_ORIGIN,
+                         QVariant (false)).toBool ();
+}
+
+bool pointOriginCommandsEnabled ()
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  return settings.value (SETTINGS_GENERAL_ENABLE_REDIGITIZE,
+                         QVariant (false)).toBool ();
 }

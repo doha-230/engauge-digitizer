@@ -74,7 +74,8 @@ public:
                            const CurveStyles &curveStyles,
                            const QString &curveName,
                            const Point &point,
-                           GeometryWindow *geometryWindow);
+                           GeometryWindow *geometryWindow,
+                           bool showAutomatedMarkers);
 
   /// Update the curve style for every curve
   void updateCurveStyles (const CurveStyles &modelCurveStyles);

@@ -20,6 +20,7 @@ class GeometryWindow;
 class GraphicsPointEllipse;
 class GraphicsPointPolygon;
 class PointStyle;
+class QPen;
 class QColor;
 class QGraphicsScene;
 class QPolygonF;
@@ -91,7 +92,13 @@ public:
   void setHighlightOpacity (double highlightOpacity);
 
   /// Update the point style
+  /// Set point style
   void setPointStyle (const PointStyle &pointStyle);
+
+  /// Mark this point as created by automation. Automated points are drawn with a dashed
+  /// outline so they can be told apart from hand-placed points (opt-in, see
+  /// pointOriginDisplayEnabled)
+  void setAutomated (bool automated);
 
   /// Update the position
   void setPos (const QPointF pos);
@@ -110,6 +117,12 @@ public:
 
 private:
   GraphicsPoint();
+
+  /// Apply the last known point style, including the automated marker
+  void applyPointStyle ();
+
+  /// Pen for this point, dashed when the point was created by automation
+  QPen penForPoint () const;
 
   void createPointEllipse (unsigned int radius); // Attributes shared by circle and polygon points are passed through member variables
   void createPointPolygon (const QPolygonF &polygon); // Attributes shared by circle and polygon points are passed through member variables
@@ -136,6 +149,10 @@ private:
   double m_highlightOpacity;
 
   GeometryWindow *m_geometryWindow; // Can receive hover signals. Null if unused
+
+  PointStyle m_pointStyle; // Last style applied, so the automated marker can be reapplied
+  bool m_hasPointStyle = false;
+  bool m_automated = false;
 };
 
 #endif // GRAPHICS_POINT_H

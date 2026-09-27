@@ -332,6 +332,7 @@ private slots:
   void slotEditCopy ();
   void slotEditCut ();
   void slotEditDelete ();
+  void slotEditDeleteAutomatedPoints ();
   void slotEditMenu ();
   void slotEditPaste ();
   void slotEditPasteAsNew ();
@@ -554,6 +555,7 @@ private:
   QAction *m_actionEditCopy;
   QAction *m_actionEditPaste;
   QAction *m_actionEditDelete;
+  QAction *m_actionEditDeleteAutomatedPoints;
   QAction *m_actionEditPasteAsNew;
 
   QMenu *m_menuDigitize;

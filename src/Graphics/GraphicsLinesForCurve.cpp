@@ -10,6 +10,7 @@
 #include "GeometryWindow.h"
 #include "GraphicsItemType.h"
 #include "GraphicsLinesForCurve.h"
+#include "PointOrigin.h"
 #include "GraphicsPoint.h"
 #include "GraphicsScene.h"
 #include "LineStyle.h"
@@ -366,7 +367,8 @@ void GraphicsLinesForCurve::renumberOrdinals ()
 void GraphicsLinesForCurve::updateAfterCommand (GraphicsScene &scene,
                                                 const PointStyle &pointStyle,
                                                 const Point &point,
-                                                GeometryWindow *geometryWindow)
+                                                GeometryWindow *geometryWindow,
+                                                bool showAutomatedMarkers)
 {
   LOG4CPP_DEBUG_S ((*mainCat)) << "GraphicsLinesForCurve::updateAfterCommand"
                                << " curve=" << m_curveName.toLatin1().data()
@@ -394,6 +396,11 @@ void GraphicsLinesForCurve::updateAfterCommand (GraphicsScene &scene,
     m_graphicsPoints [point.ordinal ()] = graphicsPoint;
 
   }
+
+  // Mark automated points so they can be told apart from hand-placed ones. This is
+  // opt-in: with the preference off, every point keeps the upstream appearance.
+  graphicsPoint->setAutomated (showAutomatedMarkers &&
+                               pointOriginIsAutomated (point.origin ()));
 
   // Mark point as wanted
   ENGAUGE_CHECK_PTR (graphicsPoint);

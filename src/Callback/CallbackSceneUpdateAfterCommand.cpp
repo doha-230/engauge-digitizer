@@ -5,6 +5,7 @@
  ******************************************************************************************************/
 
 #include "CallbackSceneUpdateAfterCommand.h"
+#include "PointOrigin.h"
 #include "DataKey.h"
 #include "Document.h"
 #include "EngaugeAssert.h"
@@ -21,7 +22,8 @@ CallbackSceneUpdateAfterCommand::CallbackSceneUpdateAfterCommand(GraphicsLinesFo
   m_graphicsLinesForCurves (graphicsLinesForCurves),
   m_scene (scene),
   m_document (document),
-  m_geometryWindow (geometryWindow)
+  m_geometryWindow (geometryWindow),
+  m_showAutomatedMarkers (pointOriginDisplayEnabled ())
 {
 }
 
@@ -34,7 +36,8 @@ CallbackSearchReturn CallbackSceneUpdateAfterCommand::callback (const QString &c
                                                m_document.modelCurveStyles (),
                                                curveName,
                                                point,
-                                               m_geometryWindow);
+                                               m_geometryWindow,
+                                               m_showAutomatedMarkers);
 
   return rtn;
 }

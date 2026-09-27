@@ -206,6 +206,17 @@ void CreateActions::createEdit (MainWindow &mw)
                                            "Deletes the selected points, after copying them to the clipboard."));
   connect (mw.m_actionEditDelete, SIGNAL (triggered ()), &mw, SLOT (slotEditDelete ()));
 
+  mw.m_actionEditDeleteAutomatedPoints = new QAction (tr ("Delete Automated Points"), &mw);
+  mw.m_actionEditDeleteAutomatedPoints->setStatusTip (tr ("Deletes every point that was placed by the Segment Fill or Point Match tool, keeping the points placed by hand."));
+  mw.m_actionEditDeleteAutomatedPoints->setWhatsThis (tr ("Delete Automated Points\n\n"
+                                                          "Deletes every point that was created by the Segment Fill or Point Match tools, "
+                                                          "in every curve, and keeps the points that were placed by hand. Digitize the "
+                                                          "affected curves again afterwards, which is useful after changing the color "
+                                                          "filter or the grid removal settings.\n\n"
+                                                          "This entry appears when Settings > General > Enable commands that work on "
+                                                          "automatically placed points is enabled."));
+  connect (mw.m_actionEditDeleteAutomatedPoints, SIGNAL (triggered ()), &mw, SLOT (slotEditDeleteAutomatedPoints ()));
+
   mw.m_actionEditPasteAsNew = new QAction (tr ("Paste As New"), &mw);
   mw.m_actionEditPasteAsNew->setStatusTip (tr ("Pastes an image from the clipboard and opens coordinate system setup."));
   mw.m_actionEditPasteAsNew->setWhatsThis (tr ("Paste as New\n\n"

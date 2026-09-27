@@ -181,7 +181,8 @@ void GraphicsLinesForCurves::updateAfterCommand (GraphicsScene &scene,
                                                  const CurveStyles &curveStyles,
                                                  const QString &curveName,
                                                  const Point &point,
-                                                 GeometryWindow *geometryWindow)
+                                                 GeometryWindow *geometryWindow,
+                                                 bool showAutomatedMarkers)
 {
   LOG4CPP_DEBUG_S ((*mainCat)) << "GraphicsLinesForCurves::updateAfterCommand"
                                << " point=" << point.identifier().toLatin1().data()
@@ -191,7 +192,8 @@ void GraphicsLinesForCurves::updateAfterCommand (GraphicsScene &scene,
   m_graphicsLinesForCurve [curveName]->updateAfterCommand (scene,
                                                            curveStyles.pointStyle(curveName),
                                                            point,
-                                                           geometryWindow);
+                                                           geometryWindow,
+                                                           showAutomatedMarkers);
 }
 
 void GraphicsLinesForCurves::updateCurveStyles (const CurveStyles &modelCurveStyles)

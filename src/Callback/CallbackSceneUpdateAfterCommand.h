@@ -37,6 +37,7 @@ private:
   GraphicsScene &m_scene;
   const Document &m_document;
   GeometryWindow *m_geometryWindow;
+  bool m_showAutomatedMarkers; // Read once from the settings, opt-in
 };
 
 #endif // CALLBACK_SCENE_UPDATE_AFTER_COMMAND_H

@@ -285,6 +285,39 @@ void GraphicsPoint::setPassive ()
 
 void GraphicsPoint::setPointStyle(const PointStyle &pointStyle)
 {
+  // Remembered so the automated marker can be reapplied without the caller passing the style again
+  m_pointStyle = pointStyle;
+  m_hasPointStyle = true;
+
+  applyPointStyle ();
+}
+
+void GraphicsPoint::setAutomated (bool automated)
+{
+  if (m_automated == automated) {
+    return;
+  }
+
+  m_automated = automated;
+
+  if (m_hasPointStyle) {
+    applyPointStyle ();
+  }
+}
+
+QPen GraphicsPoint::penForPoint () const
+{
+  // Dashed outlines mark points that were created by automation, so they can be told apart
+  // from points placed by hand (opt-in, see pointOriginDisplayEnabled)
+  return QPen (ColorPaletteToQColor (m_pointStyle.paletteColor ()),
+               m_pointStyle.lineWidth (),
+               m_automated ? Qt::DashLine : Qt::SolidLine);
+}
+
+void GraphicsPoint::applyPointStyle ()
+{
+  const PointStyle &pointStyle = m_pointStyle;
+
   // Setting pen and radius of parent graphics items below also affects the child shadows
   // (m_shadowItemPolygon and m_shadowItemEllipse)
   if (m_graphicsItemEllipse == nullptr) {
@@ -300,10 +333,8 @@ void GraphicsPoint::setPointStyle(const PointStyle &pointStyle)
     } else {
 
       // Update polygon
-      m_graphicsItemPolygon->setPen (QPen (ColorPaletteToQColor(pointStyle.paletteColor()),
-                                           pointStyle.lineWidth()));
-      m_shadowZeroWidthPolygon->setPen (QPen (ColorPaletteToQColor(pointStyle.paletteColor()),
-                                              pointStyle.lineWidth()));
+      m_graphicsItemPolygon->setPen (penForPoint ());
+      m_shadowZeroWidthPolygon->setPen (penForPoint ());
       m_graphicsItemPolygon->setPolygon (pointStyle.polygon());
       m_shadowZeroWidthPolygon->setPolygon (pointStyle.polygon());
 
@@ -321,10 +352,8 @@ void GraphicsPoint::setPointStyle(const PointStyle &pointStyle)
     } else {
 
       // Update circle
-      m_graphicsItemEllipse->setPen (QPen (ColorPaletteToQColor(pointStyle.paletteColor()),
-                                           pointStyle.lineWidth()));
-      m_shadowZeroWidthEllipse->setPen (QPen (ColorPaletteToQColor(pointStyle.paletteColor()),
-                                           pointStyle.lineWidth()));
+      m_graphicsItemEllipse->setPen (penForPoint ());
+      m_shadowZeroWidthEllipse->setPen (penForPoint ());
       m_graphicsItemEllipse->setRadius (pointStyle.radius());
       m_shadowZeroWidthEllipse->setRadius (pointStyle.radius());
     }

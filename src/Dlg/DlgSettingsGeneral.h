@@ -13,6 +13,7 @@ class ButtonWhatsThis;
 class DocumentModelGeneral;
 class QGridLayout;
 class QPushButton;
+class QCheckBox;
 class QSpinBox;
 
 /// Dialog for editing general settings.
@@ -32,7 +33,9 @@ public:
 
 private slots:
   void slotCursorSize (int);
+  void slotEnableRedigitize (bool);
   void slotExtraPrecision (int);
+  void slotShowPointOrigin (bool);
   void slotSaveDefault();
   void slotWhatsThis();
   
@@ -49,6 +52,8 @@ private:
   
   QSpinBox *m_spinCursorSize;
   QSpinBox *m_spinExtraPrecision;
+  QCheckBox *m_chkShowPointOrigin;
+  QCheckBox *m_chkEnableRedigitize;
 
   QPushButton *m_btnSaveDefault;
 

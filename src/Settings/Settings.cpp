@@ -69,7 +69,9 @@ const QString SETTINGS_GROUP_CURVE_GRAPH_PLACEHOLDER ("#"); // Field in SETTINGS
 
 // General group
 const QString SETTINGS_GENERAL_CURSOR_SIZE ("cursorSize");
+const QString SETTINGS_GENERAL_ENABLE_REDIGITIZE ("enableRedigitize");
 const QString SETTINGS_GENERAL_EXTRA_PRECISION ("extraPrecision");
+const QString SETTINGS_GENERAL_SHOW_POINT_ORIGIN ("showPointOrigin");
 const QString SETTINGS_GROUP_GENERAL ("GeneralEngauge"); // "General" group name is reserved for ungrouped settings
 
 // Import group

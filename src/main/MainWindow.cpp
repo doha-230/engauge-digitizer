@@ -11,6 +11,7 @@
 #include "CmdAddPointsGraph.h"
 #include "CmdCopy.h"
 #include "CmdCut.h"
+#include "CallbackAutomatedPoints.h"
 #include "CmdDelete.h"
 #include "CmdGuidelineAddXT.h"
 #include "CmdGuidelineAddYR.h"
@@ -81,6 +82,7 @@
 #include "MainTitleBarFormat.h"
 #include "MainWindow.h"
 #include "MimePointsImport.h"
+#include "PointOrigin.h"
 #include "PointOrigin.h"
 #ifdef NETWORKING
 #include "NetworkClient.h"
@@ -2490,6 +2492,32 @@ void MainWindow::slotEditCut ()
   }
 }
 
+void MainWindow::slotEditDeleteAutomatedPoints ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotEditDeleteAutomatedPoints";
+
+  QStringList identifiers;
+
+  CallbackAutomatedPoints ftor (identifiers);
+  Functor2wRet<const QString &, const Point &, CallbackSearchReturn> ftorWithCallback = functor_ret (ftor,
+                                                                                                     &CallbackAutomatedPoints::callback);
+  m_cmdMediator->iterateThroughCurvesPointsGraphs (ftorWithCallback);
+
+  if (identifiers.isEmpty ()) {
+    QMessageBox::information (this,
+                              engaugeWindowTitle (),
+                              tr ("This document has no points that were placed automatically."));
+    return;
+  }
+
+  // One command, so the deletion can be undone as a whole
+  CmdDelete *cmd = new CmdDelete (*this,
+                                  m_cmdMediator->document (),
+                                  identifiers);
+  m_digitizeStateContext->appendNewCmd (m_cmdMediator,
+                                        cmd);
+}
+
 void MainWindow::slotEditDelete ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotEditDelete";
@@ -2528,6 +2556,11 @@ void MainWindow::slotEditDelete ()
 void MainWindow::slotEditMenu ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotEditMenu";
+
+  // Opt-in command, so it is shown only when the preference is enabled
+  m_actionEditDeleteAutomatedPoints->setVisible (pointOriginCommandsEnabled ());
+  m_actionEditDeleteAutomatedPoints->setEnabled ((m_cmdMediator != nullptr) &&
+                                                 pointOriginCommandsEnabled ());
 
   const bool hasImportableImage = clipboardHasImportableImage ();
   m_actionEditPasteAsNew->setEnabled (hasImportableImage);

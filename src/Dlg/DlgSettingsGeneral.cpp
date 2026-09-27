@@ -8,6 +8,7 @@
 #include "CmdMediator.h"
 #include "CmdSettingsGeneral.h"
 #include "DlgSettingsGeneral.h"
+#include <QCheckBox>
 #include "EngaugeAssert.h"
 #include "Logger.h"
 #include "MainWindow.h"
@@ -72,6 +73,27 @@ void DlgSettingsGeneral::createControls (QGridLayout *layout,
                                           "This parameter is used on the coordinates in the Status Bar and during Export"));
   connect (m_spinExtraPrecision, SIGNAL (valueChanged (int)), this, SLOT (slotExtraPrecision (int)));
   layout->addWidget (m_spinExtraPrecision, row++, 2);
+
+  // The two point origin options below are application preferences, not document data, so
+  // they are read from and written to the settings directly. Both are off by default, which
+  // keeps the appearance and the commands identical to previous builds.
+  m_chkShowPointOrigin = new QCheckBox (tr ("Show which points were placed automatically"));
+  m_chkShowPointOrigin->setWhatsThis (tr ("Show Which Points Were Placed Automatically\n\n"
+                                          "Draws points created by the Segment Fill and Point Match tools with a dashed "
+                                          "outline, so they can be told apart from points placed by hand.\n\n"
+                                          "This is useful after changing the color filter or the grid removal settings: "
+                                          "the dashed points are the ones that were derived from those settings."));
+  connect (m_chkShowPointOrigin, SIGNAL (toggled (bool)), this, SLOT (slotShowPointOrigin (bool)));
+  layout->addWidget (m_chkShowPointOrigin, row++, 1, 1, 2);
+
+  m_chkEnableRedigitize = new QCheckBox (tr ("Enable commands that work on automatically placed points"));
+  m_chkEnableRedigitize->setWhatsThis (tr ("Enable Commands For Automatically Placed Points\n\n"
+                                           "Adds Delete Automated Points to the Edit menu, which removes every point that "
+                                           "was created by the Segment Fill or Point Match tools while keeping the points "
+                                           "placed by hand. Digitize a curve again afterwards.\n\n"
+                                           "This option is off by default so the menu stays unchanged."));
+  connect (m_chkEnableRedigitize, SIGNAL (toggled (bool)), this, SLOT (slotEnableRedigitize (bool)));
+  layout->addWidget (m_chkEnableRedigitize, row++, 1, 1, 2);
 }
 
 void DlgSettingsGeneral::createOptionalSaveDefault (QHBoxLayout *layout)
@@ -140,12 +162,46 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
   m_spinCursorSize->setValue (m_modelGeneralAfter->cursorSize());
   m_spinExtraPrecision->setValue (m_modelGeneralAfter->extraPrecision());
 
+  {
+    // Application preferences, so they come from the settings instead of the document
+    QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+    settings.beginGroup (SETTINGS_GROUP_GENERAL);
+
+    m_chkShowPointOrigin->setChecked (settings.value (SETTINGS_GENERAL_SHOW_POINT_ORIGIN,
+                                                      QVariant (false)).toBool ());
+    m_chkEnableRedigitize->setChecked (settings.value (SETTINGS_GENERAL_ENABLE_REDIGITIZE,
+                                                       QVariant (false)).toBool ());
+    settings.endGroup ();
+  }
+
   updateControls ();
   enableOk (false); // Disable Ok button since there not yet any changes
 }
 
 void DlgSettingsGeneral::setSmallDialogs(bool /* smallDialogs */)
 {
+}
+
+void DlgSettingsGeneral::slotShowPointOrigin (bool show)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotShowPointOrigin";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  settings.setValue (SETTINGS_GENERAL_SHOW_POINT_ORIGIN,
+                     show);
+  settings.endGroup ();
+}
+
+void DlgSettingsGeneral::slotEnableRedigitize (bool enable)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotEnableRedigitize";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  settings.setValue (SETTINGS_GENERAL_ENABLE_REDIGITIZE,
+                     enable);
+  settings.endGroup ();
 }
 
 void DlgSettingsGeneral::slotCursorSize (int cursorSize)

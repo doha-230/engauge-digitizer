@@ -52,6 +52,7 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuEdit->addAction (mw.m_actionEditCopy);
   mw.m_menuEdit->addAction (mw.m_actionEditPaste);
   mw.m_menuEdit->addAction (mw.m_actionEditDelete);
+  mw.m_menuEdit->addAction (mw.m_actionEditDeleteAutomatedPoints);
   mw.m_menuEdit->insertSeparator (mw.m_actionEditPasteAsNew);
   mw.m_menuEdit->addAction (mw.m_actionEditPasteAsNew);
 

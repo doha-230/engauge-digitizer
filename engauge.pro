@@ -93,6 +93,7 @@ HEADERS  += \
     src/util/ButtonWhatsThis.h \
     src/Callback/CallbackAddPointsInCurvesGraphs.h \
     src/Callback/CallbackAxesCheckerFromAxesPoints.h \
+    src/Callback/CallbackAutomatedPoints.h \
     src/Callback/CallbackAxisPointsAbstract.h \
     src/Callback/CallbackBoundingRects.h \
     src/Callback/CallbackCheckAddPointAxis.h \
@@ -562,6 +563,7 @@ SOURCES += \
     src/util/ButtonWhatsThis.cpp \
     src/Callback/CallbackAddPointsInCurvesGraphs.cpp \
     src/Callback/CallbackAxesCheckerFromAxesPoints.cpp \
+    src/Callback/CallbackAutomatedPoints.cpp \
     src/Callback/CallbackAxisPointsAbstract.cpp \
     src/Callback/CallbackBoundingRects.cpp \
     src/Callback/CallbackCheckAddPointAxis.cpp \

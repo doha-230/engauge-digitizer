@@ -66,7 +66,8 @@ public:
   void updateAfterCommand (GraphicsScene &scene,
                            const PointStyle &pointStyle,
                            const Point &point,
-                           GeometryWindow *geometryWindow);
+                           GeometryWindow *geometryWindow,
+                           bool showAutomatedMarkers);
 
   /// Update the curve style for this curve
   void updateCurveStyle (const CurveStyle &curveStyle);
