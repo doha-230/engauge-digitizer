@@ -778,6 +778,15 @@ private:
   QTimer *m_timerAutosave;
   QElapsedTimer m_lastAutosave;
 
+  // Hash of the axis point graph coordinates at the last axis point review, so the confirm prompt
+  // only appears when the axis points actually changed
+  unsigned m_axisPointsHashLast = 0;
+  bool m_axisPointsHashValid = false;
+
+  // Opt-in review of the axis points: confirm dialog when the graph coordinates look wrong
+  // (duplicates, or values that go backwards). Runs only when the axis point coordinates changed.
+  void validateAxisPointsIfEnabled ();
+
   // Write the current document to an arbitrary path, without touching the document identity,
   // the recent file list, the undo stack or the status bar. Used by the autosave.
   bool saveDocumentToPath (const QString &fileName);

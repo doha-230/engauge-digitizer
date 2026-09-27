@@ -313,6 +313,7 @@ install(FILES LICENSE README.md
 
 if(BUILD_TESTING)
   set(_engauge_unit_tests
+    TestAxisPointsValidator
     TestAutosaveRecovery
     TestCentipedeEndpoints
     TestCorrelation

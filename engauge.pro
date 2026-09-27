@@ -93,6 +93,7 @@ HEADERS  += \
     src/util/ButtonWhatsThis.h \
     src/Callback/CallbackAddPointsInCurvesGraphs.h \
     src/Callback/CallbackAxesCheckerFromAxesPoints.h \
+    src/Callback/CallbackCollectAxisPoints.h \
     src/Callback/CallbackAutomatedPoints.h \
     src/Callback/CallbackAxisPointsAbstract.h \
     src/Callback/CallbackBoundingRects.h \
@@ -129,6 +130,7 @@ HEADERS  += \
     src/Centipede/CentipedeStateContext.h \
     src/Centipede/CentipedeStatePrebuild.h \
     src/Checker/Checker.h \
+    src/Checker/AxisPointsValidator.h \
     src/Checker/CheckerMode.h \
     src/Checklist/ChecklistGuide.h \
     src/Checklist/ChecklistGuideBrowser.h \
@@ -570,6 +572,7 @@ SOURCES += \
     src/util/ButtonWhatsThis.cpp \
     src/Callback/CallbackAddPointsInCurvesGraphs.cpp \
     src/Callback/CallbackAxesCheckerFromAxesPoints.cpp \
+    src/Callback/CallbackCollectAxisPoints.cpp \
     src/Callback/CallbackAutomatedPoints.cpp \
     src/Callback/CallbackAxisPointsAbstract.cpp \
     src/Callback/CallbackBoundingRects.cpp \
@@ -604,6 +607,7 @@ SOURCES += \
     src/Centipede/CentipedeStateContext.cpp \
     src/Centipede/CentipedeStatePrebuild.cpp \
     src/Checker/Checker.cpp \
+    src/Checker/AxisPointsValidator.cpp \
     src/Checker/CheckerMode.cpp \
     src/Checklist/ChecklistGuide.cpp \
     src/Checklist/ChecklistGuideBrowser.cpp \

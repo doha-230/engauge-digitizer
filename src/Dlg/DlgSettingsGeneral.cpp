@@ -87,6 +87,16 @@ void DlgSettingsGeneral::createControls (QGridLayout *layout,
   connect (m_chkShowPointOrigin, SIGNAL (toggled (bool)), this, SLOT (slotShowPointOrigin (bool)));
   layout->addWidget (m_chkShowPointOrigin, row++, 1, 1, 2);
 
+  m_chkAxisValidation = new QCheckBox (tr ("Review the axis points when they look questionable"));
+  m_chkAxisValidation->setWhatsThis (tr ("Review the Axis Points\n\n"
+                                         "Shows a confirmation prompt before a coordinate system is used, when the axis points "
+                                         "look questionable: two points with the same graph coordinates, or x or y values that "
+                                         "go backwards, which suggests the points were digitized in the wrong order.\n\n"
+                                         "The prompt is a reminder rather than an error, and it appears only when the axis points "
+                                         "changed since the last review."));
+  connect (m_chkAxisValidation, SIGNAL (toggled (bool)), this, SLOT (slotAxisValidation (bool)));
+  layout->addWidget (m_chkAxisValidation, row++, 1, 1, 2);
+
   m_chkAutosave = new QCheckBox (tr ("Auto-save a recovery file while the document is modified"));
   m_chkAutosave->setWhatsThis (tr ("Auto-save Recovery File\n\n"
                                    "Writes a recovery copy of the document at the interval below while there are "
@@ -190,6 +200,8 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
     QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
     settings.beginGroup (SETTINGS_GROUP_GENERAL);
 
+    m_chkAxisValidation->setChecked (settings.value (SETTINGS_GENERAL_AXIS_VALIDATION,
+                                                     QVariant (false)).toBool ());
     m_chkAutosave->setChecked (settings.value (SETTINGS_GENERAL_AUTOSAVE_ENABLED,
                                                QVariant (false)).toBool ());
     m_spinAutosaveInterval->setValue (AutosaveRecovery::intervalMinutes ());
@@ -208,6 +220,17 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
 void DlgSettingsGeneral::setSmallDialogs(bool /* smallDialogs */)
 {
+}
+
+void DlgSettingsGeneral::slotAxisValidation (bool review)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotAxisValidation";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_GENERAL);
+  settings.setValue (SETTINGS_GENERAL_AXIS_VALIDATION,
+                     review);
+  settings.endGroup ();
 }
 
 void DlgSettingsGeneral::slotAutosave (bool autosave)

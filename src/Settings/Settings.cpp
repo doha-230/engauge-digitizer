@@ -76,6 +76,7 @@ const QString SETTINGS_GROUP_CURVE_GRAPH_PLACEHOLDER ("#"); // Field in SETTINGS
 const QString SETTINGS_GENERAL_CURSOR_SIZE ("cursorSize");
 const QString SETTINGS_GENERAL_AUTOSAVE_ENABLED ("autosaveEnabled");
 const QString SETTINGS_GENERAL_AUTOSAVE_INTERVAL_MINUTES ("autosaveIntervalMinutes");
+const QString SETTINGS_GENERAL_AXIS_VALIDATION ("axisValidation");
 const QString SETTINGS_GENERAL_ENABLE_REDIGITIZE ("enableRedigitize");
 const QString SETTINGS_GENERAL_EXTRA_PRECISION ("extraPrecision");
 const QString SETTINGS_GENERAL_SHOW_POINT_ORIGIN ("showPointOrigin");

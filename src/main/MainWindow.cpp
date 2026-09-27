@@ -12,6 +12,8 @@
 #include "CmdCopy.h"
 #include "CmdCut.h"
 #include "CallbackAutomatedPoints.h"
+#include "AxisPointsValidator.h"
+#include "CallbackCollectAxisPoints.h"
 #include "AutosaveRecovery.h"
 #include "CmdDelete.h"
 #include "CmdGuidelineAddXT.h"
@@ -3850,6 +3852,60 @@ bool MainWindow::transformIsDefined() const
   return m_transformation.transformIsDefined();
 }
 
+void MainWindow::validateAxisPointsIfEnabled ()
+{
+  const DocumentHash hashDocument = DocumentHashGenerator ().generate (m_cmdMediator->document ());
+  if (m_axisPointsHashValid && (hashDocument == m_axisPointsHashLast)) {
+    return; // Document did not change since the last review
+  }
+
+  m_axisPointsHashValid = true;
+  m_axisPointsHashLast = hashDocument;
+
+  // Opt-in: without the setting there is no prompt, which keeps the upstream behavior
+  {
+    QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+    settings.beginGroup (SETTINGS_GROUP_GENERAL);
+    const bool enabled = settings.value (SETTINGS_GENERAL_AXIS_VALIDATION,
+                                         QVariant (false)).toBool ();
+    settings.endGroup ();
+
+    if (!enabled) {
+      return;
+    }
+  }
+
+  // Collect the axis points
+  QList<Point> axisPoints;
+  {
+    CallbackCollectAxisPoints ftor (axisPoints);
+    Functor2wRet<const QString &, const Point &, CallbackSearchReturn> ftorWithCallback = functor_ret (ftor,
+                                                                                                       &CallbackCollectAxisPoints::callback);
+    m_cmdMediator->iterateThroughCurvePointsAxes (ftorWithCallback);
+  }
+
+  AxisPointsValidator validator (axisPoints);
+  if (validator.findings ().isEmpty ()) {
+    return;
+  }
+
+  // Confirmation prompt, not an error: the user knows their document best
+  QString message = tr ("The axis points look questionable. Define the coordinate system anyway?\n\n");
+  for (int index = 0; index < validator.findings ().count (); index++) {
+    message += QString ("- %1\n").arg (validator.findings ().at (index));
+  }
+
+  QMessageBox::StandardButton answer = QMessageBox::question (this,
+                                                              engaugeWindowTitle (),
+                                                              message,
+                                                              QMessageBox::Yes | QMessageBox::No,
+                                                              QMessageBox::Yes);
+  if (answer == QMessageBox::No) {
+    // Give the user the chance to fix the points: undo is the natural way back
+    LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::validateAxisPointsIfEnabled declined";
+  }
+}
+
 void MainWindow::updateAfterCommand ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::updateAfterCommand";
@@ -3859,6 +3915,10 @@ void MainWindow::updateAfterCommand ()
   // Update transformation stuff, including the graph coordinates of every point in the Document, so coordinates in
   // status bar are up to date. Point coordinates in Document are also updated
   updateAfterCommandStatusBarCoords ();
+
+  // Optional review of the axis points, as a confirmation prompt rather than an error. This runs when
+  // the axis point graph coordinates changed, so an unrelated command does not reopen the prompt.
+  validateAxisPointsIfEnabled ();
 
   updateHighlightOpacity ();
 

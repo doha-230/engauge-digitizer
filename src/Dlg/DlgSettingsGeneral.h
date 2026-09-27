@@ -34,6 +34,7 @@ public:
 private slots:
   void slotAutosave (bool);
   void slotAutosaveInterval (int);
+  void slotAxisValidation (bool);
   void slotCursorSize (int);
   void slotEnableRedigitize (bool);
   void slotExtraPrecision (int);
@@ -54,6 +55,7 @@ private:
   
   QSpinBox *m_spinCursorSize;
   QSpinBox *m_spinExtraPrecision;
+  QCheckBox *m_chkAxisValidation;
   QCheckBox *m_chkAutosave;
   QSpinBox *m_spinAutosaveInterval;
   QCheckBox *m_chkShowPointOrigin;
