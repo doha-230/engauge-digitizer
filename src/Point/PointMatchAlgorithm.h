@@ -33,7 +33,9 @@ class PointMatchAlgorithm
   QList<QPoint> findPoints (const QList<PointMatchPixel> &samplePointPixels,
                             const QImage &imageProcessed,
                             const DocumentModelPointMatch &modelPointMatch,
-                            const Points &pointsExisting);
+                            const Points &pointsExisting,
+                            const QPoint &searchCenter,
+                            double searchRadius);
 
  private:
 

@@ -32,6 +32,10 @@ public:
   virtual void loadXml(QXmlStreamReader &reader);
 
   /// Get method for max point size.
+  /// Multiplier on the point separation that limits how far from the click a candidate may be. Zero
+  /// (the default) means the whole image is searched, which is the upstream behavior
+  double searchRadiusMultiplier() const;
+
   /// Correlation threshold (log scale) below which candidate points are ignored. The default keeps
   /// the upstream hard coded value
   double correlationThreshold() const;
@@ -55,6 +59,7 @@ public:
 
   /// Set method for max point size.
   void setCorrelationThreshold (double correlationThreshold);
+  void setSearchRadiusMultiplier (double searchRadiusMultiplier);
   void setMaxPointSize (double maxPointSize);
 
   /// Set method for accepted color.
@@ -70,6 +75,7 @@ private:
 
   double m_minPointSeparation;
   double m_correlationThreshold;
+  double m_searchRadiusMultiplier;
   double m_maxPointSize;
   ColorPalette m_paletteColorAccepted;
   ColorPalette m_paletteColorCandidate;

@@ -308,10 +308,20 @@ void DigitizeStatePointMatch::findPointsAndShowFirstCandidate (CmdMediator *cmdM
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   PointMatchAlgorithm pointMatchAlgorithm (context().isGnuplot());
+    // The search radius limits how far from the click a candidate may be. Zero (the default) keeps
+  // the upstream whole image search
+  double searchRadius = 0.0;
+  if (modelPointMatch.searchRadiusMultiplier () > 0.0) {
+    searchRadius = modelPointMatch.searchRadiusMultiplier () * modelPointMatch.minPointSeparation ();
+  }
+
   m_candidatePoints = pointMatchAlgorithm.findPoints (samplePointPixels,
                                                       img,
                                                       modelPointMatch,
-                                                      curve->points());
+                                                      curve->points(),
+                                                      QPoint (qFloor (posScreen.x ()),
+                                                              qFloor (posScreen.y ())),
+                                                      searchRadius);
 
   QApplication::restoreOverrideCursor(); // Heavy duty processing has finished
   context().mainWindow().showTemporaryMessage ("Right arrow adds next matched point");

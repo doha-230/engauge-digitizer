@@ -87,6 +87,21 @@ void DlgSettingsPointMatch::createControls (QGridLayout *layout,
   QLabel *labelPointSize = new QLabel (QString ("%1:").arg (tr ("Maximum point size (pixels)")));
   layout->addWidget (labelPointSize, row, 1);
 
+  QLabel *labelSearchRadius = new QLabel (QString ("%1:").arg (tr ("Search radius multiplier")));
+  layout->addWidget (labelSearchRadius, row, 1);
+
+  m_spinSearchRadiusMultiplier = new QSpinBox;
+  m_spinSearchRadiusMultiplier->setRange (0, 20);
+  m_spinSearchRadiusMultiplier->setSpecialValueText (tr ("whole image"));
+  m_spinSearchRadiusMultiplier->setWhatsThis (tr ("Search Radius Multiplier\n\n"
+                                                  "Limits how far from the clicked position a matched point may be, as a "
+                                                  "multiple of the point separation. Zero searches the whole image, which is "
+                                                  "the behavior of the original application. A small value keeps candidates "
+                                                  "close to where you clicked, which prevents a distant similar pattern from "
+                                                  "producing wrong candidates."));
+  connect (m_spinSearchRadiusMultiplier, SIGNAL (valueChanged (const QString &)), this, SLOT (slotSearchRadiusMultiplier (const QString &)));
+  layout->addWidget (m_spinSearchRadiusMultiplier, row++, 2);
+
   QLabel *labelCorrelationThreshold = new QLabel (QString ("%1:").arg (tr ("Correlation threshold")));
   layout->addWidget (labelCorrelationThreshold, row, 1);
 
@@ -223,6 +238,8 @@ void DlgSettingsPointMatch::handleOk ()
     settings.beginGroup (SETTINGS_GROUP_POINT_MATCH);
     settings.setValue (SETTINGS_POINT_MATCH_CORRELATION_THRESHOLD,
                        m_modelPointMatchAfter->correlationThreshold ());
+    settings.setValue (SETTINGS_POINT_MATCH_SEARCH_RADIUS_MULTIPLIER,
+                       m_modelPointMatchAfter->searchRadiusMultiplier ());
     settings.endGroup ();
   }
 
@@ -265,6 +282,7 @@ void DlgSettingsPointMatch::load (CmdMediator &cmdMediator)
 
   // Populate controls
   m_spinPointSize->setValue(qFloor (m_modelPointMatchAfter->maxPointSize()));
+  m_spinSearchRadiusMultiplier->setValue (qFloor (m_modelPointMatchAfter->searchRadiusMultiplier ()));
   m_spinCorrelationThreshold->setValue (qFloor (m_modelPointMatchAfter->correlationThreshold ()));
 
   int indexAccepted = m_cmbAcceptedPointColor->findData(QVariant(m_modelPointMatchAfter->paletteColorAccepted()));
@@ -327,6 +345,13 @@ void DlgSettingsPointMatch::slotCandidatePointColor (const QString &)
   m_modelPointMatchAfter->setPaletteColorCandidate(static_cast<ColorPalette> (m_cmbCandidatePointColor->currentData().toInt()));
   updateControls();
   updatePreview();
+}
+
+void DlgSettingsPointMatch::slotSearchRadiusMultiplier (const QString &multiplier)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsPointMatch::slotSearchRadiusMultiplier";
+
+  m_modelPointMatchAfter->setSearchRadiusMultiplier (multiplier.toDouble ());
 }
 
 void DlgSettingsPointMatch::slotCorrelationThreshold (const QString &threshold)

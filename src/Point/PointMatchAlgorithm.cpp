@@ -218,10 +218,13 @@ void PointMatchAlgorithm::dumpToGnuplot (double* convolution,
 QList<QPoint> PointMatchAlgorithm::findPoints (const QList<PointMatchPixel> &samplePointPixels,
                                                const QImage &imageProcessed,
                                                const DocumentModelPointMatch &modelPointMatch,
-                                               const Points &pointsExisting)
+                                               const Points &pointsExisting,
+                                               const QPoint &searchCenter,
+                                               double searchRadius)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "PointMatchAlgorithm::findPoints"
-                              << " samplePointPixels=" << samplePointPixels.count();
+                              << " samplePointPixels=" << samplePointPixels.count()
+                              << " searchRadius=" << searchRadius;
 
   // Use larger arrays for computations, if necessary, to improve fft performance
   int originalWidth = imageProcessed.width();
@@ -287,12 +290,22 @@ QList<QPoint> PointMatchAlgorithm::findPoints (const QList<PointMatchPixel> &sam
   std::sort (listCreated.begin(),
              listCreated.end());
 
-  // Copy sorted match points to output
+  // Copy sorted match points to output. The search radius restricts how far from the search center
+  // a candidate may be, which keeps a distant similar pattern out of the candidates. A radius of
+  // zero or less means the whole image, which is the upstream behavior
   QList<QPoint> pointsCreated;
   PointMatchList::iterator itr;
   for (itr = listCreated.begin(); itr != listCreated.end(); itr++) {
 
     PointMatchTriplet triplet = *itr;
+    if (searchRadius > 0.0) {
+      const QPoint &point = triplet.point ();
+      const double distance = qSqrt (qPow (point.x () - searchCenter.x (), 2) +
+                                     qPow (point.y () - searchCenter.y (), 2));
+      if (distance > searchRadius) {
+        continue;
+      }
+    }
     pointsCreated.push_back (triplet.point ());
 
     // Current order of maxima would be fine if they never overlapped. However, they often overlap so as each

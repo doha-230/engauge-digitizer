@@ -16,6 +16,7 @@
 #include "Xml.h"
 
 const double DEFAULT_CORRELATION_THRESHOLD = 1.0; // Same value as the upstream hard coded threshold
+const double DEFAULT_SEARCH_RADIUS_MULTIPLIER = 0.0; // Zero means the whole image is searched
 const double DEFAULT_MIN_POINT_SEPARATION = 20;
 const double DEFAULT_MAX_POINT_SIZE = 48;
 const ColorPalette DEFAULT_COLOR_ACCEPTED = COLOR_PALETTE_GREEN;
@@ -24,6 +25,7 @@ const ColorPalette DEFAULT_COLOR_REJECTED = COLOR_PALETTE_RED;
 
 DocumentModelPointMatch::DocumentModelPointMatch() :
   m_correlationThreshold (DEFAULT_CORRELATION_THRESHOLD),
+  m_searchRadiusMultiplier (DEFAULT_SEARCH_RADIUS_MULTIPLIER),
   m_minPointSeparation (DEFAULT_MIN_POINT_SEPARATION),
   m_maxPointSize (DEFAULT_MAX_POINT_SIZE),
   m_paletteColorAccepted (DEFAULT_COLOR_ACCEPTED),
@@ -34,6 +36,7 @@ DocumentModelPointMatch::DocumentModelPointMatch() :
 
 DocumentModelPointMatch::DocumentModelPointMatch(const Document &document) :
   m_correlationThreshold (document.modelPointMatch().correlationThreshold()),
+  m_searchRadiusMultiplier (document.modelPointMatch().searchRadiusMultiplier()),
   m_maxPointSize (document.modelPointMatch().maxPointSize()),
   m_paletteColorAccepted (document.modelPointMatch().paletteColorAccepted()),
   m_paletteColorCandidate (document.modelPointMatch().paletteColorCandidate()),
@@ -43,6 +46,7 @@ DocumentModelPointMatch::DocumentModelPointMatch(const Document &document) :
 
 DocumentModelPointMatch::DocumentModelPointMatch(const DocumentModelPointMatch &other) :
   m_correlationThreshold (other.correlationThreshold()),
+  m_searchRadiusMultiplier (other.searchRadiusMultiplier()),
   m_maxPointSize (other.maxPointSize()),
   m_paletteColorAccepted (other.paletteColorAccepted()),
   m_paletteColorCandidate (other.paletteColorCandidate()),
@@ -53,6 +57,7 @@ DocumentModelPointMatch::DocumentModelPointMatch(const DocumentModelPointMatch &
 DocumentModelPointMatch &DocumentModelPointMatch::operator=(const DocumentModelPointMatch &other)
 {
   m_correlationThreshold = other.correlationThreshold();
+  m_searchRadiusMultiplier = other.searchRadiusMultiplier();
   m_maxPointSize = other.maxPointSize();
   m_paletteColorAccepted = other.paletteColorAccepted();
   m_paletteColorCandidate = other.paletteColorCandidate();
@@ -106,6 +111,19 @@ double DocumentModelPointMatch::correlationThreshold() const
 void DocumentModelPointMatch::setCorrelationThreshold (double correlationThreshold)
 {
   m_correlationThreshold = correlationThreshold;
+}
+
+double DocumentModelPointMatch::searchRadiusMultiplier() const
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_POINT_MATCH);
+  return settings.value (SETTINGS_POINT_MATCH_SEARCH_RADIUS_MULTIPLIER,
+                         QVariant (DEFAULT_SEARCH_RADIUS_MULTIPLIER)).toDouble ();
+}
+
+void DocumentModelPointMatch::setSearchRadiusMultiplier (double searchRadiusMultiplier)
+{
+  m_searchRadiusMultiplier = searchRadiusMultiplier;
 }
 
 double DocumentModelPointMatch::maxPointSize () const

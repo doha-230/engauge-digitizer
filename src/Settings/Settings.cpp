@@ -17,6 +17,7 @@ const QString SETTINGS_CURRENT_DIRECTORY ("currentDirectory");
 // Auto Curve Detection group
 const QString SETTINGS_GROUP_POINT_MATCH ("PointMatchEngauge");
 const QString SETTINGS_POINT_MATCH_CORRELATION_THRESHOLD ("correlationThreshold");
+const QString SETTINGS_POINT_MATCH_SEARCH_RADIUS_MULTIPLIER ("searchRadiusMultiplier");
 const QString SETTINGS_GROUP_SEGMENTS ("SegmentsEngauge");
 const QString SETTINGS_SEGMENTS_CENTER_STRATEGY ("autoCurveCenterStrategy");
 const QString SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION ("autoCurveFunctionAssumption");
