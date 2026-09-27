@@ -2057,16 +2057,29 @@ bool MainWindow::setupAfterLoadNewDocument (const QString &fileName,
 
     applyZoomFactorAfterLoad(); // Apply the currently selected zoom factor
 
-    DlgImportAdvanced dlgImportAdvanced (*this);
-    dlgImportAdvanced.exec();
+    // Automated modes must not stop on a modal dialog. The drop regression mode
+    // exists for regression testing (see the FileCmdScript comment in the
+    // constructor), yet this dialog is the one prompt that was not suppressed, so
+    // dropping an image hung forever in a headless test run. In scripted modes the
+    // dialog defaults are applied silently: one coordinate system, and the same
+    // axes points requirement as accepting the dialog without changing anything.
+    if (m_fileCmdScript == nullptr) {
 
-    if (dlgImportAdvanced.result() == QDialog::Rejected) {
-      return false;
+      DlgImportAdvanced dlgImportAdvanced (*this);
+      dlgImportAdvanced.exec();
+
+      if (dlgImportAdvanced.result() == QDialog::Rejected) {
+        return false;
+      }
+
+      int numberCoordSystem = signed (dlgImportAdvanced.numberCoordSystem());
+      m_cmdMediator->document().addCoordSystems (unsigned (numberCoordSystem - 1));
+      m_cmdMediator->setDocumentAxesPointsRequired (dlgImportAdvanced.documentAxesPointsRequired());
+
+    } else {
+
+      m_cmdMediator->setDocumentAxesPointsRequired (DOCUMENT_AXES_POINTS_REQUIRED_4);
     }
-
-    int numberCoordSystem = signed (dlgImportAdvanced.numberCoordSystem());
-    m_cmdMediator->document().addCoordSystems (unsigned (numberCoordSystem - 1));
-    m_cmdMediator->setDocumentAxesPointsRequired (dlgImportAdvanced.documentAxesPointsRequired());
   }
 
   m_transformation.resetOnLoad();
