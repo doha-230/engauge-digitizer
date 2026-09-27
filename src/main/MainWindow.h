@@ -778,9 +778,9 @@ private:
   QTimer *m_timerAutosave;
   QElapsedTimer m_lastAutosave;
 
-  // Hash of the axis point graph coordinates at the last axis point review, so the confirm prompt
-  // only appears when the axis points actually changed
-  unsigned m_axisPointsHashLast = 0;
+  // Hash of the document at the last axis point review, so the confirm prompt only appears when the
+  // axis points actually changed
+  QByteArray m_axisPointsHashLast;
   bool m_axisPointsHashValid = false;
 
   // Opt-in review of the axis points: confirm dialog when the graph coordinates look wrong

@@ -14,6 +14,7 @@
 #include "CallbackAutomatedPoints.h"
 #include "AxisPointsValidator.h"
 #include "CallbackCollectAxisPoints.h"
+#include "DocumentHashGenerator.h"
 #include "AutosaveRecovery.h"
 #include "CmdDelete.h"
 #include "CmdGuidelineAddXT.h"
