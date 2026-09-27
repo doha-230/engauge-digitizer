@@ -13,6 +13,7 @@
 #include <qmath.h>
 #include <QProgressDialog>
 #include "Segment.h"
+#include "SegmentChain.h"
 #include "SegmentFactory.h"
 #include <vector>
 
@@ -88,6 +89,60 @@ int SegmentFactory::adjacentSegments(SegmentVector &lastSegment,
   }
 
   return adjacentSegments;
+}
+
+QList<SegmentChainLink> SegmentFactory::chainLinks (const QList<Segment*> &segments,
+                                                    double maxGapPixels) const
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "SegmentFactory::chainLinks"
+                              << " segments=" << segments.count ()
+                              << " maxGap=" << maxGapPixels;
+
+  QList<SegmentChainLink> links;
+
+  // Every pair whose touching ends are close enough becomes one link. Segments grow left to right
+  // (the scan goes column by column), so "end of A near start of B with A left of B" is the pairing.
+  for (int firstIndex = 0; firstIndex < segments.count (); firstIndex++) {
+    for (int secondIndex = 0; secondIndex < segments.count (); secondIndex++) {
+
+      if (firstIndex == secondIndex) {
+        continue;
+      }
+
+      Segment *segmentFirst = segments.at (firstIndex);
+      Segment *segmentSecond = segments.at (secondIndex);
+      ENGAUGE_CHECK_PTR (segmentFirst);
+      ENGAUGE_CHECK_PTR (segmentSecond);
+
+      if ((segmentFirst->lineCount () == 0) || (segmentSecond->lineCount () == 0)) {
+        continue;
+      }
+
+      const QPointF endFirst = segmentFirst->lastPoint ();
+      const QPointF startSecond = segmentSecond->firstPoint ();
+      if (endFirst.isNull () || startSecond.isNull ()) {
+        continue;
+      }
+
+      const double dx = startSecond.x () - endFirst.x ();
+      const double dy = startSecond.y () - endFirst.y ();
+      const double distance = qSqrt (dx * dx + dy * dy);
+
+      if ((dx > 0) && (distance <= maxGapPixels)) {
+
+        SegmentChainLink link;
+        link.segmentA = segmentFirst;
+        link.segmentB = segmentSecond;
+        link.xContact = endFirst.x ();
+
+        links.append (link);
+      }
+    }
+  }
+
+  LOG4CPP_INFO_S ((*mainCat)) << "SegmentFactory::chainLinks links=" << links.count ();
+
+  return links;
 }
 
 QList<QPoint> SegmentFactory::fillPoints(const DocumentModelSegments &modelSegments,

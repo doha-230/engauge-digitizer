@@ -27,6 +27,7 @@ testsAvailable=( \
     TestPointOrigin \
     TestProjectedPoint \
     TestQualityReport \
+    TestSegmentChain \
     TestSpline \
     TestSplineDrawer \
     TestTransformation \

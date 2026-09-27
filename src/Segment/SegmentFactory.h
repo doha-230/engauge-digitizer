@@ -16,6 +16,7 @@ class DocumentModelSegments;
 class QGraphicsScene;
 class QImage;
 class Segment;
+struct SegmentChainLink;
 
 typedef std::vector<Segment*> SegmentVector;
 
@@ -37,6 +38,12 @@ public:
   /// Return segment fill points for all segments, for previewing
   QList<QPoint> fillPoints(const DocumentModelSegments &modelSegments,
                            QList<Segment*> segments);
+
+  /// Connections between neighboring segments for the Auto Curve Detection chain graph. Two
+  /// segments are neighbors when the end of one lies within maxGapPixels of the start of the other.
+  /// This is derived from segment geometry after the scan, so the scanning code itself is untouched.
+  QList<SegmentChainLink> chainLinks (const QList<Segment*> &segments,
+                                      double maxGapPixels) const;
 
   /// Main entry point for creating all Segments for the filtered image.
   void makeSegments (const QImage &imageFiltered,

@@ -32,12 +32,20 @@ public:
   /// Add some more pixels in a new column to an active segment
   void appendColumn(int x, int y, const DocumentModelSegments &modelSegments);
 
+  /// Add an already built line to this segment. Test hook: the segment factory builds lines while
+  /// scanning, and the unit tests build them by hand
+  void appendLineForTest (SegmentLine *line);
+
   /// Create evenly spaced points along the segment
   QList<QPoint> fillPoints(const DocumentModelSegments &modelSegments);
 
   /// Coordinates of first point in Segment. This info can be used to uniquely identify a Segment. This method relies
   /// on SegmentFactory::removeEmptySegments to guarantee every Segment has at least one line
   QPointF firstPoint () const;
+
+  /// Coordinates of last point in Segment (end of the last line). Relies on the same guarantee as
+  /// firstPoint
+  QPointF lastPoint () const;
 
   /// Forward mouse press event from a component SegmentLine that was just clicked on
   void forwardMousePress ();

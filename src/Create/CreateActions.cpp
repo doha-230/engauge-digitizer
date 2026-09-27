@@ -12,6 +12,7 @@
 #include "DigitGuideline.xpm"
 #include "DigitPointMatch.xpm"
 #include "DigitScale.xpm"
+#include "DigitAutoCurve.xpm"
 #include "DigitSegment.xpm"
 #include "DigitSelect.xpm"
 #include "Logger.h"
@@ -51,9 +52,11 @@ void CreateActions::createDigitize (MainWindow &mw)
   QPixmap pixmapGuideline (DigitGuideline_xpm);
   QPixmap pixmapPointMatch (DigitPointMatch_xpm);
   QPixmap pixmapScale (DigitScale_xpm);
+  QPixmap pixmapAutoCurve (DigitAutoCurve_xpm);
   QPixmap pixmapSegment (DigitSegment_xpm);
   QPixmap pixmapSelect (DigitSelect_xpm);
 
+  QIcon iconAutoCurve (pixmapAutoCurve);
   QIcon iconAxis (pixmapAxis);
   QIcon iconCurve (pixmapCurve);
   QIcon iconColorPicker (pixmapColorPicker);
@@ -129,6 +132,21 @@ void CreateActions::createDigitize (MainWindow &mw)
                                                     "while in Segment Fill mode."));
   connect (mw.m_actionDigitizeColorPicker, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeColorPicker ()));
 
+  mw.m_actionDigitizeAutoCurve = new QAction (iconAutoCurve, tr ("Auto Curve Detection Tool"), &mw);
+  mw.m_actionDigitizeAutoCurve->setCheckable (true);
+  mw.m_actionDigitizeAutoCurve->setStatusTip (tr ("Digitize a whole curve with one click, following the connected curve pieces.")) ;
+  mw.m_actionDigitizeAutoCurve->setWhatsThis (tr ("Auto Curve Detection Tool\n\n"
+                                                  "Digitizes a whole curve with a single click: click any piece of the curve and "
+                                                  "points are created along every connected piece, so gaps where the scanner "
+                                                  "dropped pixels do not have to be filled by hand.\n\n"
+                                                  "The walk stops where a piece meets the next one at a sharp angle (a grid line "
+                                                  "or text branching off) and where the pieces are further apart than the maximum "
+                                                  "gap. When the function assumption is enabled, the walk also stops where the x "
+                                                  "coordinate would go backwards.\n\n"
+                                                  "The created points are ordinary points: move, edit or delete them afterwards, "
+                                                  "and Delete Automated Points removes them as a group."));
+  connect (mw.m_actionDigitizeAutoCurve, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeAutoCurve ()));
+
   mw.m_actionDigitizeSegment = new QAction (iconSegment, tr ("Segment Fill Tool"), &mw);
   mw.m_actionDigitizeSegment->setShortcut (QKeySequence (tr ("Shift+F7")));
   mw.m_actionDigitizeSegment->setCheckable (true);
@@ -168,6 +186,7 @@ void CreateActions::createDigitize (MainWindow &mw)
   mw.m_groupDigitize->addAction (mw.m_actionDigitizeCurve);
   mw.m_groupDigitize->addAction (mw.m_actionDigitizePointMatch);
   mw.m_groupDigitize->addAction (mw.m_actionDigitizeColorPicker);
+  mw.m_groupDigitize->addAction (mw.m_actionDigitizeAutoCurve);
   mw.m_groupDigitize->addAction (mw.m_actionDigitizeSegment);
   mw.m_groupDigitize->addAction (mw.m_actionDigitizeGuideline);  
 }

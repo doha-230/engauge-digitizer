@@ -241,6 +241,7 @@ HEADERS  += \
     src/util/DataKey.h \
     src/DigitizeState/DigitizeState.h \
     src/DigitizeState/DigitizeStateAbstractBase.h \
+    src/DigitizeState/DigitizeStateAutoCurve.h \
     src/DigitizeState/DigitizeStateAxis.h \
     src/DigitizeState/DigitizeStateColorPicker.h \
     src/DigitizeState/DigitizeStateContext.h \
@@ -502,6 +503,7 @@ HEADERS  += \
     src/util/QtToString.h \
     src/ScaleBar/ScaleBarAxisPointsUnite.h \
     src/Segment/Segment.h \
+    src/Segment/SegmentChain.h \
     src/Segment/SegmentFactory.h \
     src/Segment/SegmentLine.h \
     src/Settings/Settings.h \
@@ -707,6 +709,7 @@ SOURCES += \
     src/util/DataKey.cpp \
     src/DigitizeState/DigitizeState.cpp \
     src/DigitizeState/DigitizeStateAbstractBase.cpp \
+    src/DigitizeState/DigitizeStateAutoCurve.cpp \
     src/DigitizeState/DigitizeStateAxis.cpp \
     src/DigitizeState/DigitizeStateColorPicker.cpp \
     src/DigitizeState/DigitizeStateContext.cpp \
@@ -951,6 +954,7 @@ SOURCES += \
     src/util/QtToString.cpp \
     src/ScaleBar/ScaleBarAxisPointsUnite.cpp \
     src/Segment/Segment.cpp \
+    src/Segment/SegmentChain.cpp \
     src/Segment/SegmentFactory.cpp \
     src/Segment/SegmentLine.cpp \
     src/Settings/Settings.cpp \

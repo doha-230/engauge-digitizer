@@ -279,6 +279,13 @@ QList<QPoint> Segment::fillPointsFillingCorners(const DocumentModelSegments &mod
   return list;
 }
 
+void Segment::appendLineForTest (SegmentLine *line)
+{
+  ENGAUGE_CHECK_PTR (line);
+
+  m_lines.append (line);
+}
+
 QPointF Segment::firstPoint () const
 {
   LOG4CPP_INFO_S ((*mainCat)) << "Segment::firstPoint"
@@ -291,6 +298,22 @@ QPointF Segment::firstPoint () const
   QPointF pos = line->line().p1();
 
   LOG4CPP_INFO_S ((*mainCat)) << "Segment::firstPoint"
+                              << " pos=" << QPointFToString (pos).toLatin1().data();
+
+  return pos;
+}
+
+QPointF Segment::lastPoint () const
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "Segment::lastPoint"
+                              << " lineCount=" << m_lines.count ();
+
+  ENGAUGE_ASSERT (m_lines.count () > 0);
+
+  SegmentLine *line = m_lines.last();
+  QPointF pos = line->line().p2();
+
+  LOG4CPP_INFO_S ((*mainCat)) << "Segment::lastPoint"
                               << " pos=" << QPointFToString (pos).toLatin1().data();
 
   return pos;

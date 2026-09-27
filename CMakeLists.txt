@@ -330,6 +330,7 @@ if(BUILD_TESTING)
     TestPointOrigin
     TestProjectedPoint
     TestQualityReport
+    TestSegmentChain
     TestSpline
     TestSplineDrawer
     TestTransformation

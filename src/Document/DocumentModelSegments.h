@@ -48,7 +48,19 @@ public:
   virtual void loadXml(QXmlStreamReader &reader);
 
   /// Get method for min length.
+  /// Maximum gap in pixels between two touching segment pieces that the Auto Curve Detection mode
+  /// still treats as one curve
+  double maxGapPixels() const;
+
+  /// Maximum angle in degrees between two consecutive segment pieces before the Auto Curve Detection
+  /// chain is cut
+  double maxTurnDegrees() const;
+
   double minLength() const;
+
+  /// True when the Auto Curve Detection mode may assume the curve is a function (x never goes
+  /// backwards in graph coordinates)
+  bool functionAssumption() const;
 
   /// Get method for point separation.
   double pointSeparation() const;
@@ -75,7 +87,10 @@ public:
   void setLineWidthInactive (double lineWidth);  
 
   /// Set method for min length.
+  void setMaxGapPixels (double maxGapPixels);
+  void setMaxTurnDegrees (double maxTurnDegrees);
   void setMinLength(double minLength);
+  void setFunctionAssumption (bool functionAssumption);
 
   /// Set method for point separation.
   void setPointSeparation(double pointSeparation);
@@ -83,6 +98,9 @@ public:
 private:
 
   double m_pointSeparation;
+  double m_maxGapPixels;
+  double m_maxTurnDegrees;
+  bool m_functionAssumption;
   double m_minLength;
   bool m_fillCorners;
   double m_lineWidthActive;

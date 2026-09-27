@@ -64,6 +64,7 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuDigitize->addAction (mw.m_actionDigitizePointMatch);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeColorPicker);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeSegment);
+  mw.m_menuDigitize->addAction (mw.m_actionDigitizeAutoCurve);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeGuideline);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeQualityReport);
 

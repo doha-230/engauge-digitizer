@@ -5,6 +5,7 @@
  ******************************************************************************************************/
 
 #include "CmdMediator.h"
+#include "DigitizeStateAutoCurve.h"
 #include "DigitizeStateAxis.h"
 #include "DigitizeStateColorPicker.h"
 #include "DigitizeStateContext.h"
@@ -46,6 +47,7 @@ DigitizeStateContext::DigitizeStateContext(MainWindow &mainWindow,
   m_states.insert (DIGITIZE_STATE_SELECT      , new DigitizeStateSelect      (*this));
   m_states.insert (DIGITIZE_STATE_SCALE       , new DigitizeStateScale       (*this)); // Out of order since added later
   m_states.insert (DIGITIZE_STATE_GUIDELINE   , new DigitizeStateGuideline   (*this)); // Out of order since added later
+  m_states.insert (DIGITIZE_STATE_AUTO_CURVE  , new DigitizeStateAutoCurve  (*this)); // Out of order since added later
   ENGAUGE_ASSERT (m_states.size () == NUM_DIGITIZE_STATES);
 
   m_currentState = NUM_DIGITIZE_STATES; // Value that forces a transition right away

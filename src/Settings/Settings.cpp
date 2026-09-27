@@ -14,7 +14,10 @@ const QString SETTINGS_DIGITIZER ("Digitizer");
 const QString SETTINGS_GROUP_ENVIRONMENT ("Environment"); // capitalize E since this is a group string
 const QString SETTINGS_CURRENT_DIRECTORY ("currentDirectory");
 
-// MainWindow group
+// Auto Curve Detection group
+const QString SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION ("autoCurveFunctionAssumption");
+const QString SETTINGS_SEGMENTS_MAX_GAP_PIXELS ("autoCurveMaxGapPixels");
+const QString SETTINGS_SEGMENTS_MAX_TURN_DEGREES ("autoCurveMaxTurnDegrees");
 const QString SETTINGS_BACKGROUND_IMAGE ("backgroundImage");
 const QString SETTINGS_CHECKLIST_GUIDE_DOCK_AREA ("checklistGuideDockArea");
 const QString SETTINGS_CHECKLIST_GUIDE_DOCK_GEOMETRY ("checklistGuideDockGeometry");

@@ -10,12 +10,17 @@
 #include "InactiveOpacity.h"
 #include "Logger.h"
 #include <QObject>
+#include <QSettings>
 #include <QTextStream>
 #include <QXmlStreamWriter>
+#include "Settings.h"
 #include "Xml.h"
 
 const double DEFAULT_POINT_SEPARATION = 25;
 const double DEFAULT_MIN_LENGTH = 2;
+const double DEFAULT_MAX_GAP_PIXELS = 3;
+const double DEFAULT_MAX_TURN_DEGREES = 45;
+const bool DEFAULT_FUNCTION_ASSUMPTION = false;
 const double DEFAULT_LINE_WIDTH_ACTIVE = 6; // Highlight is slightly bigger
 const double DEFAULT_LINE_WIDTH_INACTIVE = 4;
 const ColorPalette DEFAULT_LINE_COLOR (COLOR_PALETTE_GREEN);
@@ -23,6 +28,9 @@ const InactiveOpacity DEFAULT_INACTIVE_OPACITY = INACTIVE_OPACITY_128; // Highli
 
 DocumentModelSegments::DocumentModelSegments() :
   m_pointSeparation (DEFAULT_POINT_SEPARATION),
+  m_maxGapPixels (DEFAULT_MAX_GAP_PIXELS),
+  m_maxTurnDegrees (DEFAULT_MAX_TURN_DEGREES),
+  m_functionAssumption (DEFAULT_FUNCTION_ASSUMPTION),
   m_minLength (DEFAULT_MIN_LENGTH),
   m_fillCorners (false),
   m_lineWidthActive (DEFAULT_LINE_WIDTH_ACTIVE),
@@ -34,6 +42,9 @@ DocumentModelSegments::DocumentModelSegments() :
 
 DocumentModelSegments::DocumentModelSegments(const Document &document) :
   m_pointSeparation (document.modelSegments().pointSeparation()),
+  m_maxGapPixels (document.modelSegments().maxGapPixels()),
+  m_maxTurnDegrees (document.modelSegments().maxTurnDegrees()),
+  m_functionAssumption (document.modelSegments().functionAssumption()),
   m_minLength (document.modelSegments().minLength()),
   m_fillCorners (document.modelSegments().fillCorners()),
   m_lineWidthActive (document.modelSegments().lineWidthActive()),
@@ -45,6 +56,9 @@ DocumentModelSegments::DocumentModelSegments(const Document &document) :
 
 DocumentModelSegments::DocumentModelSegments(const DocumentModelSegments &other) :
   m_pointSeparation (other.pointSeparation()),
+  m_maxGapPixels (other.maxGapPixels()),
+  m_maxTurnDegrees (other.maxTurnDegrees()),
+  m_functionAssumption (other.functionAssumption()),
   m_minLength (other.minLength()),
   m_fillCorners (other.fillCorners ()),
   m_lineWidthActive (other.lineWidthActive()),
@@ -57,6 +71,9 @@ DocumentModelSegments::DocumentModelSegments(const DocumentModelSegments &other)
 DocumentModelSegments &DocumentModelSegments::operator=(const DocumentModelSegments &other)
 {
   m_pointSeparation = other.pointSeparation();
+  m_maxGapPixels = other.maxGapPixels();
+  m_maxTurnDegrees = other.maxTurnDegrees();
+  m_functionAssumption = other.functionAssumption();
   m_minLength = other.minLength();
   m_fillCorners = other.fillCorners ();
   m_lineWidthActive = other.lineWidthActive();
@@ -167,6 +184,45 @@ double DocumentModelSegments::minLength() const
 double DocumentModelSegments::pointSeparation() const
 {
   return m_pointSeparation;
+}
+
+double DocumentModelSegments::maxGapPixels() const
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_SEGMENTS);
+  return settings.value (SETTINGS_SEGMENTS_MAX_GAP_PIXELS,
+                         QVariant (DEFAULT_MAX_GAP_PIXELS)).toDouble ();
+}
+
+double DocumentModelSegments::maxTurnDegrees() const
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_SEGMENTS);
+  return settings.value (SETTINGS_SEGMENTS_MAX_TURN_DEGREES,
+                         QVariant (DEFAULT_MAX_TURN_DEGREES)).toDouble ();
+}
+
+bool DocumentModelSegments::functionAssumption() const
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_SEGMENTS);
+  return settings.value (SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION,
+                         QVariant (DEFAULT_FUNCTION_ASSUMPTION)).toBool ();
+}
+
+void DocumentModelSegments::setMaxGapPixels (double maxGapPixels)
+{
+  m_maxGapPixels = maxGapPixels;
+}
+
+void DocumentModelSegments::setMaxTurnDegrees (double maxTurnDegrees)
+{
+  m_maxTurnDegrees = maxTurnDegrees;
+}
+
+void DocumentModelSegments::setFunctionAssumption (bool functionAssumption)
+{
+  m_functionAssumption = functionAssumption;
 }
 
 void DocumentModelSegments::printStream(QString indentation,

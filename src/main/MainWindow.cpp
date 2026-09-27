@@ -2428,6 +2428,18 @@ void MainWindow::slotDigitizeScale ()
   updateControls (); // For Paste which is state dependent
 }
 
+void MainWindow::slotDigitizeAutoCurve ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotDigitizeAutoCurve";
+
+  m_digitizeStateContext->requestImmediateStateTransition (m_cmdMediator,
+                                                           DIGITIZE_STATE_AUTO_CURVE);
+  m_cmbCurve->setEnabled (true);
+  m_viewPointStyle->setEnabled (true);
+  m_viewSegmentFilter->setEnabled (true);
+  updateControls (); // For Paste which is state dependent
+}
+
 void MainWindow::slotDigitizeSegment ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotDigitizeSegment";
@@ -3987,6 +3999,7 @@ void MainWindow::updateControls ()
   m_actionDigitizeAxis->setEnabled (modeGraph ());
   m_actionDigitizeScale->setEnabled (modeMap ());
   m_actionDigitizeCurve->setEnabled (!m_currentFile.isEmpty ());
+  m_actionDigitizeAutoCurve->setEnabled (!m_currentFile.isEmpty ());
   m_actionDigitizeGuideline->setEnabled (m_transformation.transformIsDefined ());
   m_actionDigitizeQualityReport->setEnabled (m_cmdMediator != nullptr);
   m_actionDigitizePointMatch->setEnabled (!m_currentFile.isEmpty ());
@@ -4059,6 +4072,11 @@ void MainWindow::updateDigitizeStateIfSoftwareTriggered (DigitizeState digitizeS
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::updateDigitizeStateIfSoftwareTriggered";
 
   switch (digitizeState) {
+    case DIGITIZE_STATE_AUTO_CURVE:
+      m_actionDigitizeAutoCurve->setChecked(true);
+      slotDigitizeAutoCurve(); // Call the slot that the setChecked call fails to trigger
+      break;
+
     case DIGITIZE_STATE_AXIS:
       m_actionDigitizeAxis->setChecked(true);
       slotDigitizeAxis(); // Call the slot that the setChecked call fails to trigger

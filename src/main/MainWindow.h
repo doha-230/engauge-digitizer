@@ -323,6 +323,7 @@ private slots:
   void slotCmbCurve(int);
   void slotContextMenuEventAxis (QString);
   void slotContextMenuEventGraph (QStringList);
+  void slotDigitizeAutoCurve ();
   void slotDigitizeAxis ();
   void slotDigitizeQualityReport ();
   void slotDigitizeColorPicker ();
@@ -566,6 +567,7 @@ private:
   QMenu *m_menuDigitize;
   QActionGroup *m_groupDigitize;
   QAction *m_actionDigitizeSelect;
+  QAction *m_actionDigitizeAutoCurve;
   QAction *m_actionDigitizeAxis;
   QAction *m_actionDigitizeScale;
   QAction *m_actionDigitizeCurve;
