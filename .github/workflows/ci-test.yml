@@ -87,11 +87,18 @@ jobs:
         if: failure()
         shell: pwsh
         run: |
-          # The tests are already built, so only the Qt runtime needs to be on the path. The Visual
-          # Studio environment belongs to the build step and is not available here.
+          # The tests are already built, so the Visual Studio environment is not needed here.
+          # QT_ROOT is only exported inside the build step, so it is computed again here: without
+          # this the tests all fail with 0xc0000135 (DLL not found) and the re-run shows nothing
+          # about the failure it is meant to explain.
+          $env:QT_ROOT = "$env:RUNNER_TEMP\Qt\$env:QT_VERSION\msvc2022_64"
           $env:Path = "$env:QT_ROOT\bin;$env:Path"
           $env:QT_QPA_PLATFORM = "offscreen"
           ctest --preset windows-msvc-release -V
+
+          # And once more for the tests that failed, verbosely. This reruns only the failures, which
+          # is the shortest path to the assertion text if the full verbose run is too noisy to read.
+          ctest --preset windows-msvc-release --rerun-failed -V
 
       - name: Verify build products
         shell: pwsh
