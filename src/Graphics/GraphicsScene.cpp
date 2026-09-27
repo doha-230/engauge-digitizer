@@ -22,6 +22,7 @@
 #include "PointStyle.h"
 #include <QApplication>
 #include <QGraphicsItem>
+#include <QGraphicsView>
 #include "QtToString.h"
 #include "SplineDrawer.h"
 #include "Transformation.h"
