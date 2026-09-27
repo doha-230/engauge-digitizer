@@ -8,6 +8,7 @@
 #define GRAPHICS_POINT_H
 
 #include "GraphicsPointAbstractBase.h"
+#include "PointStyle.h"
 #include <QColor>
 #include <QPointF>
 #include <QRectF>
@@ -19,7 +20,6 @@ class CurveStyle;
 class GeometryWindow;
 class GraphicsPointEllipse;
 class GraphicsPointPolygon;
-class PointStyle;
 class QPen;
 class QColor;
 class QGraphicsScene;
