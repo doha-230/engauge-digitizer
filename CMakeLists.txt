@@ -67,6 +67,14 @@ file(GLOB_RECURSE engauge_headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}
 list(FILTER engauge_sources EXCLUDE REGEX "/(Jpeg2000|Test|log4cpp_null)/")
 list(FILTER engauge_headers EXCLUDE REGEX "/(Jpeg2000|Test|log4cpp_null)/")
 
+# An in-source qmake build leaves generated code in dot directories such as
+# src/.moc and src/.objs. Those must never be compiled here: AUTOMOC generates its
+# own copies of the same meta objects, and compiling both fails at link time with
+# "multiple definition of <class>::staticMetaObject". This is what happens when
+# qmake and CMake builds share a working tree, as the CI job does.
+list(FILTER engauge_sources EXCLUDE REGEX "/\\.[^/]+/")
+list(FILTER engauge_headers EXCLUDE REGEX "/\\.[^/]+/")
+
 set(_engauge_pdf_sources
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Dlg/DlgImportCroppingPdf.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Import/ImportCroppingUtilPdf.cpp"
