@@ -44,7 +44,7 @@ public:
 
 private slots:
   void slotFillCorners (int state);
-  void slotAutoCurveFunctionAssumption (int state);
+  void slotAutoCurveCenterStrategy (const QString &);
   void slotAutoCurveMaxGap (const QString &);
   void slotAutoCurveMaxTurn (const QString &);
   void slotInactiveOpacity (const QString &);
@@ -81,6 +81,7 @@ private:
   QSpinBox *m_spinPointSeparation;
   QSpinBox *m_spinAutoCurveMaxGap;
   QSpinBox *m_spinAutoCurveMaxTurn;
+  QComboBox *m_cmbAutoCurveCenterStrategy;
   QCheckBox *m_chkAutoCurveFunctionAssumption;
   QCheckBox *m_chkFillCorners;
   QSpinBox *m_spinLineWidthActive;

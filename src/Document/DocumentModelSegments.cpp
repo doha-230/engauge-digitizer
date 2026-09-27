@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QTextStream>
+#include "SegmentCenterStrategy.h"
 #include <QXmlStreamWriter>
 #include "Settings.h"
 #include "Xml.h"
@@ -21,6 +22,7 @@ const double DEFAULT_MIN_LENGTH = 2;
 const double DEFAULT_MAX_GAP_PIXELS = 3;
 const double DEFAULT_MAX_TURN_DEGREES = 45;
 const bool DEFAULT_FUNCTION_ASSUMPTION = false;
+const SegmentCenterStrategy DEFAULT_CENTER_STRATEGY = TRACED_PATH_CENTER;
 const double DEFAULT_LINE_WIDTH_ACTIVE = 6; // Highlight is slightly bigger
 const double DEFAULT_LINE_WIDTH_INACTIVE = 4;
 const ColorPalette DEFAULT_LINE_COLOR (COLOR_PALETTE_GREEN);
@@ -31,6 +33,7 @@ DocumentModelSegments::DocumentModelSegments() :
   m_maxGapPixels (DEFAULT_MAX_GAP_PIXELS),
   m_maxTurnDegrees (DEFAULT_MAX_TURN_DEGREES),
   m_functionAssumption (DEFAULT_FUNCTION_ASSUMPTION),
+  m_centerStrategy (DEFAULT_CENTER_STRATEGY),
   m_minLength (DEFAULT_MIN_LENGTH),
   m_fillCorners (false),
   m_lineWidthActive (DEFAULT_LINE_WIDTH_ACTIVE),
@@ -45,6 +48,7 @@ DocumentModelSegments::DocumentModelSegments(const Document &document) :
   m_maxGapPixels (document.modelSegments().maxGapPixels()),
   m_maxTurnDegrees (document.modelSegments().maxTurnDegrees()),
   m_functionAssumption (document.modelSegments().functionAssumption()),
+  m_centerStrategy (document.modelSegments().centerStrategy ()),
   m_minLength (document.modelSegments().minLength()),
   m_fillCorners (document.modelSegments().fillCorners()),
   m_lineWidthActive (document.modelSegments().lineWidthActive()),
@@ -59,6 +63,7 @@ DocumentModelSegments::DocumentModelSegments(const DocumentModelSegments &other)
   m_maxGapPixels (other.maxGapPixels()),
   m_maxTurnDegrees (other.maxTurnDegrees()),
   m_functionAssumption (other.functionAssumption()),
+  m_centerStrategy (other.centerStrategy ()),
   m_minLength (other.minLength()),
   m_fillCorners (other.fillCorners ()),
   m_lineWidthActive (other.lineWidthActive()),
@@ -74,6 +79,7 @@ DocumentModelSegments &DocumentModelSegments::operator=(const DocumentModelSegme
   m_maxGapPixels = other.maxGapPixels();
   m_maxTurnDegrees = other.maxTurnDegrees();
   m_functionAssumption = other.functionAssumption();
+  m_centerStrategy = other.centerStrategy ();
   m_minLength = other.minLength();
   m_fillCorners = other.fillCorners ();
   m_lineWidthActive = other.lineWidthActive();
@@ -223,6 +229,19 @@ void DocumentModelSegments::setMaxTurnDegrees (double maxTurnDegrees)
 void DocumentModelSegments::setFunctionAssumption (bool functionAssumption)
 {
   m_functionAssumption = functionAssumption;
+}
+
+SegmentCenterStrategy DocumentModelSegments::centerStrategy() const
+{
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_SEGMENTS);
+  return segmentCenterStrategyFromString (settings.value (SETTINGS_SEGMENTS_CENTER_STRATEGY,
+                                                          QVariant (segmentCenterStrategyToString (DEFAULT_CENTER_STRATEGY))).toString ());
+}
+
+void DocumentModelSegments::setCenterStrategy (SegmentCenterStrategy centerStrategy)
+{
+  m_centerStrategy = centerStrategy;
 }
 
 void DocumentModelSegments::printStream(QString indentation,

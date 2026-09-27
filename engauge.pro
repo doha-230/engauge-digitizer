@@ -503,6 +503,8 @@ HEADERS  += \
     src/util/QtToString.h \
     src/ScaleBar/ScaleBarAxisPointsUnite.h \
     src/Segment/Segment.h \
+    src/Segment/SegmentCenter.h \
+    src/Segment/SegmentCenterStrategy.h \
     src/Segment/SegmentChain.h \
     src/Segment/SegmentFactory.h \
     src/Segment/SegmentLine.h \
@@ -954,6 +956,8 @@ SOURCES += \
     src/util/QtToString.cpp \
     src/ScaleBar/ScaleBarAxisPointsUnite.cpp \
     src/Segment/Segment.cpp \
+    src/Segment/SegmentCenter.cpp \
+    src/Segment/SegmentCenterStrategy.cpp \
     src/Segment/SegmentChain.cpp \
     src/Segment/SegmentFactory.cpp \
     src/Segment/SegmentLine.cpp \

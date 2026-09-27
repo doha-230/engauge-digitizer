@@ -62,6 +62,10 @@ public:
   /// backwards in graph coordinates)
   bool functionAssumption() const;
 
+  /// Where a filled point sits inside a thick curve band. The default keeps the traced path, so the
+  /// results match the upstream release
+  SegmentCenterStrategy centerStrategy() const;
+
   /// Get method for point separation.
   double pointSeparation() const;
 
@@ -92,6 +96,8 @@ public:
   void setMinLength(double minLength);
   void setFunctionAssumption (bool functionAssumption);
 
+  void setCenterStrategy (SegmentCenterStrategy centerStrategy);
+
   /// Set method for point separation.
   void setPointSeparation(double pointSeparation);
 
@@ -101,6 +107,7 @@ private:
   double m_maxGapPixels;
   double m_maxTurnDegrees;
   bool m_functionAssumption;
+  SegmentCenterStrategy m_centerStrategy;
   double m_minLength;
   bool m_fillCorners;
   double m_lineWidthActive;

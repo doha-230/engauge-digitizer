@@ -12,6 +12,7 @@
 // Settings tags for QSettings
 extern const QString SETTINGS_BACKGROUND_IMAGE;
 extern const QString SETTINGS_GROUP_SEGMENTS;
+extern const QString SETTINGS_SEGMENTS_CENTER_STRATEGY;
 extern const QString SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION;
 extern const QString SETTINGS_SEGMENTS_MAX_GAP_PIXELS;
 extern const QString SETTINGS_SEGMENTS_MAX_TURN_DEGREES;

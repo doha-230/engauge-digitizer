@@ -18,6 +18,7 @@
 #include <QImage>
 #include <QSize>
 #include "Segment.h"
+#include "SegmentCenter.h"
 #include "SegmentFactory.h"
 #include "Transformation.h"
 
@@ -190,6 +191,12 @@ void DigitizeStateSegment::slotMouseClickOnSegment(QPointF posSegmentStart)
 
   QList<QPoint> points = segmentFactory.fillPoints (m_cmdMediator->document().modelSegments(),
                                                     segments);
+
+  // Optionally move the points to the center of the curve band, according to the selected strategy.
+  // The default strategy keeps the upstream behavior unchanged.
+  points = SegmentCenter::centerPoints (points,
+                                        context ().mainWindow ().imageFiltered (),
+                                        m_cmdMediator->document().modelSegments().centerStrategy ());
 
   // Create one ordinal for each point
   OrdinalGenerator ordinalGenerator;

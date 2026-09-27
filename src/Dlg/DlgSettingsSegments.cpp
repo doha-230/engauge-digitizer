@@ -14,6 +14,7 @@
 #include "Logger.h"
 #include "MainWindow.h"
 #include "PointStyle.h"
+#include "SegmentCenterStrategy.h"
 #include "Settings.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -129,6 +130,24 @@ void DlgSettingsSegments::createControls (QGridLayout *layout,
                                             "sharp corners of the curve itself."));
   connect (m_spinAutoCurveMaxTurn, SIGNAL (valueChanged (const QString &)), this, SLOT (slotAutoCurveMaxTurn (const QString &)));
   layout->addWidget (m_spinAutoCurveMaxTurn, row++, 2);
+
+  QLabel *labelAutoCurveCenterStrategy = new QLabel (QString ("%1:").arg (tr ("Auto Curve Detection point placement")));
+  layout->addWidget (labelAutoCurveCenterStrategy, row, 1);
+
+  m_cmbAutoCurveCenterStrategy = new QComboBox;
+  m_cmbAutoCurveCenterStrategy->addItem (tr ("Traced path (upstream behavior)"));
+  m_cmbAutoCurveCenterStrategy->addItem (tr ("Center of the curve pixels"));
+  m_cmbAutoCurveCenterStrategy->addItem (tr ("Darkness weighted center of the curve pixels"));
+  m_cmbAutoCurveCenterStrategy->setWhatsThis (tr ("Auto Curve Detection Point Placement\n\n"
+                                                  "Determines where a created point sits inside a thick curve band.\n\n"
+                                                  "Traced path keeps the point on the path that the tool traced, which is the "
+                                                  "behavior of the original application.\n\n"
+                                                  "Center of the curve pixels moves the point to the middle of the curve pixels "
+                                                  "in its column, so the points follow the middle of the band.\n\n"
+                                                  "Darkness weighted center also moves the point to the middle, but weights the "
+                                                  "pixels by darkness, which follows the dark middle of a band with soft edges."));
+  connect (m_cmbAutoCurveCenterStrategy, SIGNAL (currentIndexChanged (const QString &)), this, SLOT (slotAutoCurveCenterStrategy (const QString &)));
+  layout->addWidget (m_cmbAutoCurveCenterStrategy, row++, 2);
 
   m_chkAutoCurveFunctionAssumption = new QCheckBox;
   m_chkAutoCurveFunctionAssumption->setWhatsThis (tr ("Auto Curve Detection Function Assumption\n\n"
@@ -358,6 +377,8 @@ void DlgSettingsSegments::handleOk ()
                        m_spinAutoCurveMaxGap->value ());
     settings.setValue (SETTINGS_SEGMENTS_MAX_TURN_DEGREES,
                        m_spinAutoCurveMaxTurn->value ());
+    settings.setValue (SETTINGS_SEGMENTS_CENTER_STRATEGY,
+                       segmentCenterStrategyToString (m_modelSegmentsAfter->centerStrategy ()));
     settings.setValue (SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION,
                        m_chkAutoCurveFunctionAssumption->isChecked ());
     settings.endGroup ();
@@ -393,6 +414,7 @@ void DlgSettingsSegments::load (CmdMediator &cmdMediator)
   m_spinPointSeparation->setValue (qFloor (m_modelSegmentsAfter->pointSeparation()));
   m_spinAutoCurveMaxGap->setValue (qFloor (m_modelSegmentsAfter->maxGapPixels ()));
   m_spinAutoCurveMaxTurn->setValue (qFloor (m_modelSegmentsAfter->maxTurnDegrees ()));
+  m_cmbAutoCurveCenterStrategy->setCurrentIndex ((int) m_modelSegmentsAfter->centerStrategy ());
   m_chkAutoCurveFunctionAssumption->setChecked (m_modelSegmentsAfter->functionAssumption ());
   m_spinMinLength->setValue (qFloor (m_modelSegmentsAfter->minLength()));
   m_chkFillCorners->setChecked (m_modelSegmentsAfter->fillCorners ());
@@ -434,6 +456,15 @@ void DlgSettingsSegments::slotAutoCurveMaxTurn (const QString &maxTurn)
   LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsSegments::slotAutoCurveMaxTurn";
 
   m_modelSegmentsAfter->setMaxTurnDegrees (maxTurn.toDouble ());
+}
+
+void DlgSettingsSegments::slotAutoCurveCenterStrategy (const QString &text)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsSegments::slotAutoCurveCenterStrategy";
+
+  const int index = m_cmbAutoCurveCenterStrategy->currentIndex ();
+
+  m_modelSegmentsAfter->setCenterStrategy ((SegmentCenterStrategy) index);
 }
 
 void DlgSettingsSegments::slotAutoCurveFunctionAssumption (int state)

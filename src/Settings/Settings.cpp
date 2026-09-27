@@ -16,6 +16,7 @@ const QString SETTINGS_CURRENT_DIRECTORY ("currentDirectory");
 
 // Auto Curve Detection group
 const QString SETTINGS_GROUP_SEGMENTS ("SegmentsEngauge");
+const QString SETTINGS_SEGMENTS_CENTER_STRATEGY ("autoCurveCenterStrategy");
 const QString SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION ("autoCurveFunctionAssumption");
 const QString SETTINGS_SEGMENTS_MAX_GAP_PIXELS ("autoCurveMaxGapPixels");
 const QString SETTINGS_SEGMENTS_MAX_TURN_DEGREES ("autoCurveMaxTurnDegrees");

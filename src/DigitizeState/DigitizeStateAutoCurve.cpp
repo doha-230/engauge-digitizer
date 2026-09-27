@@ -20,6 +20,7 @@
 #include "QualityReport.h"
 #include "Segment.h"
 #include "SegmentChain.h"
+#include "SegmentCenter.h"
 #include "SegmentFactory.h"
 #include "Transformation.h"
 #include <QApplication>
@@ -270,6 +271,11 @@ void DigitizeStateAutoCurve::createPointsAlongChain (const QList<Segment*> &chai
 
   QList<QPoint> points = segmentFactory.fillPoints (modelSegments,
                                                     chain);
+
+  // Band centering, same as in the Segment Fill mode. The default strategy keeps the traced path.
+  points = SegmentCenter::centerPoints (points,
+                                        context ().mainWindow ().imageFiltered (),
+                                        modelSegments.centerStrategy ());
   if (points.isEmpty ()) {
     return;
   }
