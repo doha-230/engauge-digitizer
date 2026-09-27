@@ -329,6 +329,13 @@ void DlgSettingsPointMatch::slotCandidatePointColor (const QString &)
   updatePreview();
 }
 
+void DlgSettingsPointMatch::slotCorrelationThreshold (const QString &threshold)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsPointMatch::slotCorrelationThreshold";
+
+  m_modelPointMatchAfter->setCorrelationThreshold (threshold.toDouble ());
+}
+
 void DlgSettingsPointMatch::slotMaxPointSize (int maxPointSize)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsPointMatch::slotMaxPointSize";
