@@ -83,40 +83,13 @@ int countOfType (const QualityReport &report,
 
 }
 
-namespace {
-
-// Reports whether static initialization runs at all, since a process that exits before main would
-// leave this out
-struct StaticInitProbe {
-  StaticInitProbe ()
-  {
-    fprintf (stderr, "TESTQR: static init ran\n");
-    fflush (stderr);
-  }
-};
-
-StaticInitProbe g_staticInitProbe;
-
-}
-
 int main (int argc, char *argv[])
 {
-  fprintf (stderr, "TESTQR: main entered, argc=%d\n", argc);
-  fflush (stderr);
-
   QApplication app (argc, argv);
-
-  fprintf (stderr, "TESTQR: QApplication created\n");
-  fflush (stderr);
 
   TestQualityReport testObject;
 
-  const int result = QTest::qExec (&testObject, argc, argv);
-
-  fprintf (stderr, "TESTQR: qExec returned %d\n", result);
-  fflush (stderr);
-
-  return result;
+  return QTest::qExec (&testObject, argc, argv);
 }
 
 TestQualityReport::TestQualityReport(QObject *parent) :

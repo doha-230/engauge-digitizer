@@ -301,18 +301,26 @@ void QualityReport::analyzeCurves (const QStringList &curveNames,
 
   m_issues.clear ();
 
-  // Range covered by the axis points
+  // Range covered by the axis points. The half unit margin on the right and bottom matters
+  // because QRectF::contains is half open: a point exactly on the axis coordinate would otherwise
+  // be reported as outside its own axes, and a single axis point would produce an empty rectangle
+  // that contains nothing at all.
   QRectF axesRange;
   bool hasAxesRange = false;
   for (int index = 0; index < axisPoints.count (); index++) {
 
     const QPointF posGraph = axisPoints.at (index).posGraph;
     if (!hasAxesRange) {
-      axesRange = QRectF (posGraph, posGraph);
+      axesRange = QRectF (posGraph, posGraph).normalized ();
       hasAxesRange = true;
     } else {
-      axesRange |= QRectF (posGraph, posGraph);
+      axesRange |= QRectF (posGraph, posGraph).normalized ();
     }
+  }
+
+  if (hasAxesRange) {
+    axesRange.setRight (axesRange.right () + 0.5);
+    axesRange.setBottom (axesRange.bottom () + 0.5);
   }
 
   for (int curveIndex = 0; curveIndex < curvesPoints.count (); curveIndex++) {
