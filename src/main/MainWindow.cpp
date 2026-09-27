@@ -81,6 +81,7 @@
 #include "MainTitleBarFormat.h"
 #include "MainWindow.h"
 #include "MimePointsImport.h"
+#include "PointOrigin.h"
 #ifdef NETWORKING
 #include "NetworkClient.h"
 #endif
@@ -2557,7 +2558,8 @@ void MainWindow::slotEditPaste ()
                                                   m_cmdMediator->document(),
                                                   m_cmbCurve->currentText (),
                                                   points,
-                                                  ordinals);
+                                                  ordinals,
+                                                  POINT_ORIGIN_PASTED);
   m_digitizeStateContext->appendNewCmd (m_cmdMediator,
                                         cmd);
 }

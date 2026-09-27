@@ -21,13 +21,15 @@ CmdAddPointGraph::CmdAddPointGraph (MainWindow &mainWindow,
                                     Document &document,
                                     const QString &curveName,
                                     const QPointF &posScreen,
-                                    double ordinal) :
+                                    double ordinal,
+                                    PointOrigin origin) :
   CmdPointChangeBase (mainWindow,
                       document,
                       CMD_DESCRIPTION),
   m_curveName (curveName),
   m_posScreen (posScreen),
-  m_ordinal (ordinal)
+  m_ordinal (ordinal),
+  m_origin (origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "CmdAddPointGraph::CmdAddPointGraph"
                               << " posScreen=" << QPointFToString (posScreen).toLatin1 ().data ()
@@ -78,7 +80,8 @@ void CmdAddPointGraph::cmdRedo ()
   document().addPointGraphWithGeneratedIdentifier (m_curveName,
                                                    m_posScreen,
                                                    m_identifierAdded,
-                                                   m_ordinal);
+                                                   m_ordinal,
+                                                   m_origin);
   document().updatePointOrdinals (mainWindow().transformation());
   mainWindow().updateAfterCommand();
   selectAddedPointForMoving(m_identifierAdded);

@@ -23,13 +23,15 @@ CmdAddPointsGraph::CmdAddPointsGraph (MainWindow &mainWindow,
                                       Document &document,
                                       const QString &curveName,
                                       const QList<QPoint> &points,
-                                      const QList<double> &ordinals) :
+                                      const QList<double> &ordinals,
+                                      PointOrigin origin) :
   CmdPointChangeBase (mainWindow,
                       document,
                       CMD_DESCRIPTION),
   m_curveName (curveName),
   m_points (points),
-  m_ordinals (ordinals)
+  m_ordinals (ordinals),
+  m_origin (origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "CmdAddPointsGraph::CmdAddPointsGraph";
 }
@@ -117,7 +119,8 @@ void CmdAddPointsGraph::cmdRedo ()
     document().addPointGraphWithGeneratedIdentifier (m_curveName,
                                                      m_points.at (index),
                                                      identifierAdded,
-                                                     m_ordinals.at (index));
+                                                     m_ordinals.at (index),
+                                                     m_origin);
     m_identifiersAdded.push_back (identifierAdded);
   }
 

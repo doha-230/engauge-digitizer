@@ -10,6 +10,7 @@
 #include "CurveStyles.h"
 #include "DigitizeStateContext.h"
 #include "DigitizeStatePointMatch.h"
+#include "PointOrigin.h"
 #include "EngaugeAssert.h"
 #include "EnumsToQt.h"
 #include "GraphicsPoint.h"
@@ -88,7 +89,8 @@ void DigitizeStatePointMatch::createPermanentPoint (CmdMediator *cmdMediator,
                                             ordinalGenerator.generateCurvePointOrdinal(document,
                                                                                        transformation,
                                                                                        posScreen,
-                                                                                       activeCurve ()));
+                                                                                       activeCurve ()),
+                                            POINT_ORIGIN_POINT_MATCH);
   context().appendNewCmd(cmdMediator,
                          cmd);
 

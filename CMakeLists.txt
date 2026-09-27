@@ -326,6 +326,7 @@ if(BUILD_TESTING)
     TestGuidelines
     TestImportCoordinateSetup
     TestMatrix
+    TestPointOrigin
     TestProjectedPoint
     TestSpline
     TestSplineDrawer

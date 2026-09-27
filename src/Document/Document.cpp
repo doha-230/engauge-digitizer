@@ -201,27 +201,31 @@ void Document::addPointAxisWithSpecifiedIdentifier (const QPointF &posScreen,
 void Document::addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      QString &identifier,
-                                                     double ordinal)
+                                                     double ordinal,
+                                                     PointOrigin origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "Document::addPointGraphWithGeneratedIdentifier";
 
   m_coordSystemContext.addPointGraphWithGeneratedIdentifier(curveName,
                                                             posScreen,
                                                             identifier,
-                                                            ordinal);
+                                                            ordinal,
+                                                            origin);
 }
 
 void Document::addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      const QString &identifier,
-                                                     double ordinal)
+                                                     double ordinal,
+                                                     PointOrigin origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "Document::addPointGraphWithSpecifiedIdentifier";
 
   m_coordSystemContext.addPointGraphWithSpecifiedIdentifier(curveName,
                                                             posScreen,
                                                             identifier,
-                                                            ordinal);
+                                                            ordinal,
+                                                            origin);
 }
 
 void Document::addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs)

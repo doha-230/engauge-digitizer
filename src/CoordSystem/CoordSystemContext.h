@@ -9,6 +9,7 @@
 
 #include "CoordSystem.h"
 #include "CoordSystemIndex.h"
+#include "PointOrigin.h"
 #include "CoordSystemInterface.h"
 #include "DocumentAxesPointsRequired.h"
 #include <QVector>
@@ -46,11 +47,13 @@ class CoordSystemContext : public CoordSystemInterface
   virtual void addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      QString &generatedIentifier,
-                                                     double ordinal);
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN);
   virtual void addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      const QString &identifier,
-                                                     double ordinal);
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN);
   virtual void addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs);
   virtual void checkAddPointAxis (const QPointF &posScreen,
                                   const QPointF &posGraph,

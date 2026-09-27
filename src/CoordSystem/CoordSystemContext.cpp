@@ -74,27 +74,31 @@ void CoordSystemContext::addPointAxisWithSpecifiedIdentifier (const QPointF &pos
 void CoordSystemContext::addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                                const QPointF &posScreen,
                                                                QString &generatedIdentifier,
-                                                               double ordinal)
+                                                               double ordinal,
+                                                               PointOrigin origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "CoordSystemContext::addPointGraphWithGeneratedIdentifier";
 
   m_coordSystems [signed (m_coordSystemIndex)]->addPointGraphWithGeneratedIdentifier(curveName,
                                                                                      posScreen,
                                                                                      generatedIdentifier,
-                                                                                     ordinal);
+                                                                                     ordinal,
+                                                                                     origin);
 }
 
 void CoordSystemContext::addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                                const QPointF &posScreen,
                                                                const QString &identifier,
-                                                               double ordinal)
+                                                               double ordinal,
+                                                               PointOrigin origin)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "CoordSystemContext::addPointGraphWithSpecifiedIdentifier";
 
   m_coordSystems [signed (m_coordSystemIndex)]->addPointGraphWithSpecifiedIdentifier(curveName,
                                                                                      posScreen,
                                                                                      identifier,
-                                                                                     ordinal);
+                                                                                     ordinal,
+                                                                                     origin);
 }
 
 void CoordSystemContext::addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs)

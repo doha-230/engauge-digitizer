@@ -9,6 +9,7 @@
 #include "CursorFactory.h"
 #include "DigitizeStateContext.h"
 #include "DigitizeStateCurve.h"
+#include "PointOrigin.h"
 #include "Logger.h"
 #include "MainWindow.h"
 #include "OrdinalGenerator.h"
@@ -129,7 +130,8 @@ void DigitizeStateCurve::handleMouseRelease (CmdMediator *cmdMediator,
                                             ordinalGenerator.generateCurvePointOrdinal(document,
                                                                                        transformation,
                                                                                        posScreen,
-                                                                                       activeCurve ()));
+                                                                                       activeCurve ()),
+                                            POINT_ORIGIN_MANUAL);
   context().appendNewCmd(cmdMediator,
                          cmd);
 }

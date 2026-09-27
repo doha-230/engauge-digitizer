@@ -23,6 +23,7 @@ testsAvailable=( \
     TestGuidelines \
     TestImportCoordinateSetup \
     TestMatrix \
+    TestPointOrigin \
     TestProjectedPoint \
     TestSpline \
     TestSplineDrawer \

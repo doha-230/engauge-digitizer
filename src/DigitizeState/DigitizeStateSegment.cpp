@@ -7,6 +7,7 @@
 #include "CmdAddPointsGraph.h"
 #include "DigitizeStateContext.h"
 #include "DigitizeStateSegment.h"
+#include "PointOrigin.h"
 #include "EngaugeAssert.h"
 #include "GraphicsScene.h"
 #include "Logger.h"
@@ -210,7 +211,8 @@ void DigitizeStateSegment::slotMouseClickOnSegment(QPointF posSegmentStart)
                                              document,
                                              context ().mainWindow().selectedGraphCurve(),
                                              points,
-                                             ordinals);
+                                             ordinals,
+                                             POINT_ORIGIN_SEGMENT_FILL);
   context().appendNewCmd(m_cmdMediator,
                          cmd);
 }

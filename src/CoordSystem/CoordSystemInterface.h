@@ -23,6 +23,7 @@
 #include "DocumentModelSegments.h"
 #include "functor.h"
 #include "Point.h"
+#include "PointOrigin.h"
 
 class Curve;
 class CurvesGraphs;
@@ -69,13 +70,15 @@ public:
   virtual void addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      QString &generatedIentifier,
-                                                     double ordinal) = 0;
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN) = 0;
 
   /// Add a single graph point with the specified point identifier. Note that PointStyle is not applied to the point within the Graph.
   virtual void addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      const QString &identifier,
-                                                     double ordinal) = 0;
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN) = 0;
 
   /// Add all points identified in the specified CurvesGraphs. See also removePointsInCurvesGraphs
   virtual void addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs) = 0;

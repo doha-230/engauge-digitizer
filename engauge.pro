@@ -486,6 +486,7 @@ HEADERS  += \
     src/Pdf/PdfResolution.h \
     src/util/Pixels.h \
     src/Point/Point.h \
+    src/Point/PointOrigin.h \
     src/Point/PointComparator.h \
     src/Point/PointIdentifiers.h \
     src/Point/PointMatchAlgorithm.h \
@@ -932,6 +933,7 @@ SOURCES += \
     src/Pdf/PdfResolution.cpp \
     src/util/Pixels.cpp \
     src/Point/Point.cpp \
+    src/Point/PointOrigin.cpp \
     src/Point/PointIdentifiers.cpp \
     src/Point/PointMatchAlgorithm.cpp \
     src/Point/PointMatchPixel.cpp \

@@ -8,6 +8,7 @@
 #define DOCUMENT_H
 
 #include "CoordSystemContext.h"
+#include "PointOrigin.h"
 #include "CoordSystemIndex.h"
 #include "CurvesGraphs.h"
 #include "CurveStyles.h"
@@ -84,13 +85,15 @@ public:
   void addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                              const QPointF &posScreen,
                                              QString &generatedIentifier,
-                                             double ordinal);
+                                             double ordinal,
+                                             PointOrigin origin = POINT_ORIGIN_UNKNOWN);
 
   /// Add a single graph point with the specified point identifier. Note that PointStyle is not applied to the point within the Document.
   void addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                              const QPointF &posScreen,
                                              const QString &identifier,
-                                             double ordinal);
+                                             double ordinal,
+                                             PointOrigin origin = POINT_ORIGIN_UNKNOWN);
 
   /// Add all points identified in the specified CurvesGraphs. See also removePointsInCurvesGraphs
   void addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs);

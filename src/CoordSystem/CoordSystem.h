@@ -22,6 +22,7 @@
 #include "DocumentModelGuideline.h"
 #include "DocumentModelPointMatch.h"
 #include "DocumentModelSegments.h"
+#include "PointOrigin.h"
 #include "PointStyle.h"
 #include <QList>
 #include <QPixmap>
@@ -64,11 +65,13 @@ public:
   virtual void addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      QString &generatedIentifier,
-                                                     double ordinal);
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN);
   virtual void addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                      const QPointF &posScreen,
                                                      const QString &identifier,
-                                                     double ordinal);
+                                                     double ordinal,
+                                                     PointOrigin origin = POINT_ORIGIN_UNKNOWN);
   virtual void addPointsInCurvesGraphs (CurvesGraphs &curvesGraphs);
   virtual void checkAddPointAxis (const QPointF &posScreen,
                                   const QPointF &posGraph,

@@ -199,6 +199,7 @@ Point::Point (const Point &other)
   m_hasOrdinal = other.hasOrdinal ();
   m_ordinal = other.ordinal (SKIP_HAS_CHECK);
   m_isXOnly = other.isXOnly ();
+  m_origin = other.origin ();
 }
 
 Point &Point::operator=(const Point &point)
@@ -220,6 +221,7 @@ Point &Point::operator=(const Point &point)
   m_hasOrdinal = point.hasOrdinal ();
   m_ordinal = point.ordinal (SKIP_HAS_CHECK);
   m_isXOnly = point.isXOnly ();
+  m_origin = point.origin ();
 
   return *this;
 }
@@ -322,6 +324,12 @@ void Point::loadXml(QXmlStreamReader &reader)
     m_posGraph.setX (MISSING_POSGRAPH_VALUE);
     m_posGraph.setY (MISSING_POSGRAPH_VALUE);
     m_isXOnly = (isXOnly == DOCUMENT_SERIALIZE_BOOL_TRUE);
+
+    // Optional attribute: absent in documents that predate it, and then the origin is unknown
+    m_origin = POINT_ORIGIN_UNKNOWN;
+    if (attributes.hasAttribute (DOCUMENT_SERIALIZE_POINT_ORIGIN)) {
+      m_origin = pointOriginFromString (attributes.value (DOCUMENT_SERIALIZE_POINT_ORIGIN).toString ());
+    }
 
     while ((reader.tokenType() != QXmlStreamReader::EndElement) ||
            (reader.name () != DOCUMENT_SERIALIZE_POINT)) {
@@ -443,6 +451,12 @@ void Point::saveXml(QXmlStreamWriter &writer) const
   writer.writeAttribute(DOCUMENT_SERIALIZE_POINT_IS_X_ONLY,
                         m_isXOnly ? DOCUMENT_SERIALIZE_BOOL_TRUE : DOCUMENT_SERIALIZE_BOOL_FALSE);
 
+  // Only written when known, so that the documents stay byte-identical to previous
+  // builds for every point whose origin was never determined
+  if (m_origin != POINT_ORIGIN_UNKNOWN) {
+    writer.writeAttribute(DOCUMENT_SERIALIZE_POINT_ORIGIN, pointOriginToString (m_origin));
+  }
+
   // Variable m_identifierIndex is static, but for simplicity this is handled like other values. Those values are all
   // the same, but simplicity wins over a few extra bytes of storage
   writer.writeAttribute(DOCUMENT_SERIALIZE_POINT_IDENTIFIER_INDEX, QString::number (m_identifierIndex));
@@ -481,6 +495,16 @@ void Point::setIdentifierIndex (unsigned int identifierIndex)
                               << " identifierIndex=" << identifierIndex;
 
   m_identifierIndex = identifierIndex;
+}
+
+PointOrigin Point::origin () const
+{
+  return m_origin;
+}
+
+void Point::setOrigin (PointOrigin origin)
+{
+  m_origin = origin;
 }
 
 void Point::setOrdinal(double ordinal)

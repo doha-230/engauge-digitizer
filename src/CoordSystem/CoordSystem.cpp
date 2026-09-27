@@ -121,11 +121,16 @@ void CoordSystem::addPointAxisWithSpecifiedIdentifier (const QPointF &posScreen,
 void CoordSystem::addPointGraphWithGeneratedIdentifier (const QString &curveName,
                                                         const QPointF &posScreen,
                                                         QString &identifier,
-                                                        double ordinal)
+                                                        double ordinal,
+                                                        PointOrigin origin)
 {
   Point point (curveName,
                posScreen,
                ordinal);
+
+  // Optional metadata for point provenance, see PointOrigin
+  point.setOrigin (origin);
+
   m_curvesGraphs.addPoint (point);
 
   identifier = point.identifier();
@@ -139,12 +144,17 @@ void CoordSystem::addPointGraphWithGeneratedIdentifier (const QString &curveName
 void CoordSystem::addPointGraphWithSpecifiedIdentifier (const QString &curveName,
                                                         const QPointF &posScreen,
                                                         const QString &identifier,
-                                                        double ordinal)
+                                                        double ordinal,
+                                                        PointOrigin origin)
 {
   Point point (curveName,
                identifier,
                posScreen,
                ordinal);
+
+  // Optional metadata for point provenance, see PointOrigin
+  point.setOrigin (origin);
+
   m_curvesGraphs.addPoint (point);
 
   LOG4CPP_INFO_S ((*mainCat)) << "CoordSystem::addPointGraphWithSpecifiedIdentifier"

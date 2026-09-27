@@ -10,6 +10,8 @@
 #include <QPointF>
 #include <QString>
 
+#include "PointOrigin.h"
+
 class QTextStream;
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -133,6 +135,13 @@ public:
   /// Get method for undefined ordinal constant
   static double UNDEFINED_ORDINAL () { return -1.0; }
 
+  /// How this point was created. Optional metadata: points loaded from documents that
+  /// predate this attribute report POINT_ORIGIN_UNKNOWN
+  PointOrigin origin () const;
+
+  /// Set how this point was created
+  void setOrigin (PointOrigin origin);
+
 private:
 
   /// Version 10.7 was known to have unwanted underscores in points rather than the correct
@@ -157,6 +166,7 @@ private:
   bool m_hasOrdinal;
   double m_ordinal;
   bool m_isXOnly; // For DOCUMENT_AXES_POINTS_REQUIRED_4, true/false when x/y coordinate is undefined
+  PointOrigin m_origin = POINT_ORIGIN_UNKNOWN; // Optional metadata, see PointOrigin
 
   static unsigned int m_identifierIndex; // For generating unique identifiers
 };
