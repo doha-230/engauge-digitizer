@@ -56,7 +56,7 @@ void DigitizeStateAutoCurve::begin (CmdMediator *cmdMediator,
                                     DigitizeState previousState)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::begin"
-                              << " previous=" << previousState.toLatin1().data();
+                              << " previous=" << digitizeStateAsString (previousState).toLatin1().data();
 
   m_cmdMediator = cmdMediator;
 
