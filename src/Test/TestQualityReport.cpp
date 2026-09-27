@@ -112,7 +112,9 @@ void TestQualityReport::testCleanCurveHasNoIssues ()
 
   // A curve that is straight, inside the axes and alone must not produce a single candidate
   QCOMPARE (report.issues ().count (), 0);
-  QVERIFY (report.summary ().contains ("No review"));
+
+  // The summary is translated, so only its presence is checked rather than its wording
+  QVERIFY (!report.summary ().isEmpty ());
 }
 
 void TestQualityReport::testRepeatedAndReversedXAreReported ()

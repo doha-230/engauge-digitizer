@@ -81,6 +81,18 @@ jobs:
           # the test name: a failure that cannot be diagnosed costs a whole CI cycle
           ctest --preset windows-msvc-release --output-on-failure
 
+      - name: Show unit test output when a test failed
+        # The normal run keeps the log short. When something fails, this re-runs the suite verbosely
+        # so the assertion that failed is in the log instead of only the test name.
+        if: failure()
+        shell: pwsh
+        run: |
+          & (Join-Path $visualStudioRoot "Common7\Tools\Launch-VsDevShell.ps1") `
+            -Arch amd64 -HostArch amd64 -SkipAutomaticLocation
+          $env:Path = "$env:QT_ROOT\bin;$env:Path"
+          $env:QT_QPA_PLATFORM = "offscreen"
+          ctest --preset windows-msvc-release -V
+
       - name: Verify build products
         shell: pwsh
         run: |
