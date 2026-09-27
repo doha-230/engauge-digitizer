@@ -3,6 +3,7 @@ name: Build Windows release
 on:
   push:
     tags:
+      - "v*.*.*"
       - "v*.*.*.*"
 
 permissions:
@@ -33,7 +34,7 @@ jobs:
           $cmakeText = Get-Content CMakeLists.txt -Raw
           $versionMatch = [regex]::Match(
             $cmakeText,
-            'project\(EngaugeDigitizer VERSION (\d+\.\d+\.\d+\.\d+) LANGUAGES CXX\)')
+            'project\(EngaugeDigitizer VERSION (\d+\.\d+\.\d+(?:\.\d+)?) LANGUAGES CXX\)')
           if (-not $versionMatch.Success) {
             throw "CMake project version was not found."
           }
@@ -144,14 +145,14 @@ jobs:
         shell: pwsh
         run: |
           .\dev\windows\test_installer.ps1 `
-            -SetupExecutable "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Multilingual-Windows-x64-Setup.exe"
+            -SetupExecutable "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Windows-x64-Setup.exe"
 
       - name: Create SHA-256 manifest
         shell: pwsh
         run: |
           $assetNames = @(
-            "Engauge-Digitizer-$env:ENGAUGE_VERSION-Multilingual-Windows-x64-Setup.exe",
-            "Engauge-Digitizer-$env:ENGAUGE_VERSION-Multilingual-Windows-x64-Portable.zip"
+            "Engauge-Digitizer-$env:ENGAUGE_VERSION-Windows-x64-Setup.exe",
+            "Engauge-Digitizer-$env:ENGAUGE_VERSION-Windows-x64-Portable.zip"
           )
           $hashLines = foreach ($assetName in $assetNames) {
             $hash = Get-FileHash "dist\$assetName" -Algorithm SHA256
@@ -167,8 +168,8 @@ jobs:
         with:
           name: Engauge-Digitizer-${{ github.ref_name }}-Windows-x64
           path: |
-            dist/*-Multilingual-Windows-x64-Setup.exe
-            dist/*-Multilingual-Windows-x64-Portable.zip
+            dist/*-Windows-x64-Setup.exe
+            dist/*-Windows-x64-Portable.zip
             dist/SHA256SUMS.txt
           if-no-files-found: error
 
@@ -178,8 +179,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $assets = @(
-            "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Multilingual-Windows-x64-Setup.exe",
-            "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Multilingual-Windows-x64-Portable.zip",
+            "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Windows-x64-Setup.exe",
+            "dist\Engauge-Digitizer-$env:ENGAUGE_VERSION-Windows-x64-Portable.zip",
             "dist\SHA256SUMS.txt"
           )
           gh release create `

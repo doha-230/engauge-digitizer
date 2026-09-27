@@ -141,7 +141,7 @@ void CreateActions::createDigitize (MainWindow &mw)
   connect (mw.m_actionDigitizeSegment, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeSegment ()));
 
   mw.m_actionDigitizeGuideline = new QAction (iconGuideline, tr ("Guidelines Tool"), &mw);
-  mw.m_actionDigitizeGuideline->setShortcut (QKeySequence (tr ("Shift+F8")));
+  mw.m_actionDigitizeGuideline->setShortcut (QKeySequence (tr ("Shift+F9")));
   mw.m_actionDigitizeGuideline->setCheckable (true);
   mw.m_actionDigitizeGuideline->setStatusTip (tr ("Digitize guidelines along constant coordinate values for aligning new points"));
   mw.m_actionDigitizeGuideline->setWhatsThis (tr ("Digitize guidelines along constant coordinate values\n\n"

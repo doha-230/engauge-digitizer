@@ -10,7 +10,7 @@
 // 1) changes to Document class
 // 2) at least one version-specific test case in the test subdirectory
 // 3) at least one period in the version number (e.g. 13.0 versus 13)
-const char *VERSION_NUMBER = "12.10.0";
+const char *VERSION_NUMBER = "12.11.1";
 
 QString engaugeWindowTitle()
 {
