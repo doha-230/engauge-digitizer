@@ -104,19 +104,27 @@ jobs:
           # summarizes the child output in some failure modes (a crash before the test framework
           # writes anything, for example), so this is the ground truth: everything the test writes
           # and its raw exit code.
-          ctest --preset windows-msvc-release --rerun-failed -N |
+          $testList = ctest --preset windows-msvc-release --rerun-failed -N |
             Select-String -Pattern "Test\s+#\d+:\s+unit\.(\S+)" |
             ForEach-Object { $_.Matches[0].Groups[1].Value } |
-            Sort-Object -Unique |
-            ForEach-Object {
-              # The captured name is already the executable name (unit.TestQualityReport ->
-              # TestQualityReport), so it must not get a second Test prefix
-              $exe = Join-Path (Join-Path (Get-Location) "cmake-build\windows-msvc-release\bin") ("$_.exe")
-              Write-Host "===== direct: $exe"
-              $output = & $exe 2>&1
-              $output | ForEach-Object { Write-Host "$_" }
-              Write-Host "===== exit code: $LASTEXITCODE"
-            }
+            Sort-Object -Unique
+          foreach ($testName in $testList) {
+            # The captured name is already the executable name (unit.TestQualityReport ->
+            # TestQualityReport), so it must not get a second Test prefix
+            $exe = Join-Path (Join-Path (Get-Location) "cmake-build\windows-msvc-release\bin") "$testName.exe"
+            Write-Host "===== direct: $exe"
+            # Capture through cmd redirection into files, then read the files back. The pipeline
+            # between a native exe and PowerShell has dropped this output twice already; cmd
+            # redirection is the most primitive capture there is.
+            $outFile = Join-Path $env:RUNNER_TEMP "$testName.out"
+            $errFile = Join-Path $env:RUNNER_TEMP "$testName.err"
+            cmd /c "`"$exe`" >"$outFile" 2>"$errFile" <NUL"
+            Write-Host "===== exit code: $LASTEXITCODE"
+            Write-Host "===== stdout ($(Get-Item $outFile | Select-Object -ExpandProperty Length) bytes):"
+            Get-Content $outFile | ForEach-Object { Write-Host $_ }
+            Write-Host "===== stderr ($(Get-Item $errFile | Select-Object -ExpandProperty Length) bytes):"
+            Get-Content $errFile | ForEach-Object { Write-Host $_ }
+          }
 
       - name: Verify build products
         shell: pwsh
