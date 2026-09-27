@@ -5,6 +5,7 @@
  ******************************************************************************************************/
 
 #include "AxisPointsValidator.h"
+#include "Curve.h"
 #include "Logger.h"
 #include "Point.h"
 #include <QtTest/QtTest>
@@ -17,7 +18,7 @@ Point makeAxisPoint (const QString &identifier,
                      double yGraph,
                      bool isXOnly = false)
 {
-  return Point ("AxisCurve",
+  return Point (AXIS_CURVE_NAME,
                 identifier,
                 QPointF (xGraph, yGraph), // Screen coordinates are unused by the checks
                 QPointF (xGraph, yGraph),
