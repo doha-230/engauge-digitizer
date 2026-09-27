@@ -17,6 +17,8 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QGridLayout>
+#include <QSettings>
+#include "Settings.h"
 #include <QLabel>
 #include <qmath.h>
 #include <QPen>
@@ -84,6 +86,19 @@ void DlgSettingsPointMatch::createControls (QGridLayout *layout,
 
   QLabel *labelPointSize = new QLabel (QString ("%1:").arg (tr ("Maximum point size (pixels)")));
   layout->addWidget (labelPointSize, row, 1);
+
+  QLabel *labelCorrelationThreshold = new QLabel (QString ("%1:").arg (tr ("Correlation threshold")));
+  layout->addWidget (labelCorrelationThreshold, row, 1);
+
+  m_spinCorrelationThreshold = new QSpinBox;
+  m_spinCorrelationThreshold->setRange (0, 5);
+  m_spinCorrelationThreshold->setWhatsThis (tr ("Correlation Threshold\n\n"
+                                                "Smallest correlation value (log scale) at which a candidate point is still "
+                                                "offered. Lower values offer weaker matches, which finds more candidates but "
+                                                "also more wrong ones. Higher values only offer near perfect matches.\n\n"
+                                                "The default matches the behavior of the original application."));
+  connect (m_spinCorrelationThreshold, SIGNAL (valueChanged (const QString &)), this, SLOT (slotCorrelationThreshold (const QString &)));
+  layout->addWidget (m_spinCorrelationThreshold, row++, 2);
 
   m_spinPointSize = new QSpinBox;
   m_spinPointSize->setWhatsThis (tr ("Select a maximum point size in pixels.\n\n"
@@ -202,6 +217,15 @@ void DlgSettingsPointMatch::createTemplate ()
 
 void DlgSettingsPointMatch::handleOk ()
 {
+  // The correlation threshold is an application preference, so it is stored in the settings
+  {
+    QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+    settings.beginGroup (SETTINGS_GROUP_POINT_MATCH);
+    settings.setValue (SETTINGS_POINT_MATCH_CORRELATION_THRESHOLD,
+                       m_modelPointMatchAfter->correlationThreshold ());
+    settings.endGroup ();
+  }
+
   LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsPointMatch::handleOk";
 
   CmdSettingsPointMatch *cmd = new CmdSettingsPointMatch (mainWindow (),
@@ -241,6 +265,7 @@ void DlgSettingsPointMatch::load (CmdMediator &cmdMediator)
 
   // Populate controls
   m_spinPointSize->setValue(qFloor (m_modelPointMatchAfter->maxPointSize()));
+  m_spinCorrelationThreshold->setValue (qFloor (m_modelPointMatchAfter->correlationThreshold ()));
 
   int indexAccepted = m_cmbAcceptedPointColor->findData(QVariant(m_modelPointMatchAfter->paletteColorAccepted()));
   ENGAUGE_ASSERT (indexAccepted >= 0);

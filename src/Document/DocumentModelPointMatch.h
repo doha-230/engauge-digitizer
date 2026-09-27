@@ -32,6 +32,10 @@ public:
   virtual void loadXml(QXmlStreamReader &reader);
 
   /// Get method for max point size.
+  /// Correlation threshold (log scale) below which candidate points are ignored. The default keeps
+  /// the upstream hard coded value
+  double correlationThreshold() const;
+
   double maxPointSize() const;
 
   /// Get method for accepted color.
@@ -50,6 +54,7 @@ public:
   virtual void saveXml(QXmlStreamWriter &writer) const;
 
   /// Set method for max point size.
+  void setCorrelationThreshold (double correlationThreshold);
   void setMaxPointSize (double maxPointSize);
 
   /// Set method for accepted color.
@@ -64,6 +69,7 @@ public:
 private:
 
   double m_minPointSeparation;
+  double m_correlationThreshold;
   double m_maxPointSize;
   ColorPalette m_paletteColorAccepted;
   ColorPalette m_paletteColorCandidate;

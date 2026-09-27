@@ -48,12 +48,11 @@ void PointMatchAlgorithm::allocateMemory(double** array,
 void PointMatchAlgorithm::assembleLocalMaxima(double* convolution,
                                               PointMatchList& listCreated, 
                                               int width,
-                                              int height)
+                                              int height,
+                                              double correlationThreshold)
 {
-  LOG4CPP_INFO_S ((*mainCat)) << "PointMatchAlgorithm::assembleLocalMaxima";
-
-  // Ignore tiny correlation values near zero by applying this threshold
-  const double SINGLE_PIXEL_CORRELATION = 1.0;
+  LOG4CPP_INFO_S ((*mainCat)) << "PointMatchAlgorithm::assembleLocalMaxima"
+                              << " threshold=" << correlationThreshold;
 
   for (int i = 0; i < width; i++) {
     for (int j = 0; j < height; j++) {
@@ -93,7 +92,7 @@ void PointMatchAlgorithm::assembleLocalMaxima(double* convolution,
       }
 
       if (isLocalMax &&
-          (convIJ > SINGLE_PIXEL_CORRELATION) ) {
+          (convIJ > correlationThreshold) ) {
 
         // Save new local maximum
         PointMatchTriplet t (i,
@@ -283,7 +282,8 @@ QList<QPoint> PointMatchAlgorithm::findPoints (const QList<PointMatchPixel> &sam
   assembleLocalMaxima(convolution,
                       listCreated,
                       width,
-                      height);
+                      height,
+                      modelPointMatch.correlationThreshold ());
   std::sort (listCreated.begin(),
              listCreated.end());
 

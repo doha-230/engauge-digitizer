@@ -38,6 +38,7 @@ public:
 
 private slots:
   void slotAcceptedPointColor (const QString &);
+  void slotCorrelationThreshold (const QString &);
   void slotCandidatePointColor (const QString &);
   void slotMaxPointSize (int);
   void slotMouseMove (QPointF pos);
@@ -62,6 +63,7 @@ private:
 
   ButtonWhatsThis *m_btnWhatsThis;
   
+  QSpinBox *m_spinCorrelationThreshold;
   QSpinBox *m_spinMinPointSeparation;
   QSpinBox *m_spinPointSize;
   QComboBox *m_cmbAcceptedPointColor;
