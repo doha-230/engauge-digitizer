@@ -274,10 +274,20 @@ void QualityReport::checkOutsideAxes (const QString &curveName,
     return;
   }
 
+  // The range arrives as plain doubles through the rectangle members, but the comparison is done
+  // directly on coordinates so the result depends on arithmetic alone
+  const double axesLeft = axesRange.left ();
+  const double axesRight = axesRange.right ();
+  const double axesTop = axesRange.top ();
+  const double axesBottom = axesRange.bottom ();
+
   for (int index = 0; index < points.count (); index++) {
 
     const QPointF posGraph = points.at (index).posGraph;
-    if (!axesRange.contains (posGraph)) {
+    if ((posGraph.x () < axesLeft) ||
+        (posGraph.x () > axesRight) ||
+        (posGraph.y () < axesTop) ||
+        (posGraph.y () > axesBottom)) {
       addIssue (curveName,
                 points.at (index).identifier,
                 posGraph,
@@ -285,10 +295,10 @@ void QualityReport::checkOutsideAxes (const QString &curveName,
                 QString ("%1,%2 is outside %3,%4 to %5,%6")
                         .arg (numberToString (posGraph.x ()))
                         .arg (numberToString (posGraph.y ()))
-                        .arg (numberToString (axesRange.left ()))
-                        .arg (numberToString (axesRange.top ()))
-                        .arg (numberToString (axesRange.right ()))
-                        .arg (numberToString (axesRange.bottom ())));
+                        .arg (numberToString (axesLeft))
+                        .arg (numberToString (axesTop))
+                        .arg (numberToString (axesRight))
+                        .arg (numberToString (axesBottom)));
     }
   }
 }
@@ -301,26 +311,33 @@ void QualityReport::analyzeCurves (const QStringList &curveNames,
 
   m_issues.clear ();
 
-  // Range covered by the axis points. The half unit margin on the right and bottom matters
-  // because QRectF::contains is half open: a point exactly on the axis coordinate would otherwise
-  // be reported as outside its own axes, and a single axis point would produce an empty rectangle
-  // that contains nothing at all.
-  QRectF axesRange;
+  // Range covered by the axis points, stored as plain doubles. The half unit margin on the right
+  // and bottom counts a point that sits exactly on an axis coordinate as inside its own axes.
+  // Plain comparisons are used instead of QRectF because the rectangle semantics (normalization,
+  // half open edges, null handling) were producing candidates for every point.
   bool hasAxesRange = false;
+  double axesLeft = 0.0;
+  double axesRight = 0.0;
+  double axesTop = 0.0;
+  double axesBottom = 0.0;
   for (int index = 0; index < axisPoints.count (); index++) {
 
     const QPointF posGraph = axisPoints.at (index).posGraph;
     if (!hasAxesRange) {
-      axesRange = QRectF (posGraph, posGraph).normalized ();
+      axesLeft = axesRight = posGraph.x ();
+      axesTop = axesBottom = posGraph.y ();
       hasAxesRange = true;
     } else {
-      axesRange |= QRectF (posGraph, posGraph).normalized ();
+      axesLeft = std::min (axesLeft, posGraph.x ());
+      axesRight = std::max (axesRight, posGraph.x ());
+      axesTop = std::min (axesTop, posGraph.y ());
+      axesBottom = std::max (axesBottom, posGraph.y ());
     }
   }
 
   if (hasAxesRange) {
-    axesRange.setRight (axesRange.right () + 0.5);
-    axesRange.setBottom (axesRange.bottom () + 0.5);
+    axesRight += 0.5;
+    axesBottom += 0.5;
   }
 
   for (int curveIndex = 0; curveIndex < curvesPoints.count (); curveIndex++) {
