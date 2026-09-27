@@ -6,7 +6,9 @@
 
 #include "Logger.h"
 #include "QualityReport.h"
+#include <QApplication>
 #include <QtTest/QtTest>
+#include <cstdio>
 #include <QStringList>
 #include "Test/TestQualityReport.h"
 
@@ -81,7 +83,41 @@ int countOfType (const QualityReport &report,
 
 }
 
-QTEST_MAIN (TestQualityReport)
+namespace {
+
+// Reports whether static initialization runs at all, since a process that exits before main would
+// leave this out
+struct StaticInitProbe {
+  StaticInitProbe ()
+  {
+    fprintf (stderr, "TESTQR: static init ran\n");
+    fflush (stderr);
+  }
+};
+
+StaticInitProbe g_staticInitProbe;
+
+}
+
+int main (int argc, char *argv[])
+{
+  fprintf (stderr, "TESTQR: main entered, argc=%d\n", argc);
+  fflush (stderr);
+
+  QApplication app (argc, argv);
+
+  fprintf (stderr, "TESTQR: QApplication created\n");
+  fflush (stderr);
+
+  TestQualityReport testObject;
+
+  const int result = QTest::qExec (&testObject, argc, argv);
+
+  fprintf (stderr, "TESTQR: qExec returned %d\n", result);
+  fflush (stderr);
+
+  return result;
+}
 
 TestQualityReport::TestQualityReport(QObject *parent) :
   QObject(parent)
