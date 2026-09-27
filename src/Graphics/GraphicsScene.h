@@ -45,6 +45,18 @@ public:
   /// Virtual destructor needed since using Q_OBJECT
   virtual ~GraphicsScene();
 
+  /// Center the view on the point with the specified identifier and select it. Used by the quality
+  /// report, so a listed point can be found and fixed without searching by eye. Returns true when
+  /// the point was found.
+  bool centerAndSelectPoint (const QString &curveName,
+                             const QString &pointIdentifier);
+
+public slots:
+  /// Slot wrapper around centerAndSelectPoint, for connecting a dialog signal
+  void slotCenterAndSelectPoint (const QString &curveName,
+                                 const QString &pointIdentifier);
+
+public:
   /// Add one temporary point to m_graphicsLinesForCurves. Non-temporary points are handled by the updateLineMembership functions
   void addTemporaryPoint (const QString &identifier,
                           GraphicsPoint *point);

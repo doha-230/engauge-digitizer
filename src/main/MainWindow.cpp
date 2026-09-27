@@ -2661,6 +2661,8 @@ void MainWindow::slotDigitizeQualityReport ()
 
   DlgQualityReport dlg (*this,
                         report);
+  connect (&dlg, SIGNAL (signalPointSelected (const QString &, const QString &)),
+           m_scene, SLOT (slotCenterAndSelectPoint (const QString &, const QString &)));
   dlg.exec ();
 }
 

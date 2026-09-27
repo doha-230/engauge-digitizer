@@ -72,6 +72,10 @@ public:
   /// Update the curve style for this curve
   void updateCurveStyle (const CurveStyle &curveStyle);
 
+  /// Screen position of the point with the specified identifier, or a null point when there is no
+  /// such point in this curve
+  QPointF pointPosition (const QString &pointIdentifier) const;
+
   /// Calls to moveLinesWithDraggedPoint have finished so update the lines correspondingly
   void updateGraphicsLinesToMatchGraphicsPoints (const LineStyle &lineStyle,
                                                  SplineDrawer &splineDrawer,

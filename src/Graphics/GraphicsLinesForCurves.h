@@ -40,6 +40,11 @@ public:
                  GraphicsPoint &point);
 
   /// Add new curves and remove expired curves to match the specified list
+  /// Screen position of the point with the specified identifier, or a null point when there is no
+  /// such point in the specified curve
+  QPointF pointPosition (const QString &curveName,
+                         const QString &pointIdentifier) const;
+
   void addRemoveCurves (GraphicsScene &scene,
                         const QStringList &curveNames);
 

@@ -32,7 +32,9 @@ DlgQualityReport::DlgQualityReport (MainWindow &mainWindow,
 
   setWindowTitle (tr ("Digitizing Quality Report"));
 
-  // Kept so that Save As CSV writes exactly what the table shows
+  // Kept so that Save As CSV writes exactly what the table shows, and so a double click can map a
+  // row back to its point
+  m_issues = report.issues ();
   m_reportCsv = report.toCsv ();
 
   createWidgets (report);
@@ -79,6 +81,7 @@ void DlgQualityReport::createWidgets (const QualityReport &report)
 
   QPushButton *btnClose = new QPushButton (tr ("Close"));
   connect (btnClose, SIGNAL (released ()), this, SLOT (accept ()));
+  connect (m_table, SIGNAL (cellDoubleClicked (int, int)), this, SLOT (slotCellDoubleClicked (int, int)));
   layoutButtons->addWidget (btnClose);
 
   layout->addLayout (layoutButtons);
@@ -103,6 +106,20 @@ void DlgQualityReport::populateTable (const QualityReport &report)
   }
 
   m_table->resizeColumnsToContents ();
+}
+
+void DlgQualityReport::slotCellDoubleClicked (int row, int /* column */)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgQualityReport::slotCellDoubleClicked";
+
+  if ((row < 0) || (row >= m_issues.count ())) {
+    return;
+  }
+
+  const QualityIssue &issue = m_issues.at (row);
+
+  emit signalPointSelected (issue.curveName,
+                            issue.pointIdentifier);
 }
 
 void DlgQualityReport::slotSaveCsv ()

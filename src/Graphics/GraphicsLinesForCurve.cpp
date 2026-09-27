@@ -364,6 +364,23 @@ void GraphicsLinesForCurve::renumberOrdinals ()
   }
 }
 
+QPointF GraphicsLinesForCurve::pointPosition (const QString &pointIdentifier) const
+{
+  LOG4CPP_DEBUG_S ((*mainCat)) << "GraphicsLinesForCurve::pointPosition";
+
+  OrdinalToGraphicsPoint::const_iterator itr;
+  for (itr = m_graphicsPoints.begin(); itr != m_graphicsPoints.end(); itr++) {
+
+    const GraphicsPoint *point = itr.value();
+
+    if (point->data (DATA_KEY_IDENTIFIER) == pointIdentifier) {
+      return point->pos ();
+    }
+  }
+
+  return QPointF ();
+}
+
 void GraphicsLinesForCurve::updateAfterCommand (GraphicsScene &scene,
                                                 const PointStyle &pointStyle,
                                                 const Point &point,

@@ -9,6 +9,8 @@
 
 #include <QDialog>
 #include <QString>
+#include <QList>
+#include "QualityReport.h"
 
 class MainWindow;
 class QLabel;
@@ -27,7 +29,13 @@ public:
 
   virtual ~DlgQualityReport ();
 
+signals:
+  /// The user double clicked a row, so the main window can center on and select that point
+  void signalPointSelected (const QString &curveName,
+                            const QString &pointIdentifier);
+
 private slots:
+  void slotCellDoubleClicked (int row, int column);
   void slotSaveCsv ();
 
 private:
@@ -35,6 +43,7 @@ private:
   void populateTable (const QualityReport &report);
 
   MainWindow &m_mainWindow;
+  QList<QualityIssue> m_issues;
   QString m_reportCsv;
   QLabel *m_lblSummary;
   QTableWidget *m_table;

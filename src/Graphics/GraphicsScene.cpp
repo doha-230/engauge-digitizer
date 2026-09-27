@@ -273,6 +273,53 @@ void GraphicsScene::showCurves (bool show,
   }
 }
 
+bool GraphicsScene::centerAndSelectPoint (const QString &curveName,
+                                          const QString &pointIdentifier)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "GraphicsScene::centerAndSelectPoint"
+                              << " curve=" << curveName.toLatin1().data()
+                              << " point=" << pointIdentifier.toLatin1().data();
+
+  const QPointF posScreen = m_graphicsLinesForCurves.pointPosition (curveName,
+                                                                    pointIdentifier);
+  if (posScreen.isNull ()) {
+    LOG4CPP_WARN_S ((*mainCat)) << "GraphicsScene::centerAndSelectPoint point not found";
+    return false;
+  }
+
+  // Select the point's graphics item(s), so the next delete or arrow key acts on it. The selectable
+  // items are the ellipse/polygon children that carry the identifier data
+  clearSelection ();
+  bool selected = false;
+  const QList<QGraphicsItem*> itemsList = items ();
+  for (int index = 0; index < itemsList.count (); index++) {
+
+    QGraphicsItem *item = itemsList.at (index);
+
+    if ((item->data (DATA_KEY_GRAPHICS_ITEM_TYPE).toInt () == GRAPHICS_ITEM_TYPE_POINT) &&
+        (item->data (DATA_KEY_IDENTIFIER).toString () == pointIdentifier)) {
+
+      item->setSelected (true);
+      selected = true;
+    }
+  }
+
+  // Center every view on the point
+  const QList<QGraphicsView*> viewsList = views ();
+  for (int index = 0; index < viewsList.count (); index++) {
+    viewsList.at (index)->centerOn (posScreen);
+  }
+
+  return selected;
+}
+
+void GraphicsScene::slotCenterAndSelectPoint (const QString &curveName,
+                                              const QString &pointIdentifier)
+{
+  centerAndSelectPoint (curveName,
+                        pointIdentifier);
+}
+
 void GraphicsScene::updateAfterCommand (CmdMediator &cmdMediator,
                                         double highlightOpacity,
                                         GeometryWindow *geometryWindow,

@@ -177,6 +177,18 @@ void GraphicsLinesForCurves::resetOnLoad()
   m_graphicsLinesForCurve.clear();
 }
 
+QPointF GraphicsLinesForCurves::pointPosition (const QString &curveName,
+                                               const QString &pointIdentifier) const
+{
+  LOG4CPP_DEBUG_S ((*mainCat)) << "GraphicsLinesForCurves::pointPosition";
+
+  if (!m_graphicsLinesForCurve.contains (curveName)) {
+    return QPointF ();
+  }
+
+  return m_graphicsLinesForCurve [curveName]->pointPosition (pointIdentifier);
+}
+
 void GraphicsLinesForCurves::updateAfterCommand (GraphicsScene &scene,
                                                  const CurveStyles &curveStyles,
                                                  const QString &curveName,
