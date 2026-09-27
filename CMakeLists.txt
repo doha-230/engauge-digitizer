@@ -52,6 +52,8 @@ if(NOT APPLE)
       "${Qt6_DIR}/../../../bin"
     PATHS
       "/usr/lib/qt6/bin"
+      "/usr/lib/qt6/libexec"
+      "/usr/lib/x86_64-linux-gnu/qt6/libexec"
       "/usr/libexec/qt6"
     REQUIRED
   )
