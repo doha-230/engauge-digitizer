@@ -267,19 +267,16 @@ void QualityReport::checkCurvePoints (const QString &curveName,
 
 void QualityReport::checkOutsideAxes (const QString &curveName,
                                       const QList<QualityPoint> &points,
-                                      const QRectF &axesRange,
+                                      double axesLeft,
+                                      double axesRight,
+                                      double axesTop,
+                                      double axesBottom,
                                       bool hasAxesRange)
 {
   if (!hasAxesRange) {
     return;
   }
 
-  // The range arrives as plain doubles through the rectangle members, but the comparison is done
-  // directly on coordinates so the result depends on arithmetic alone
-  const double axesLeft = axesRange.left ();
-  const double axesRight = axesRange.right ();
-  const double axesTop = axesRange.top ();
-  const double axesBottom = axesRange.bottom ();
 
   for (int index = 0; index < points.count (); index++) {
 
@@ -346,7 +343,13 @@ void QualityReport::analyzeCurves (const QStringList &curveNames,
     const QList<QualityPoint> &points = curvesPoints.at (curveIndex);
 
     checkCurvePoints (curveName, points);
-    checkOutsideAxes (curveName, points, axesRange, hasAxesRange);
+    checkOutsideAxes (curveName,
+                      points,
+                      axesLeft,
+                      axesRight,
+                      axesTop,
+                      axesBottom,
+                      hasAxesRange);
   }
 
   // Points of different curves that sit on top of each other, which usually means one curve was

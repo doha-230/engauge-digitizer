@@ -96,7 +96,10 @@ private:
   /// Points outside the range covered by the axis points
   void checkOutsideAxes (const QString &curveName,
                          const QList<QualityPoint> &points,
-                         const QRectF &axesRange,
+                         double axesLeft,
+                         double axesRight,
+                         double axesTop,
+                         double axesBottom,
                          bool hasAxesRange);
 
   QList<QualityIssue> m_issues;
