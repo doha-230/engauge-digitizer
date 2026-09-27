@@ -81,7 +81,7 @@ int countOfType (const QualityReport &report,
 
 }
 
-QTEST_APPLESS_MAIN (TestQualityReport)
+QTEST_MAIN (TestQualityReport)
 
 TestQualityReport::TestQualityReport(QObject *parent) :
   QObject(parent)
@@ -90,9 +90,9 @@ TestQualityReport::TestQualityReport(QObject *parent) :
 
 void TestQualityReport::initTestCase ()
 {
-  // The checks log through the LOG4CPP macros, which dereference the global mainCat. Every other
-  // CLI test calls initializeLogging first, and without it mainCat stays uninitialized, which
-  // crashes the test before the first assertion (seen on CI as a failure with no output at all).
+  // The checks log through the LOG4CPP macros, which dereference the global mainCat, so logging
+  // has to be initialized first. QTEST_MAIN creates the QApplication, which the majority of the
+  // CLI tests also rely on.
   initializeLogging ("engauge_test",
                      "engauge_test.log",
                      false); // NO_DEBUG
