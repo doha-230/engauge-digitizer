@@ -31,6 +31,7 @@
 #include "DlgAbout.h"
 #include "DlgErrorReportLocal.h"
 #include "DlgImportAdvanced.h"
+#include "DlgQualityReport.h"
 #include "DlgRequiresTransform.h"
 #include "DlgSettingsAxesChecker.h"
 #include "DlgSettingsColorFilter.h"
@@ -84,7 +85,7 @@
 #include "MainWindow.h"
 #include "MimePointsImport.h"
 #include "PointOrigin.h"
-#include "PointOrigin.h"
+#include "QualityReport.h"
 #ifdef NETWORKING
 #include "NetworkClient.h"
 #endif
@@ -2631,6 +2632,23 @@ void MainWindow::slotTimeoutRecoveryPrompt ()
   }
 }
 
+void MainWindow::slotDigitizeQualityReport ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotDigitizeQualityReport";
+
+  if (m_cmdMediator == nullptr) {
+    return;
+  }
+
+  QualityReport report;
+  report.analyze (m_cmdMediator->document (),
+                  m_transformation);
+
+  DlgQualityReport dlg (*this,
+                        report);
+  dlg.exec ();
+}
+
 void MainWindow::slotEditDeleteAutomatedPoints ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotEditDeleteAutomatedPoints";
@@ -3970,6 +3988,7 @@ void MainWindow::updateControls ()
   m_actionDigitizeScale->setEnabled (modeMap ());
   m_actionDigitizeCurve->setEnabled (!m_currentFile.isEmpty ());
   m_actionDigitizeGuideline->setEnabled (m_transformation.transformIsDefined ());
+  m_actionDigitizeQualityReport->setEnabled (m_cmdMediator != nullptr);
   m_actionDigitizePointMatch->setEnabled (!m_currentFile.isEmpty ());
   m_actionDigitizeColorPicker->setEnabled (!m_currentFile.isEmpty ());
   m_actionDigitizeSegment->setEnabled (!m_currentFile.isEmpty ());

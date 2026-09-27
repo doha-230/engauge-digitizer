@@ -140,6 +140,17 @@ void CreateActions::createDigitize (MainWindow &mw)
                                                 "New points will be assigned to the currently selected curve."));
   connect (mw.m_actionDigitizeSegment, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeSegment ()));
 
+  mw.m_actionDigitizeQualityReport = new QAction (tr ("Quality Report..."), &mw);
+  mw.m_actionDigitizeQualityReport->setStatusTip (tr ("List the digitized points that deserve a second look."));
+  mw.m_actionDigitizeQualityReport->setWhatsThis (tr ("Quality Report\n\n"
+                                                     "Lists the digitized points that deserve a second look: points that repeat or "
+                                                     "reverse an x value, points where the slope changes abruptly, points that sit "
+                                                     "on top of a point of another curve, and points outside the axes range.\n\n"
+                                                     "These are review candidates rather than errors, which makes the report useful "
+                                                     "after changing the color filter or the grid removal settings. The list can be "
+                                                     "saved as a comma separated file."));
+  connect (mw.m_actionDigitizeQualityReport, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeQualityReport ()));
+
   mw.m_actionDigitizeGuideline = new QAction (iconGuideline, tr ("Guidelines Tool"), &mw);
   mw.m_actionDigitizeGuideline->setShortcut (QKeySequence (tr ("Shift+F9")));
   mw.m_actionDigitizeGuideline->setCheckable (true);

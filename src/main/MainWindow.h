@@ -324,6 +324,7 @@ private slots:
   void slotContextMenuEventAxis (QString);
   void slotContextMenuEventGraph (QStringList);
   void slotDigitizeAxis ();
+  void slotDigitizeQualityReport ();
   void slotDigitizeColorPicker ();
   void slotDigitizeCurve ();
   void slotDigitizeGuidelines ();
@@ -568,7 +569,8 @@ private:
   QAction *m_actionDigitizeAxis;
   QAction *m_actionDigitizeScale;
   QAction *m_actionDigitizeCurve;
-  QAction *m_actionDigitizeGuideline;  
+  QAction *m_actionDigitizeGuideline;
+  QAction *m_actionDigitizeQualityReport;  
   QAction *m_actionDigitizePointMatch;
   QAction *m_actionDigitizeColorPicker;
   QAction *m_actionDigitizeSegment;

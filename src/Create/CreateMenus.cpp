@@ -65,6 +65,7 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeColorPicker);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeSegment);
   mw.m_menuDigitize->addAction (mw.m_actionDigitizeGuideline);
+  mw.m_menuDigitize->addAction (mw.m_actionDigitizeQualityReport);
 
   mw.m_menuView = mw.menuBar()->addMenu(tr("View"));
   mw.m_menuView->addAction (mw.m_actionViewBackgroundToolBar);

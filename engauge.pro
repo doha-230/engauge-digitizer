@@ -263,6 +263,7 @@ HEADERS  += \
     src/Dlg/DlgFilterWorker.h \
     src/Dlg/DlgImportAdvanced.h \
     src/Dlg/DlgImportCroppingNonPdf.h \
+    src/Dlg/DlgQualityReport.h \
     src/Dlg/DlgRequiresTransform.h \
     src/Dlg/DlgSettingsAbstractBase.h \
     src/Dlg/DlgSettingsAxesChecker.h \
@@ -728,6 +729,7 @@ SOURCES += \
     src/Dlg/DlgFilterWorker.cpp \
     src/Dlg/DlgImportAdvanced.cpp \
     src/Dlg/DlgImportCroppingNonPdf.cpp \
+    src/Dlg/DlgQualityReport.cpp \
     src/Dlg/DlgRequiresTransform.cpp \
     src/Dlg/DlgSettingsAbstractBase.cpp \
     src/Dlg/DlgSettingsAxesChecker.cpp \
