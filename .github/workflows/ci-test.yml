@@ -184,6 +184,10 @@ jobs:
       - name: Assemble and verify portable deployment
         shell: pwsh
         run: |
+          # QT_ROOT was only exported inside the previous step, and step-level
+          # environment variables do not carry over, so windeployqt was resolved as
+          # "\bin\windeployqt.exe" and this step failed.
+          $env:QT_ROOT = "$env:RUNNER_TEMP\Qt\$env:QT_VERSION\msvc2022_64"
           $portableRoot = [System.IO.Path]::GetFullPath(
             (Join-Path $env:RUNNER_TEMP 'Engauge Digitizer Multilingual'))
           $tempPrefix = [System.IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\') + '\'
