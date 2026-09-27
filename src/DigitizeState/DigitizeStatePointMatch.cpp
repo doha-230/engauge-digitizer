@@ -224,6 +224,22 @@ void DigitizeStatePointMatch::handleKeyPress (CmdMediator *cmdMediator,
 
     popCandidatePoint(cmdMediator); // This creates a new temporary point
 
+  } else if (key == Qt::Key_Down) {
+
+    // Skip this candidate without adding a point, so a wrong match does not have to be added and
+    // deleted, or accepted by accident
+    LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStatePointMatch::handleKeyPress skipping candidate";
+
+    popCandidatePoint (cmdMediator);
+
+  } else if (key == Qt::Key_Escape) {
+
+    // Skip all remaining candidates, which ends this point match round
+    LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStatePointMatch::handleKeyPress skipping all candidates";
+
+    while (!m_candidatePoints.isEmpty ()) {
+      popCandidatePoint (cmdMediator);
+    }
   }
 }
 
