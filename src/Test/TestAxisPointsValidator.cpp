@@ -5,6 +5,7 @@
  ******************************************************************************************************/
 
 #include "AxisPointsValidator.h"
+#include "Logger.h"
 #include "Point.h"
 #include <QtTest/QtTest>
 #include "Test/TestAxisPointsValidator.h"
@@ -49,6 +50,11 @@ TestAxisPointsValidator::TestAxisPointsValidator(QObject *parent) :
 
 void TestAxisPointsValidator::initTestCase ()
 {
+  // The Point constructors log through the LOG4CPP macros, which dereference the global mainCat, so
+  // logging has to be initialized before any Point is created
+  initializeLogging ("engauge_test",
+                     "engauge_test.log",
+                     false); // NO_DEBUG
 }
 
 void TestAxisPointsValidator::cleanupTestCase ()

@@ -4,6 +4,7 @@
  * LICENSE or go to gnu.org/licenses for details. Distribution requires prior written permission.     *
  ******************************************************************************************************/
 
+#include "Logger.h"
 #include "SegmentChain.h"
 #include <QtTest/QtTest>
 #include "Test/TestSegmentChain.h"
@@ -86,6 +87,11 @@ TestSegmentChain::TestSegmentChain(QObject *parent) :
 
 void TestSegmentChain::initTestCase ()
 {
+  // The segment classes log through the LOG4CPP macros, which dereference the global mainCat, so
+  // logging has to be initialized first
+  initializeLogging ("engauge_test",
+                     "engauge_test.log",
+                     false); // NO_DEBUG
 }
 
 void TestSegmentChain::cleanupTestCase ()
