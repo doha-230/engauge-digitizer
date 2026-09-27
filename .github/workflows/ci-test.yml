@@ -70,8 +70,10 @@ jobs:
         run: python3 ./DumpGraphAndScreenCoordinates_test.py
 
       - name: Run command-line unit tests
-        working-directory: src
-        run: ./build_and_run_all_cli_tests
+        # These QtTest binaries build a QApplication, so they need a display. Without
+        # one Qt aborts with "Could not load the Qt platform plugin xcb" (exit 134),
+        # which the harness used to hide because the exit status came from grep.
+        run: xvfb-run --auto-servernum bash -c 'cd src && ./build_and_run_all_cli_tests'
 
       - name: Verify executable
         run: file bin/Engauge
