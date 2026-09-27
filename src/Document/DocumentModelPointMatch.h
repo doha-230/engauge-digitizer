@@ -40,6 +40,9 @@ public:
   /// the upstream hard coded value
   double correlationThreshold() const;
 
+  /// Get method for the minimum point separation, which is also the unit of the search radius
+  double minPointSeparation() const;
+
   double maxPointSize() const;
 
   /// Get method for accepted color.

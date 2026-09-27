@@ -126,6 +126,11 @@ void DocumentModelPointMatch::setSearchRadiusMultiplier (double searchRadiusMult
   m_searchRadiusMultiplier = searchRadiusMultiplier;
 }
 
+double DocumentModelPointMatch::minPointSeparation() const
+{
+  return m_minPointSeparation;
+}
+
 double DocumentModelPointMatch::maxPointSize () const
 {
   return m_maxPointSize;
