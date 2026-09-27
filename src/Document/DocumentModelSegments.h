@@ -10,6 +10,7 @@
 #include "ColorPalette.h"
 #include "DocumentModelAbstractBase.h"
 #include "InactiveOpacity.h"
+#include "SegmentCenterStrategy.h"
 
 class Document;
 class QTextStream;
