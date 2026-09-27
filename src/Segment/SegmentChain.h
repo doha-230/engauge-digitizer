@@ -65,8 +65,10 @@ private:
   QList<SegmentChainLink> m_links;
   double m_maxGapPixels;
   double m_maxTurnDegrees;
-  bool m_stoppedAtAngle;
-  bool m_stoppedAtGap;
+
+  // The walk records why it stopped, so these are written by the const chainFrom
+  mutable bool m_stoppedAtAngle;
+  mutable bool m_stoppedAtGap;
 };
 
 #endif // SEGMENT_CHAIN_H

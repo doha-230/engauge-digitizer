@@ -20,7 +20,7 @@ enum DigitizeState {
   DIGITIZE_STATE_SELECT,
   DIGITIZE_STATE_SCALE, // Out of order for backwards compatibility with pre-version 10
   DIGITIZE_STATE_GUIDELINE, // Out of order for backwards compatibility with pre-version 13
-  DIGITIZE_STATE_AUTO_CURVE // Out of order since added later
+  DIGITIZE_STATE_AUTO_CURVE, // Out of order since added later
   NUM_DIGITIZE_STATES
 };
 
