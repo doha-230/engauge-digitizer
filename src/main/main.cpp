@@ -8,6 +8,7 @@
 #include "Compatibility.h"
 #include "FittingCurveCoefficients.h"
 #include "ImportImageExtensions.h"
+#include "BatchProcessor.h"
 #include "Logger.h"
 #include "MainWindow.h"
 #include "MainWindowMsg.h"
@@ -26,6 +27,9 @@
 
 using namespace std;
 
+const QString CMD_BATCHCONTINUE ("batchcontinue");
+const QString CMD_BATCHOUT ("batchout");
+const QString CMD_BATCHTEMPLATE ("batchtemplate");
 const QString CMD_DEBUG ("debug");
 const QString CMD_DROP_REGRESSION ("dropregression");
 const QString CMD_ERROR_REPORT ("errorreport");
@@ -40,6 +44,9 @@ const QString CMD_STYLE ("style"); // Qt handles this
 const QString CMD_STYLES ("styles"); // Not to be confused with -style option that qt handles
 const QString CMD_UPGRADE ("upgrade");
 const QString DASH ("-");
+const QString DASH_BATCHTEMPLATE ("-" + CMD_BATCHTEMPLATE);
+const QString DASH_BATCHOUT ("-" + CMD_BATCHOUT);
+const QString DASH_BATCHCONTINUE ("-" + CMD_BATCHCONTINUE);
 const QString DASH_DEBUG ("-" + CMD_DEBUG);
 const QString DASH_DROP_REGRESSION ("-" + CMD_DROP_REGRESSION);
 const QString DASH_ERROR_REPORT ("-" + CMD_ERROR_REPORT);
@@ -62,9 +69,12 @@ bool engaugeLogFilenameAttempt (const QString &path,
                                 QString &pathAndFile);
 void parseCmdLine (int argc,
                    char **argv,
+                   bool &isBatchContinue,
                    bool &isDebug,
                    bool &isDropRegression,
                    bool &isReset,
+                   QString &batchOutDirectory,
+                   QString &batchTemplateFile,
                    QString &errorReportFile,
                    QString &fileCmdScriptFile,
                    bool &isErrorReportRegressionTest,
@@ -156,14 +166,17 @@ int main(int argc, char *argv[])
   TranslatorContainer translatorContainer (app); // Must exist until execution terminates
 
   // Command line
-  bool isDebug, isDropRegression, isReset, isGnuplot, isErrorReportRegressionTest, isExportOnly, isExtractImageOnly, isUpgrade;
-  QString errorReportFile, extractImageOnlyExtension, fileCmdScriptFile;
+  bool isBatchContinue, isDebug, isDropRegression, isReset, isGnuplot, isErrorReportRegressionTest, isExportOnly, isExtractImageOnly, isUpgrade;
+  QString batchOutDirectory, batchTemplateFile, errorReportFile, extractImageOnlyExtension, fileCmdScriptFile;
   QStringList loadStartupFiles, commandLineWithoutLoadStartupFiles;
   parseCmdLine (argc,
                 argv,
+                isBatchContinue,
                 isDebug,
                 isDropRegression,
                 isReset,
+                batchOutDirectory,
+                batchTemplateFile,
                 errorReportFile,
                 fileCmdScriptFile,
                 isErrorReportRegressionTest,
@@ -185,6 +198,31 @@ int main(int argc, char *argv[])
   int rtn = 0;
   if (isUpgrade) {
     upgradeFiles (loadStartupFiles);
+  } else if (!batchTemplateFile.isEmpty ()) {
+
+    // Batch mode: process the files and exit. The window exists only because the batch needs it,
+    // so it never gets shown
+    MainWindow w (errorReportFile,
+                  fileCmdScriptFile,
+                  isDropRegression,
+                  isErrorReportRegressionTest,
+                  isGnuplot,
+                  isReset,
+                  isExportOnly,
+                  isExtractImageOnly,
+                  extractImageOnlyExtension,
+                  loadStartupFiles,
+                  commandLineWithoutLoadStartupFiles);
+
+    BatchProcessor batchProcessor;
+    const bool success = batchProcessor.process (w,
+                                                 batchTemplateFile,
+                                                 batchOutDirectory,
+                                                 isBatchContinue,
+                                                 loadStartupFiles);
+
+    rtn = success ? 0 : 1;
+
   } else {
     // Create and show main window
     MainWindow w (errorReportFile,
@@ -209,9 +247,12 @@ int main(int argc, char *argv[])
 
 void parseCmdLine (int argc,
                    char **argv,
+                   bool &isBatchContinue,
                    bool &isDebug,
                    bool &isDropRegression,
                    bool &isReset,
+                   QString &batchOutDirectory,
+                   QString &batchTemplateFile,
                    QString &errorReportFile,
                    QString &fileCmdScriptFile,
                    bool &isErrorReportRegressionTest,
@@ -228,11 +269,16 @@ void parseCmdLine (int argc,
   ImportImageExtensions importImageExtensions;
 
   // State
+  bool nextIsBatchOutDirectory = false;
+  bool nextIsBatchTemplateFile = false;
   bool nextIsErrorReportFile = false;
   bool nextIsExtractImageOnly = false;
   bool nextIsFileCmdScript = false;
 
   // Defaults
+  isBatchContinue = false;
+  batchOutDirectory = "";
+  batchTemplateFile = "";
   isDebug = false;
   isDropRegression = false;
   isReset = false;
@@ -249,7 +295,16 @@ void parseCmdLine (int argc,
 
     bool isLoadStartupFile = false;
 
-    if (nextIsErrorReportFile) {
+    if (nextIsBatchOutDirectory) {
+      batchOutDirectory = argv [i];
+      nextIsBatchOutDirectory = false;
+    } else if (nextIsBatchTemplateFile) {
+      sanityCheckValue (checkFileExists (argv [i]),
+                        argv [i],
+                        QObject::tr ("is not a valid file name"));
+      batchTemplateFile = argv [i];
+      nextIsBatchTemplateFile = false;
+    } else if (nextIsErrorReportFile) {
       sanityCheckValue (checkFileExists (argv [i]),
                         argv [i],
                         QObject::tr ("is not a valid file name"));
@@ -267,6 +322,12 @@ void parseCmdLine (int argc,
                         QObject::tr ("is not a valid file name"));
       fileCmdScriptFile = argv [i];
       nextIsFileCmdScript = false;
+    } else if (strcmp (argv [i], DASH_BATCHCONTINUE.toLatin1().data()) == 0) {
+      isBatchContinue = true;
+    } else if (strcmp (argv [i], DASH_BATCHOUT.toLatin1().data()) == 0) {
+      nextIsBatchOutDirectory = true;
+    } else if (strcmp (argv [i], DASH_BATCHTEMPLATE.toLatin1().data()) == 0) {
+      nextIsBatchTemplateFile = true;
     } else if (strcmp (argv [i], DASH_DEBUG.toLatin1().data()) == 0) {
       isDebug = true;
     } else if (strcmp (argv [i], DASH_DROP_REGRESSION.toLatin1().data()) == 0) {
@@ -409,6 +470,24 @@ void showUsageAndQuit ()
       << "<tr>"
       << "<td>" << QObject::tr ("where") << "</td>"
       << "<td>&nbsp;</td>"
+      << "</tr>"
+      << "<tr>"
+      << "<td>" << DASH_BATCHTEMPLATE.toLatin1().data() << "</td>"
+      << "<td>"
+      << QObject::tr ("Batch mode: digitize every image file using this template document").toLatin1().data()
+      << "</td>"
+      << "</tr>"
+      << "<tr>"
+      << "<td>" << DASH_BATCHOUT.toLatin1().data() << "</td>"
+      << "<td>"
+      << QObject::tr ("Batch mode: directory for the exported files and the summary").toLatin1().data()
+      << "</td>"
+      << "</tr>"
+      << "<tr>"
+      << "<td>" << DASH_BATCHCONTINUE.toLatin1().data() << "</td>"
+      << "<td>"
+      << QObject::tr ("Batch mode: continue with the remaining files after a failed file").toLatin1().data()
+      << "</td>"
       << "</tr>"
       << "<tr>"
       << "<td>" << DASH_DEBUG.toLatin1().data() << "</td>"
