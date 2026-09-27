@@ -4,9 +4,9 @@
  * LICENSE or go to gnu.org/licenses for details. Distribution requires prior written permission.     *
  ******************************************************************************************************/
 
+#include "Logger.h"
 #include "QualityReport.h"
 #include <QtTest/QtTest>
-#include <QDebug>
 #include <QStringList>
 #include "Test/TestQualityReport.h"
 
@@ -90,10 +90,12 @@ TestQualityReport::TestQualityReport(QObject *parent) :
 
 void TestQualityReport::initTestCase ()
 {
-  // Temporary diagnostic while the failure of this test is being tracked down: it shows whether the
-  // test process reaches the first test at all, since the failing assertion is not appearing in the
-  // continuous integration log.
-  qWarning ("TestQualityReport started, Qt %s", qVersion ());
+  // The checks log through the LOG4CPP macros, which dereference the global mainCat. Every other
+  // CLI test calls initializeLogging first, and without it mainCat stays uninitialized, which
+  // crashes the test before the first assertion (seen on CI as a failure with no output at all).
+  initializeLogging ("engauge_test",
+                     "engauge_test.log",
+                     false); // NO_DEBUG
 }
 
 void TestQualityReport::cleanupTestCase ()
