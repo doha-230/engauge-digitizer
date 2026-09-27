@@ -77,7 +77,9 @@ jobs:
           $env:QT_QPA_PLATFORM = "offscreen"
           cmake --preset windows-msvc-release
           cmake --build --preset windows-msvc-release
-          ctest --preset windows-msvc-release
+          # --output-on-failure so that a failing assertion is visible in the log instead of only
+          # the test name: a failure that cannot be diagnosed costs a whole CI cycle
+          ctest --preset windows-msvc-release --output-on-failure
 
       - name: Verify build products
         shell: pwsh

@@ -40,6 +40,19 @@ QList<QualityPoint> makeCurve (const QString &prefix,
   return points;
 }
 
+QList<QualityPoint> makePointsFromCoordinates (const QString &prefix,
+                                               const QList<QPointF> &coordinates)
+{
+  QList<QualityPoint> points;
+  for (int index = 0; index < coordinates.count (); index++) {
+    points << makePoint (QString ("%1%2").arg (prefix).arg (index),
+                         coordinates.at (index).x (),
+                         coordinates.at (index).y ());
+  }
+
+  return points;
+}
+
 // Straight rising line through the origin
 QList<QualityPoint> makeStraightCurve (const QString &prefix)
 {
@@ -106,10 +119,15 @@ void TestQualityReport::testRepeatedAndReversedXAreReported ()
 {
   QStringList curveNames;
   QList<QList<QualityPoint> > curvesPoints;
-  QList<double> yValues;
-  yValues << 0 << 10 << 10 << 30 << 20 << 50; // x repeats at the third point, then goes backwards
+  QList<QPointF> coordinates;
+  coordinates << QPointF (0, 0)
+              << QPointF (10, 10)
+              << QPointF (10, 20)  // x repeats the previous point
+              << QPointF (30, 30)
+              << QPointF (20, 40)  // x goes backwards
+              << QPointF (50, 50);
   curveNames << "Curve1";
-  curvesPoints << makeCurve ("Points", yValues);
+  curvesPoints << makePointsFromCoordinates ("Points", coordinates);
 
   QualityReport report;
   report.analyzeCurves (curveNames,
