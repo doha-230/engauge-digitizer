@@ -14,9 +14,11 @@
 #include "Logger.h"
 #include "MainWindow.h"
 #include "PointStyle.h"
+#include "Settings.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QSettings>
 #include <QGraphicsScene>
 #include <QLabel>
 #include <qmath.h>
@@ -100,6 +102,42 @@ void DlgSettingsSegments::createControls (QGridLayout *layout,
                                            "This value has a lower limit"));
   connect (m_spinPointSeparation, SIGNAL (valueChanged (const QString &)), this, SLOT (slotPointSeparation (const QString &)));
   layout->addWidget (m_spinPointSeparation, row++, 2);
+
+  // The Auto Curve Detection options below are application preferences rather than document data,
+  // so they are read from and written to the settings directly
+  QLabel *labelAutoCurveMaxGap = new QLabel (QString ("%1:").arg (tr ("Auto Curve Detection maximum gap (pixels)")));
+  layout->addWidget (labelAutoCurveMaxGap, row, 1);
+
+  m_spinAutoCurveMaxGap = new QSpinBox;
+  m_spinAutoCurveMaxGap->setRange (1, 20);
+  m_spinAutoCurveMaxGap->setWhatsThis (tr ("Auto Curve Detection Maximum Gap\n\n"
+                                           "Largest distance in pixels between two touching curve pieces that the Auto Curve "
+                                           "Detection tool still treats as one curve. Pieces further apart are treated as "
+                                           "separate curves."));
+  connect (m_spinAutoCurveMaxGap, SIGNAL (valueChanged (const QString &)), this, SLOT (slotAutoCurveMaxGap (const QString &)));
+  layout->addWidget (m_spinAutoCurveMaxGap, row++, 2);
+
+  QLabel *labelAutoCurveMaxTurn = new QLabel (QString ("%1:").arg (tr ("Auto Curve Detection maximum turn (degrees)")));
+  layout->addWidget (labelAutoCurveMaxTurn, row, 1);
+
+  m_spinAutoCurveMaxTurn = new QSpinBox;
+  m_spinAutoCurveMaxTurn->setRange (15, 90);
+  m_spinAutoCurveMaxTurn->setWhatsThis (tr ("Auto Curve Detection Maximum Turn\n\n"
+                                            "Largest angle in degrees between two consecutive curve pieces before the Auto Curve "
+                                            "Detection walk is cut. Small values stop the walk earlier, which keeps the chain from "
+                                            "following a grid line or text that touches the curve, at the cost of stopping also at "
+                                            "sharp corners of the curve itself."));
+  connect (m_spinAutoCurveMaxTurn, SIGNAL (valueChanged (const QString &)), this, SLOT (slotAutoCurveMaxTurn (const QString &)));
+  layout->addWidget (m_spinAutoCurveMaxTurn, row++, 2);
+
+  m_chkAutoCurveFunctionAssumption = new QCheckBox;
+  m_chkAutoCurveFunctionAssumption->setWhatsThis (tr ("Auto Curve Detection Function Assumption\n\n"
+                                                      "Assume the curve is a function, which means the x coordinate in graph coordinates never "
+                                                      "goes backwards. The Auto Curve Detection walk is cut where the assumption is violated, "
+                                                      "which keeps the chain from following a vertical grid line. Turn this off for relation "
+                                                      "curves that legitimately loop back."));
+  connect (m_chkAutoCurveFunctionAssumption, SIGNAL (stateChanged (int)), this, SLOT (slotAutoCurveFunctionAssumption (int)));
+  layout->addWidget (m_chkAutoCurveFunctionAssumption, row++, 2);
 
   QLabel *labelFillCorners = new QLabel (QString ("%1:").arg (tr ("Fill corners")));
   layout->addWidget (labelFillCorners, row, 1);
@@ -310,6 +348,21 @@ void DlgSettingsSegments::handleOk ()
                                                       *m_modelSegmentsAfter);
   cmdMediator ().push (cmd);
 
+  // The Auto Curve Detection options are application preferences, so they are stored in the settings
+  // and picked up by DocumentModelSegments the next time a document is loaded
+  {
+    QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+    settings.beginGroup (SETTINGS_GROUP_SEGMENTS);
+
+    settings.setValue (SETTINGS_SEGMENTS_MAX_GAP_PIXELS,
+                       m_spinAutoCurveMaxGap->value ());
+    settings.setValue (SETTINGS_SEGMENTS_MAX_TURN_DEGREES,
+                       m_spinAutoCurveMaxTurn->value ());
+    settings.setValue (SETTINGS_SEGMENTS_FUNCTION_ASSUMPTION,
+                       m_chkAutoCurveFunctionAssumption->isChecked ());
+    settings.endGroup ();
+  }
+
   hide ();
 }
 
@@ -338,6 +391,9 @@ void DlgSettingsSegments::load (CmdMediator &cmdMediator)
 
   // Populate controls
   m_spinPointSeparation->setValue (qFloor (m_modelSegmentsAfter->pointSeparation()));
+  m_spinAutoCurveMaxGap->setValue (qFloor (m_modelSegmentsAfter->maxGapPixels ()));
+  m_spinAutoCurveMaxTurn->setValue (qFloor (m_modelSegmentsAfter->maxTurnDegrees ()));
+  m_chkAutoCurveFunctionAssumption->setChecked (m_modelSegmentsAfter->functionAssumption ());
   m_spinMinLength->setValue (qFloor (m_modelSegmentsAfter->minLength()));
   m_chkFillCorners->setChecked (m_modelSegmentsAfter->fillCorners ());
   m_spinLineWidthActive->setValue (qFloor (m_modelSegmentsAfter->lineWidthActive()));
@@ -364,6 +420,27 @@ void DlgSettingsSegments::setSmallDialogs(bool smallDialogs)
   if (!smallDialogs) {
     setMinimumHeight (MINIMUM_HEIGHT);
   }
+}
+
+void DlgSettingsSegments::slotAutoCurveMaxGap (const QString &maxGap)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsSegments::slotAutoCurveMaxGap";
+
+  m_modelSegmentsAfter->setMaxGapPixels (maxGap.toDouble ());
+}
+
+void DlgSettingsSegments::slotAutoCurveMaxTurn (const QString &maxTurn)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsSegments::slotAutoCurveMaxTurn";
+
+  m_modelSegmentsAfter->setMaxTurnDegrees (maxTurn.toDouble ());
+}
+
+void DlgSettingsSegments::slotAutoCurveFunctionAssumption (int state)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsSegments::slotAutoCurveFunctionAssumption";
+
+  m_modelSegmentsAfter->setFunctionAssumption (state == Qt::Checked);
 }
 
 void DlgSettingsSegments::slotFillCorners (int state)

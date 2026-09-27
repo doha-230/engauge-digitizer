@@ -44,6 +44,9 @@ public:
 
 private slots:
   void slotFillCorners (int state);
+  void slotAutoCurveFunctionAssumption (int state);
+  void slotAutoCurveMaxGap (const QString &);
+  void slotAutoCurveMaxTurn (const QString &);
   void slotInactiveOpacity (const QString &);
   void slotLineColor (const QString &);
   void slotLineWidthActive (int);
@@ -76,6 +79,9 @@ private:
   ButtonWhatsThis *m_btnWhatsThis;
   QSpinBox *m_spinMinLength;
   QSpinBox *m_spinPointSeparation;
+  QSpinBox *m_spinAutoCurveMaxGap;
+  QSpinBox *m_spinAutoCurveMaxTurn;
+  QCheckBox *m_chkAutoCurveFunctionAssumption;
   QCheckBox *m_chkFillCorners;
   QSpinBox *m_spinLineWidthActive;
   QSpinBox *m_spinLineWidthInactive;  
