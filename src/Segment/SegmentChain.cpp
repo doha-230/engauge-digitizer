@@ -120,10 +120,11 @@ QList<Segment*> SegmentChain::chainFrom (Segment *segmentStart) const
       }
 
       // Direction continuity gate: a curve keeps its direction where two scanned pieces touch,
-      // while a grid line crosses the curve at a large angle and a glyph turns randomly
+      // while a grid line crosses the curve at a large angle and a glyph turns randomly. Both lines
+      // point in the walking direction, so two collinear pieces measure zero degrees apart.
       const QLineF lineEndCurrent = left ? QLineF (endOf (current), startOf (current)) :
                                      QLineF (startOf (current), endOf (current));
-      const QLineF lineStartNext = left ? QLineF (startOf (next), endOf (next)) :
+      const QLineF lineStartNext = left ? QLineF (endOf (next), startOf (next)) :
                                     QLineF (startOf (next), endOf (next));
       const double angleBetween = lineEndCurrent.angleTo (lineStartNext);
       if (angleBetween > m_maxTurnDegrees) {
