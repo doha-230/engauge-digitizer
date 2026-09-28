@@ -8,6 +8,7 @@
 #include "MainWindow.h"
 #include <QGridLayout>
 #include <QSpacerItem>
+#include <QtGlobal>
 #include "Version.h"
 
 DlgAbout::DlgAbout (MainWindow &mainWindow) :
@@ -18,7 +19,17 @@ DlgAbout::DlgAbout (MainWindow &mainWindow) :
   setTextFormat (Qt::RichText);
 
   // Do not embed single quotes in the strings below since that will interfere with the translations
-  setText (QString ("<p>%1 %2 %3</p> <p>&copy; Mark Mitchell</p><p>%4</p><p>%5</p><p>%6</p><p>%7</p><p>%8:</p>"
+  // Build information (version, Qt runtime, build date) helps an offline support conversation: the
+  // user can copy what they see instead of describing it
+  const QString buildInfo = QString ("<p>%1 %2</p><p>%3 %4</p><p>%5 %6</p>")
+                              .arg (tr ("Version"))
+                              .arg (VERSION_NUMBER)
+                              .arg (tr ("Qt runtime"))
+                              .arg (qVersion ())
+                              .arg (tr ("Build date"))
+                              .arg (__DATE__);
+
+  setText (QString ("<p>%1 %2 %3</p><p>%14</p> <p>&copy; Mark Mitchell</p><p>%4</p><p>%5</p><p>%6</p><p>%7</p><p>%8:</p>"
                     "<ul>"
                      "<li><a href=\"https://github.com/markummitchell/engauge-digitizer\">%9</a></li>"
                      "<li><a href=\"https://gitter.im/markummitchell/engauge-digitizer\">%10</a></li>"
@@ -46,7 +57,8 @@ DlgAbout::DlgAbout (MainWindow &mainWindow) :
            .arg (tr ("Project Home Page"))
            .arg (tr ("Gitter Forum"))
            .arg (tr ("Project Page"))
-           .arg (tr ("Project Page")));
+           .arg (tr ("Project Page"))
+           .arg (buildInfo));
 
   // Calling setMinimumWidth has no effect so we insert spacer to prevent overly narrow dialog in linux.
   // Hack from https://forum.qt.io/topic/24213/qmessagebox-too-small/9

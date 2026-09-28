@@ -307,7 +307,7 @@ if(WIN32 AND FFTW3_RUNTIME_LIBRARY)
     DESTINATION "${_engauge_runtime_install_directory}"
   )
 endif()
-install(FILES LICENSE README.md
+install(FILES LICENSE README.md docs/OFFLINE_UPDATE.md
   DESTINATION "${_engauge_license_install_directory}"
 )
 
