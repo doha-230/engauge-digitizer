@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QPalette>
 #include <QSettings>
+#include <QStyle>
 #include <QStyleFactory>
 
 namespace {
