@@ -7,7 +7,7 @@ param(
     [string]$FftwRoot,
 
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = "12.11.2",
+    [string]$Version = "12.11.3",
 
     [string]$BuildDirectory = "cmake-build\windows-msvc-release",
 

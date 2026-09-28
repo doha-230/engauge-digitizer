@@ -31,8 +31,8 @@ GUI regression count must match `test/*.test.commandline`.
 windows and crops of the graph area only. Capture these on Windows and add them as
 `docs/images/`:
 
-1. `docs/images/auto-curve-detection.png` — the main window right after one click with the **Auto
-   Curve Detection** tool on a graph with scan gaps (points created along the whole curve).
+1. `docs/images/auto-curve-detection.png` — the main window after selecting the start and end with
+   the **Auto Curve Detection** tool on a graph with crossings (points along the chosen route).
 2. `docs/images/quality-report.png` — the `Digitize > Quality Report...` dialog with a few listed
    candidates.
 
