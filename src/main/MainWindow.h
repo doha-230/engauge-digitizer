@@ -406,7 +406,7 @@ private slots:
   void slotViewZoomFactor (ZoomFactor);
   void slotViewZoomFactorInt (int);
   void slotViewZoom (int);
-  QComboBox *createZoomComboForMenu (QObject *parent);
+  QComboBox *createZoomComboForMenu (QWidget *parent);
   void slotZoomComboActivated (int);
   void slotViewZoomIn ();
   void slotViewZoomInFromWheelEvent ();

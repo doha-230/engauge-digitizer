@@ -3753,7 +3753,7 @@ void MainWindow::slotViewZoomFactorInt (int zoom)
   slotViewZoomFactor (static_cast<ZoomFactor> (zoom));
 }
 
-QComboBox *MainWindow::createZoomComboForMenu (QObject *parent)
+QComboBox *MainWindow::createZoomComboForMenu (QWidget *parent)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::createZoomComboForMenu";
 

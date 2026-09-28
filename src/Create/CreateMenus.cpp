@@ -13,6 +13,9 @@
 #include <QActionGroup>
 #include <QMenu>
 #include <QMenuBar>
+#include <QSettings>
+#include <QWidgetAction>
+#include "Settings.h"
 
 CreateMenus::CreateMenus()
 {
@@ -113,7 +116,13 @@ void CreateMenus::create(MainWindow &mw)
       mw.m_menuViewZoom->addAction (mw.m_actionZoomOut);
       mw.m_menuViewZoom->addAction (mw.m_actionZoomIn);
       mw.m_menuViewZoom->addSeparator ();
-      mw.m_menuViewZoom->addWidget (mw.createZoomComboForMenu (mw.m_menuViewZoom));
+      {
+        // A plain widget cannot be added to a menu; the QWidgetAction wrapper can
+        QComboBox *zoomCombo = mw.createZoomComboForMenu (mw.m_menuViewZoom);
+        QWidgetAction *zoomComboAction = new QWidgetAction (mw.m_menuViewZoom);
+        zoomComboAction->setDefaultWidget (zoomCombo);
+        mw.m_menuViewZoom->addAction (zoomComboAction);
+      }
       mw.m_menuViewZoom->addAction (mw.m_actionZoomFill);
     } else {
       mw.m_menuViewZoom->addAction (mw.m_actionZoomOut);
