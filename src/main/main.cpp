@@ -9,6 +9,7 @@
 #include "FittingCurveCoefficients.h"
 #include "ImportImageExtensions.h"
 #include "BatchProcessor.h"
+#include "ThemeManager.h"
 #include "Logger.h"
 #include "MainWindow.h"
 #include "MainWindowMsg.h"
@@ -154,6 +155,10 @@ int main(int argc, char *argv[])
 
   QApplication app(argc, argv);
 
+  // Prefer smooth scaling of the pixmaps on high DPI displays. The automatic scaling itself is
+  // already the Qt 6 default, so only the pixmap rounding policy needs a hint
+  QApplication::setAttribute (Qt::AA_UseHighDpiPixmaps);
+
   const QString settingsDirectory = qEnvironmentVariable ("ENGAUGE_SETTINGS_DIR");
   if (!settingsDirectory.isEmpty ()) {
     QSettings::setDefaultFormat (QSettings::IniFormat);
@@ -187,6 +192,10 @@ int main(int argc, char *argv[])
                 isUpgrade,
                 loadStartupFiles,
                 commandLineWithoutLoadStartupFiles);
+
+  // Theme, before the main window is created so it starts in the right colors. The default is
+  // System, which is the upstream appearance
+  ThemeManager::apply (ThemeManager::theme ());
 
   // Logging
   initializeLogging ("engauge",

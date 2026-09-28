@@ -69,6 +69,7 @@ extern const QString SETTINGS_GROUP_GENERAL;
 extern const QString SETTINGS_GROUP_IMPORT;
 extern const QString SETTINGS_GROUP_IMPORT_CROPPING;
 extern const QString SETTINGS_GROUP_MAIN_WINDOW;
+extern const QString SETTINGS_MAIN_WINDOW_THEME;
 extern const QString SETTINGS_HELP_POS;
 extern const QString SETTINGS_HELP_SIZE;
 extern const QString SETTINGS_HIGHLIGHT_OPACITY;

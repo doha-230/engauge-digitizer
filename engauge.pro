@@ -475,6 +475,7 @@ HEADERS  += \
     src/Logger/Logger.h \
     src/Logger/LoggerUpload.h \
     src/main/BatchProcessor.h \
+    src/main/ThemeManager.h \
     src/main/TemplateManager.h \
     src/main/AutosaveRecovery.h \
     src/main/MainDirectoryPersist.h \
@@ -937,6 +938,7 @@ SOURCES += \
     src/Logger/LoggerUpload.cpp \
     src/main/main.cpp \
     src/main/BatchProcessor.cpp \
+    src/main/ThemeManager.cpp \
     src/main/TemplateManager.cpp \
     src/main/AutosaveRecovery.cpp \
     src/main/MainDirectoryPersist.cpp \

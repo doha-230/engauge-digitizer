@@ -20,6 +20,7 @@
 #include <QLabel>
 #include <qmath.h>
 #include <QPushButton>
+#include "ThemeManager.h"
 #include <QSettings>
 #include <QSpinBox>
 #include <QWhatsThis>
@@ -96,6 +97,23 @@ void DlgSettingsGeneral::createControls (QGridLayout *layout,
                                          "changed since the last review."));
   connect (m_chkAxisValidation, SIGNAL (toggled (bool)), this, SLOT (slotAxisValidation (bool)));
   layout->addWidget (m_chkAxisValidation, row++, 1, 1, 2);
+
+  QLabel *labelTheme = new QLabel (QString ("%1:").arg (tr ("Theme")));
+  layout->addWidget (labelTheme, row, 0);
+
+  m_cmbTheme = new QComboBox;
+  m_cmbTheme->addItem (tr ("System"));
+  m_cmbTheme->addItem (tr ("Light"));
+  m_cmbTheme->addItem (tr ("Dark"));
+  m_cmbTheme->setWhatsThis (tr ("Theme\n\n"
+                                "Application colors. System (the default) uses the platform colors, which is the "
+                                "appearance of the original application. Light and Dark force a consistent palette "
+                                "independent of the platform.\n\n"
+                                "Curve colors that the user assigned are never changed by the theme, which keeps a "
+                                "color calibrated scan readable in every theme."));
+  connect (m_cmbTheme, SIGNAL (currentTextChanged (const QString &)), this, SLOT (slotTheme (const QString &)));
+  layout->addWidget (m_cmbTheme, row, 1);
+  row++;
 
   m_chkAutosave = new QCheckBox (tr ("Auto-save a recovery file while the document is modified"));
   m_chkAutosave->setWhatsThis (tr ("Auto-save Recovery File\n\n"
@@ -202,6 +220,8 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
     m_chkAxisValidation->setChecked (settings.value (SETTINGS_GENERAL_AXIS_VALIDATION,
                                                      QVariant (false)).toBool ());
+    m_cmbTheme->setCurrentText (settings.value (SETTINGS_MAIN_WINDOW_THEME,
+                                                QVariant ("System")).toString ());
     m_chkAutosave->setChecked (settings.value (SETTINGS_GENERAL_AUTOSAVE_ENABLED,
                                                QVariant (false)).toBool ());
     m_spinAutosaveInterval->setValue (AutosaveRecovery::intervalMinutes ());
@@ -220,6 +240,20 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
 void DlgSettingsGeneral::setSmallDialogs(bool /* smallDialogs */)
 {
+}
+
+void DlgSettingsGeneral::slotTheme (const QString &theme)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotTheme";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_MAIN_WINDOW);
+  settings.setValue (SETTINGS_MAIN_WINDOW_THEME,
+                     theme);
+  settings.endGroup ();
+
+  // Apply immediately, so the user sees the result without restarting
+  ThemeManager::apply (theme);
 }
 
 void DlgSettingsGeneral::slotAxisValidation (bool review)

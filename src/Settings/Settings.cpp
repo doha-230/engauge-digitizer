@@ -33,7 +33,8 @@ const QString SETTINGS_FITTING_WINDOW_DOCK_GEOMETRY ("fittingWindowDockGeometry"
 const QString SETTINGS_GEOMETRY_WINDOW_DOCK_AREA ("geometryWIndowDockArea");
 const QString SETTINGS_GEOMETRY_WINDOW_DOCK_GEOMETRY ("geometryWindowGeometry");
 const QString SETTINGS_GEOMETRY_WINDOW_VISIBLE ("geometryWindowVisible");
-const QString SETTINGS_GROUP_MAIN_WINDOW ("MainWindow"); // Capitalize both M and W since this is a group string
+const QString SETTINGS_GROUP_MAIN_WINDOW ("MainWindow");
+const QString SETTINGS_MAIN_WINDOW_THEME ("theme"); // Capitalize both M and W since this is a group string
 const QString SETTINGS_HELP_POS ("helpPos");
 const QString SETTINGS_HELP_SIZE ("helpSize");
 const QString SETTINGS_HIGHLIGHT_OPACITY ("highlightOpacity");
