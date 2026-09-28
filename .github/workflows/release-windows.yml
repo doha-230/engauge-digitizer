@@ -144,6 +144,12 @@ jobs:
             -CreateInstaller `
             -InnoCompiler $env:INNO_COMPILER
 
+      - name: Replay curve properties regression with packaged portable
+        shell: pwsh
+        run: |
+          .\dev\windows\test_portable_regression.ps1 `
+            -PortableRoot "dist\Engauge Digitizer"
+
       - name: Test silent install, launch, and uninstall
         shell: pwsh
         run: |

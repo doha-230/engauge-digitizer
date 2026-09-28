@@ -85,8 +85,13 @@ void CmdSettingsCurveProperties::cmdRedo ()
 
   restoreState ();
   saveOrCheckPreCommandDocumentStateHash (document ());
-  document().updatePointOrdinals (mainWindow().transformation());
+  if (!m_hasCurvesGraphsBefore) {
+    // Function connections reorder points by x/theta. Keep the relation order for undo.
+    m_curvesGraphsBefore = document().curvesGraphs();
+    m_hasCurvesGraphsBefore = true;
+  }
   mainWindow().updateSettingsCurveStyles(m_modelCurveStylesAfter);
+  document().updatePointOrdinals (mainWindow().transformation());
   mainWindow().updateAfterCommand();
   saveOrCheckPostCommandDocumentStateHash (document ());
 }
@@ -97,8 +102,8 @@ void CmdSettingsCurveProperties::cmdUndo ()
 
   restoreState ();
   saveOrCheckPostCommandDocumentStateHash (document ());
-  document().updatePointOrdinals (mainWindow().transformation());
   mainWindow().updateSettingsCurveStyles(m_modelCurveStylesBefore);
+  document().setCurvesGraphs(m_curvesGraphsBefore);
   mainWindow().updateAfterCommand();
   saveOrCheckPreCommandDocumentStateHash (document ());
 }

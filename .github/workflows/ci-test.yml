@@ -298,15 +298,18 @@ jobs:
           }
 
           $archive = Join-Path $env:RUNNER_TEMP `
-            'Engauge-Digitizer-12.11.2-Windows-x64-Portable.zip'
+            'Engauge-Digitizer-12.11.3-Windows-x64-Portable.zip'
           Compress-Archive `
             -Path (Join-Path $portableRoot '*') `
             -DestinationPath $archive `
             -CompressionLevel Optimal
 
+          .\dev\windows\test_portable_regression.ps1 `
+            -PortableRoot $portableRoot
+
       - name: Upload Windows portable package
         uses: actions/upload-artifact@v4
         with:
-          name: Engauge-Digitizer-12.11.2-Windows-x64-Portable
-          path: ${{ runner.temp }}/Engauge-Digitizer-12.11.2-Windows-x64-Portable.zip
+          name: Engauge-Digitizer-12.11.3-Windows-x64-Portable
+          path: ${{ runner.temp }}/Engauge-Digitizer-12.11.3-Windows-x64-Portable.zip
           if-no-files-found: error

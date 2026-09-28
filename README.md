@@ -122,7 +122,7 @@ the long descriptions.
   verification and portable deployment assembly — in two parallel Windows jobs with build caching
 - Every release: silent install, launch and uninstall test, and SHA-256 checksums before the release
   is published
-- The 83 GUI regression cases under `test/` are run locally with `src/build_and_run_all_gui_tests`
+- The 84 GUI regression cases under `test/` are run locally with `src/build_and_run_all_gui_tests`
 
 ### Support
 

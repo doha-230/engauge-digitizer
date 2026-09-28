@@ -1133,7 +1133,10 @@ int Document::versionFromFile (QFile *file) const
       if (attributes.contains (DOCUMENT_SERIALIZE_APPLICATION_VERSION_NUMBER)) {
 
         QDomElement elem = node.toElement();
-        version = qFloor (elem.attribute (DOCUMENT_SERIALIZE_APPLICATION_VERSION_NUMBER).toDouble());
+        // Versions may contain a patch component (for example 12.11.2), which
+        // cannot be parsed as a single floating-point number.
+        version = elem.attribute (DOCUMENT_SERIALIZE_APPLICATION_VERSION_NUMBER)
+                      .section ('.', 0, 0).toInt();
       }
     }
   }
