@@ -150,6 +150,16 @@ jobs:
             -Arch amd64 -HostArch amd64 -SkipAutomaticLocation
           $env:Path = "$env:QT_ROOT\bin;$env:Path"
           $env:QT_QPA_PLATFORM = "offscreen"
+          # The qmake job used to create the FFTW import library as a side effect of its build, and
+          # this job relied on that hidden dependency. Now that the two build in parallel jobs, the
+          # import library has to be created here as well: FindFFTW3 needs libfftw3-3.lib, which the
+          # zip does not contain (it ships the .def and the .dll)
+          if (-not (Test-Path "$env:FFTW_HOME\lib\libfftw3-3.lib")) {
+            lib.exe /NOLOGO /MACHINE:X64 "/DEF:$env:FFTW_HOME\lib\libfftw3-3.def" "/OUT:$env:FFTW_HOME\lib\libfftw3-3.lib"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Creating the FFTW import library failed with exit code $LASTEXITCODE."
+            }
+          }
           cmake --preset windows-msvc-release
           cmake --build --preset windows-msvc-release
           # --output-on-failure so that a failing assertion is visible in the log instead of only
