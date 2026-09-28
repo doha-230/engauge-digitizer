@@ -89,6 +89,8 @@ SmartScreen may ask for confirmation.
 | **Batch processing** | Command line | `Engauge -batchtemplate <template.dig> [-batchout <dir>] [-batchcontinue] <images...>` digitizes a whole folder from a template document. |
 | **New From Template** | `File > New From Template...` | Digitize a new image with the axis points, filters and export format of a template document. |
 | **Export presets** | `Settings > Export Format` | Save and restore the complete export format under a name. |
+| **Point Match options and keys** | `Settings > Point Match` | Correlation threshold and a search radius multiplier (0 keeps the whole image search); `Down` skips a candidate without adding a point, `Escape` skips the remaining candidates of the round. |
+| **Arrow key acceleration** | Any selected point | A plain arrow key still moves one screen pixel; `Shift`+arrow moves 10 pixels, `Control`+arrow 50. |
 | **Themes and high DPI** | `Settings > General` | Light and Dark themes (user curve colors are never touched), crisp icons at 150% and 200% scaling. |
 | **Compact zoom** | `Settings > General` | Replaces the twenty entry zoom menu with a combo plus fill. |
 | **About and diagnostics** | `Help > About`, `Help > Copy Diagnostics` | Version, Qt runtime and build date; diagnostics to the clipboard or a file — nothing is sent anywhere. |
@@ -229,6 +231,8 @@ Windows 전용이 아닌 수정·개선은 업스트림 PR로 정리해 되돌�
 | **배치 처리** | 명령줄 | `Engauge -batchtemplate <template.dig> [-batchout <dir>] [-batchcontinue] <이미지들...>` — 템플릿 문서로 폴더 전체를 디지타이즈합니다. |
 | **템플릿으로 새 문서** | `File > New From Template...` | 템플릿 문서의 축 점·필터·내보내기 형식으로 새 이미지를 디지타이즈합니다. |
 | **내보내기 프리셋** | `Settings > Export Format` | 내보내기 형식 전체를 이름으로 저장·복원합니다. |
+| **Point Match 옵션·키** | `Settings > Point Match` | 상관 임계값과 탐색 반경 배수(0이면 이미지 전체 탐색), `Down`은 후보를 건너뛰고 점을 추가하지 않으며 `Escape`는 이번 라운드의 남은 후보를 모두 건너뜁니다. |
+| **커서키 가속** | 선택된 점 | 기본 방향키는 화면 1픽셀 그대로이고, `Shift`+방향키는 10픽셀, `Control`+방향키는 50픽셀 이동합니다. |
 | **테마·고해상도** | `Settings > General` | Light·Dark 테마(사용자 커브 색은 불변), 150%·200% 배율에서 선명한 아이콘. |
 | **컴팩트 줌** | `Settings > General` | 20개 항목 줌 메뉴를 콤보+Fill로 교체합니다. |
 | **정보·진단** | `Help > About`, `Help > Copy Diagnostics` | 버전·Qt 런타임·빌드 날짜, 클립보드/파일 진단 — 어디로도 전송하지 않습니다. |
