@@ -21,6 +21,7 @@
 #include "CmdGuidelineAddXT.h"
 #include "CmdGuidelineAddYR.h"
 #include "CmdMediator.h"
+#include "DiagnosticsCollector.h"
 #include "CmdSelectCoordSystem.h"
 #include "CmdStackShadow.h"
 #include "ColorFilter.h"
@@ -2539,6 +2540,11 @@ QString MainWindow::documentIdentity () const
   return (m_engaugeFile == EMPTY_FILENAME) ? QString () : m_engaugeFile;
 }
 
+QString MainWindow::currentDocumentPath () const
+{
+  return m_currentFileWithPathAndFileExtension;
+}
+
 bool MainWindow::saveDocumentToPath (const QString &fileName)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::saveDocumentToPath fileName=" << fileName.toLatin1().data();
@@ -3142,6 +3148,29 @@ void MainWindow::slotGuidelineDragged(QString identifierReplaced,
                                                  draggedOffscreen);
 
   m_cmdMediator->push (cmd);
+}
+
+void MainWindow::slotHelpCopyDiagnostics ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotHelpCopyDiagnostics";
+
+  const QString diagnostics = DiagnosticsCollector::collect (*this);
+
+  QApplication::clipboard ()->setText (diagnostics);
+
+  // Optional file copy next to the clipboard, for attaching to a report. Everything stays local
+  QString fileName = QFileDialog::getSaveFileName (this,
+                                                   tr ("Save Diagnostics"),
+                                                   QDir::homePath () + "/engauge-diagnostics.txt",
+                                                   tr ("Text files (*.txt);;All files (*.*)"));
+  if (!fileName.isEmpty ()) {
+    QFile file (fileName);
+    if (file.open (QIODevice::WriteOnly | QIODevice::Text)) {
+      file.write (diagnostics.toUtf8 ());
+    }
+  }
+
+  m_statusBar->showTemporaryMessage (tr ("Diagnostics copied to the clipboard"));
 }
 
 void MainWindow::slotHelpAbout()

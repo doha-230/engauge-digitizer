@@ -378,6 +378,15 @@ void CreateActions::createHelp (MainWindow &mw)
   mw.m_actionHelpAbout->setStatusTip (tr ("About the application."));
   mw.m_actionHelpAbout->setWhatsThis (tr ("About Engauge\n\nAbout the application."));
   connect (mw.m_actionHelpAbout, SIGNAL (triggered ()), &mw, SLOT (slotHelpAbout ()));
+
+  mw.m_actionHelpCopyDiagnostics = new QAction (tr ("Copy Diagnostics"), &mw);
+  mw.m_actionHelpCopyDiagnostics->setStatusTip (tr ("Copy version, system and log diagnostics to the clipboard"));
+  mw.m_actionHelpCopyDiagnostics->setWhatsThis (tr ("Copy Diagnostics\n\n"
+                                                    "Collects the diagnostic facts that a problem report needs: the version, the Qt runtime, "
+                                                    "the build date, the operating system and screen scale, the current document and the "
+                                                    "tail of the application log. Everything is copied to the clipboard, and can be saved "
+                                                    "to a text file next to it. Nothing is sent anywhere."));
+  connect (mw.m_actionHelpCopyDiagnostics, SIGNAL (triggered ()), &mw, SLOT (slotHelpCopyDiagnostics ()));
 }
 
 void CreateActions::createSettings (MainWindow &mw)

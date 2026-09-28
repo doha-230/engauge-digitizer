@@ -207,6 +207,7 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuHelp->addAction (mw.m_actionHelpHelp);
 #endif
   mw.m_menuHelp->addAction (mw.m_actionHelpAbout);
+  mw.m_menuHelp->addAction (mw.m_actionHelpCopyDiagnostics);
 
   mw.updateRecentFileList();
 }

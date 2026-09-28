@@ -359,6 +359,7 @@ private slots:
   void slotGeometryWindowClosed();
   void slotGuidelineDragged(QString, double, bool, GuidelineState);
   void slotHelpAbout();
+  void slotHelpCopyDiagnostics();
   void slotHelpTutorial();
   void slotKeyPress (Qt::Key, bool, Qt::KeyboardModifiers);
   void slotLanguageSelected (QAction *action);
@@ -662,6 +663,7 @@ private:
 
   QMenu *m_menuHelp;
   QAction *m_actionHelpAbout;
+  QAction *m_actionHelpCopyDiagnostics;
   QAction *m_actionHelpChecklistGuideWizard;
   QAction *m_actionHelpHelp;
   QAction *m_actionHelpTutorial;
@@ -795,6 +797,9 @@ private:
   // Write the current document to an arbitrary path, without touching the document identity,
   // the recent file list, the undo stack or the status bar. Used by the autosave.
   bool saveDocumentToPath (const QString &fileName);
+
+  /// Path and file name of the current document, for diagnostics. Empty when no document is loaded
+  QString currentDocumentPath () const;
 
   // Key that identifies the document being edited for the recovery file. Empty for a document
   // that has never been saved.
