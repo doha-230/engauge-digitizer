@@ -22,9 +22,8 @@ struct SegmentChainLink {
 
 /// Chain of connected Segments, walked from the clicked Segment out to both ends.
 ///
-/// This class assumes curves do not branch, which is the documented premise of the Auto Curve
-/// Detection mode: each Segment then has at most one neighbor on each side, so the chain is walked
-/// with a simple bidirectional loop instead of a graph search.
+/// At crossings, the walk selects the neighbor with the smallest direction change on each side.
+/// It does not explore multiple paths through a branch.
 class SegmentChain
 {
 public:
@@ -40,6 +39,11 @@ public:
   /// means the chain was cut by a direction change (the caller decides what to do).
   QList<Segment*> chainFrom (Segment *segmentStart) const;
 
+  /// Lowest-cost route between two selected pieces. Returns an empty list when the pieces cannot
+  /// be connected under the gap and turn limits. The returned pieces run left to right.
+  QList<Segment*> pathBetween (Segment *segmentStart,
+                               Segment *segmentEnd) const;
+
   /// True when the walk stopped early because two consecutive segments meet at an angle above the
   /// maximum. Only valid after chainFrom returned a non-empty list.
   bool stoppedAtAngle () const;
@@ -51,7 +55,7 @@ public:
 private:
   SegmentChain ();
 
-  /// Neighbor of a segment on the left (lower firstPoint x) or right (higher firstPoint x), or null
+  /// Best continuous neighbor on the left or right, or null if none passes the gates
   Segment *neighborOf (Segment *segment,
                        bool left) const;
 

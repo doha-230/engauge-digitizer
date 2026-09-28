@@ -10,6 +10,7 @@
 #include "InactiveOpacity.h"
 #include "Logger.h"
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include <QPen>
 #include "Segment.h"
 #include "SegmentLine.h"
@@ -58,11 +59,11 @@ void SegmentLine::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* event */)
   emit (signalHover (false));
 }
 
-void SegmentLine::mousePressEvent(QGraphicsSceneMouseEvent * /* event */)
+void SegmentLine::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "SegmentLine::mousePressEvent";
 
-  m_segment->forwardMousePress();
+  m_segment->forwardMousePress (event->scenePos ());
 }
 
 Segment *SegmentLine::segment() const

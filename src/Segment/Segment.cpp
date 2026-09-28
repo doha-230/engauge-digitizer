@@ -327,6 +327,12 @@ void Segment::forwardMousePress()
   emit signalMouseClickOnSegment (firstPoint ());
 }
 
+void Segment::forwardMousePress (const QPointF &posScene)
+{
+  forwardMousePress ();
+  emit signalMouseClickOnSegmentAt (firstPoint (), posScene);
+}
+
 bool Segment::isCorner (double yLast,
                         double yPrev,
                         double yNext) const

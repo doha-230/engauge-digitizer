@@ -10,6 +10,7 @@
 #include "Test/TestSegmentChain.h"
 
 #include "Segment.h"
+#include "SegmentFactory.h"
 #include "SegmentLine.h"
 #include <QApplication>
 #include <QGraphicsScene>
@@ -31,9 +32,14 @@ public:
 
   Segment *addSegment (double x1, double x2, double y)
   {
-    Segment *segment = new Segment (m_scene, (int) y, false);
+    return addSlopedSegment (x1, y, x2, y);
+  }
+
+  Segment *addSlopedSegment (double x1, double y1, double x2, double y2)
+  {
+    Segment *segment = new Segment (m_scene, (int) y1, false);
     SegmentLine *line = new SegmentLine (m_scene, m_modelSegments, segment);
-    line->setLine (QLineF (x1, y, x2, y));
+    line->setLine (QLineF (x1, y1, x2, y2));
     line->hide (); // The scene here is only a container
 
     segment->appendLineForTest (line);
@@ -174,4 +180,83 @@ void TestSegmentChain::testSharpAngleStopsChain ()
   // The walk stops at the sharp angle instead of following the vertical piece
   QCOMPARE (pieces.count (), 1);
   QVERIFY (chain.stoppedAtAngle ());
+}
+
+void TestSegmentChain::testSmallClockwiseTurnContinues ()
+{
+  ChainFixture fixture;
+  Segment *first = fixture.addSlopedSegment (10, 30, 20, 20);
+  Segment *second = fixture.addSlopedSegment (21, 20, 31, 15);
+  QList<QPair<Segment*, Segment*> > pairs;
+  pairs << qMakePair (first, second);
+
+  SegmentChain chain (linksFor (pairs), 3.0, 45.0);
+  QList<Segment*> pieces = chain.chainFrom (first);
+
+  QCOMPARE (pieces.count (), 2);
+  QCOMPARE (pieces.at (1), second);
+  QVERIFY (!chain.stoppedAtAngle ());
+}
+
+void TestSegmentChain::testCrossingChoosesStraighterPiece ()
+{
+  ChainFixture fixture;
+  Segment *first = fixture.addSlopedSegment (10, 30, 20, 20);
+  Segment *branch = fixture.addSlopedSegment (21, 20, 31, 40);
+  Segment *continuation = fixture.addSlopedSegment (22, 19, 32, 11);
+  QList<QPair<Segment*, Segment*> > pairs;
+  pairs << qMakePair (first, branch) << qMakePair (first, continuation);
+
+  SegmentChain chain (linksFor (pairs), 3.0, 45.0);
+  QList<Segment*> pieces = chain.chainFrom (first);
+
+  QCOMPARE (pieces.count (), 2);
+  QCOMPARE (pieces.at (1), continuation);
+  QVERIFY (!chain.stoppedAtAngle ());
+}
+
+void TestSegmentChain::testEndpointPathChoosesSmoothRoute ()
+{
+  ChainFixture fixture;
+  Segment *start = fixture.addSegment (10, 20, 20);
+  Segment *detour = fixture.addSlopedSegment (21, 20, 30, 22);
+  Segment *straight = fixture.addSegment (21, 30, 20);
+  Segment *end = fixture.addSegment (31, 40, 20);
+  QList<QPair<Segment*, Segment*> > pairs;
+  pairs << qMakePair (start, detour) << qMakePair (detour, end)
+        << qMakePair (start, straight) << qMakePair (straight, end);
+
+  SegmentChain chain (linksFor (pairs), 3.0, 45.0);
+  QList<Segment*> pieces = chain.pathBetween (start, end);
+
+  QCOMPARE (pieces.count (), 3);
+  QCOMPARE (pieces.at (0), start);
+  QCOMPARE (pieces.at (1), straight);
+  QCOMPARE (pieces.at (2), end);
+}
+
+void TestSegmentChain::testEndpointPathRejectsDisconnectedPieces ()
+{
+  ChainFixture fixture;
+  Segment *start = fixture.addSegment (10, 20, 20);
+  Segment *end = fixture.addSegment (35, 45, 20);
+  QList<QPair<Segment*, Segment*> > pairs;
+  pairs << qMakePair (start, end);
+
+  SegmentChain chain (linksFor (pairs), 3.0, 45.0);
+  QVERIFY (chain.pathBetween (start, end).isEmpty ());
+}
+
+void TestSegmentChain::testSameColumnContactIsLinked ()
+{
+  ChainFixture fixture;
+  Segment *start = fixture.addSegment (10, 20, 20);
+  Segment *end = fixture.addSegment (20, 30, 20);
+  SegmentFactory factory (fixture.m_scene, false);
+  SegmentChain chain (factory.chainLinks (fixture.m_segments, 3.0), 3.0, 45.0);
+
+  QList<Segment*> pieces = chain.pathBetween (start, end);
+  QCOMPARE (pieces.count (), 2);
+  QCOMPARE (pieces.at (0), start);
+  QCOMPARE (pieces.at (1), end);
 }

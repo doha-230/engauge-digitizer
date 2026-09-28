@@ -49,6 +49,7 @@ public:
 
   /// Forward mouse press event from a component SegmentLine that was just clicked on
   void forwardMousePress ();
+  void forwardMousePress (const QPointF &posScene);
 
   /// Get method for length in pixels
   double length() const;
@@ -77,6 +78,8 @@ signals:
 
   /// Pass mouse press event, with coordinates of first point in the Segment since that info uniquely identifies the owning Segment
   void signalMouseClickOnSegment (QPointF posSegmentStart);
+  /// Also pass the actual click position to tools that use it as a path endpoint.
+  void signalMouseClickOnSegmentAt (QPointF posSegmentStart, QPointF posClick);
 
 private:
   Segment();

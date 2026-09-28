@@ -17,13 +17,13 @@
   setting that enables them.</P>
 
 <H3>Auto Curve Detection</H3>
-<P>The <B>Digitize &gt; Auto Curve Detection Tool</B> digitizes a whole curve from a single click.
-  Click any piece of the curve and points are placed along every connected piece of it, which removes
-  the tedious work of filling each scan gap by hand. Two gates keep the chain on the curve and can be
+<P>The <B>Digitize &gt; Auto Curve Detection Tool</B> traces between two clicks on a curve.
+  Click its start and end. The tool compares routes through crossings and places points along the
+  smoothest connected route. Press Escape to clear the selected start. Two gates guide the route and can be
   tuned in <B>Settings &gt; Segments</B>:</P>
 <UL>
   <LI><B>Auto Curve Detection maximum gap (pixels)</B> (3 by default) is how far the detection may jump
-    over a break in the curve. Pieces further apart are treated as separate curves.</LI>
+    over a break in the curve. If no route is found, the tool retries with a 12 pixel bridge.</LI>
   <LI><B>Auto Curve Detection maximum turn (degrees)</B> (45 by default) is how much the direction may
     change from one step to the next, which stops the chain from following a grid line, text or an axis
     that touches the curve.</LI>
@@ -32,7 +32,7 @@
     back.</LI>
   <LI><B>Auto Curve Detection point placement</B> decides whether a created point stays on the traced
     path (the upstream behavior) or moves to the middle of the curve band - see below.</LI>
-  <LI>A single detection stops at 5000 points; click again further along a long curve.</LI>
+  <LI>A route estimated to exceed 5000 points is rejected; select shorter sections of a long curve.</LI>
 </UL>
 
 <H3>Digitizing quality report</H3>

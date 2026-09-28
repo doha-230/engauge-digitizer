@@ -16,11 +16,8 @@ class DocumentModelSegments;
 class Segment;
 struct SegmentChainLink;
 
-/// Digitizing state for the Auto Curve Detection mode: one click on any piece of a curve creates
-/// Points along the whole curve, following the chain of touching segment pieces, so gaps where the
-/// scanner dropped branch pixels do not have to be filled by hand.
-///
-/// Premise (documented): curves do not branch. Every piece then has at most one neighbor per side.
+/// Digitizing state for the Auto Curve Detection mode: click the start and end of a curve, then
+/// choose a continuous route through the segment graph between them.
 ///
 /// Sanity gates keep the chain from following things that are not the curve:
 /// - a direction gate cuts the chain where two consecutive pieces meet at too sharp an angle, which
@@ -70,7 +67,7 @@ public:
 
 public slots:
   /// Receive signal from Segment that has been clicked on. The CmdMediator from the begin method will be used
-  void slotMouseClickOnSegment(QPointF);
+  void slotMouseClickOnSegmentAt(QPointF posSegmentStart, QPointF posClick);
 
 private:
   DigitizeStateAutoCurve();
@@ -79,7 +76,9 @@ private:
   void rebuildSegments (CmdMediator *cmdMediator);
 
   /// Create the points along the chain of segments, as one undoable command
-  void createPointsAlongChain (const QList<Segment*> &chain);
+  void createPointsAlongChain (const QList<Segment*> &chain,
+                               const QPointF &posStart,
+                               const QPointF &posEnd);
 
   /// Cut the chain at the piece boundary where the function assumption (no x going backwards in graph
   /// coordinates) is violated. Returns the longest surviving run of pieces.
@@ -89,6 +88,8 @@ private:
   QList<Segment*> m_segments;
   QList<SegmentChainLink> m_links;
   CmdMediator *m_cmdMediator;
+  Segment *m_startSegment;
+  QPointF m_startPosition;
 };
 
 #endif // DIGITIZE_STATE_AUTO_CURVE_H

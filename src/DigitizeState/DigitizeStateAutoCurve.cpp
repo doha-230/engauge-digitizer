@@ -29,9 +29,8 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-// The chain stops growing when two consecutive pieces meet at a bigger angle than this. A curve keeps
-// its direction where two scanned pieces touch, while a grid line crosses the curve at a large angle
-const double DEFAULT_MAX_TURN_DEGREES = 45.0;
+// Retry with a bounded bridge when scanner gaps or crossings disconnect the normal route.
+const double FALLBACK_MAX_GAP_PIXELS = 12.0;
 
 // Hard safety limit on the number of points one detection may create, so a wrong click on a full
 // image of touching lines cannot freeze the application
@@ -40,7 +39,8 @@ const int MAX_POINTS_PER_DETECTION = 5000;
 DigitizeStateAutoCurve::DigitizeStateAutoCurve(DigitizeStateContext &context) :
   QObject (),
   DigitizeStateAbstractBase (context),
-  m_cmdMediator (nullptr)
+  m_cmdMediator (nullptr),
+  m_startSegment (nullptr)
 {
 }
 
@@ -60,10 +60,12 @@ void DigitizeStateAutoCurve::begin (CmdMediator *cmdMediator,
                               << " previous=" << digitizeStateAsString (previousState).toLatin1().data();
 
   m_cmdMediator = cmdMediator;
+  m_startSegment = nullptr;
 
   rebuildSegments (cmdMediator);
 
   context().mainWindow().updateAfterCommand();
+  context().mainWindow().showTemporaryMessage (QObject::tr ("Click the curve start, then its end."));
 }
 
 bool DigitizeStateAutoCurve::canPaste (const Transformation &transformation,
@@ -84,6 +86,12 @@ QCursor DigitizeStateAutoCurve::cursor (CmdMediator * /* cmdMediator */) const
 void DigitizeStateAutoCurve::end ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::end";
+  m_startSegment = nullptr;
+  GraphicsScene &scene = context().mainWindow().scene();
+  SegmentFactory segmentFactory (dynamic_cast<QGraphicsScene &> (scene),
+                                 context().isGnuplot());
+  segmentFactory.clearSegments (m_segments);
+  m_links.clear ();
 }
 
 bool DigitizeStateAutoCurve::guidelinesAreSelectable () const
@@ -105,6 +113,7 @@ void DigitizeStateAutoCurve::handleCurveChange (CmdMediator *cmdMediator)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::handleCurveChange";
 
+  m_startSegment = nullptr;
   rebuildSegments (cmdMediator);
 }
 
@@ -114,6 +123,12 @@ void DigitizeStateAutoCurve::handleKeyPress (CmdMediator *cmdMediator,
                                                                                        Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::handleKeyPress";
+
+  if (key == Qt::Key_Escape) {
+    m_startSegment = nullptr;
+    context().mainWindow().showTemporaryMessage (QObject::tr ("Start point cleared. Click the curve start."));
+    return;
+  }
 
   handleKeyPressArrow (cmdMediator,
                        key,
@@ -160,6 +175,7 @@ void DigitizeStateAutoCurve::updateModelSegments (const DocumentModelSegments & 
 void DigitizeStateAutoCurve::rebuildSegments (CmdMediator *cmdMediator)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::rebuildSegments";
+  m_startSegment = nullptr;
 
   QImage img = context().mainWindow().imageFiltered();
 
@@ -169,8 +185,12 @@ void DigitizeStateAutoCurve::rebuildSegments (CmdMediator *cmdMediator)
 
   segmentFactory.clearSegments (m_segments);
 
+  // Crossings split lines into short pieces. Keep them here so a route can pass through
+  // the crossing even when Segment Fill's minimum length would discard them.
+  DocumentModelSegments tracingModel (cmdMediator->document().modelSegments());
+  tracingModel.setMinLength (1);
   segmentFactory.makeSegments (img,
-                               cmdMediator->document().modelSegments(),
+                               tracingModel,
                                m_segments);
 
   // Connect the click signal of every new segment
@@ -179,12 +199,13 @@ void DigitizeStateAutoCurve::rebuildSegments (CmdMediator *cmdMediator)
 
     Segment *segment = *itr;
 
-    disconnect (segment, SIGNAL (signalMouseClickOnSegment (QPointF)), this, SLOT (slotMouseClickOnSegment (QPointF)));
-    connect (segment, SIGNAL (signalMouseClickOnSegment (QPointF)), this, SLOT (slotMouseClickOnSegment (QPointF)));
+    connect (segment, SIGNAL (signalMouseClickOnSegmentAt (QPointF, QPointF)),
+             this, SLOT (slotMouseClickOnSegmentAt (QPointF, QPointF)));
   }
 
   m_links = segmentFactory.chainLinks (m_segments,
-                                       cmdMediator->document().modelSegments().maxGapPixels ());
+                                       qMax (FALLBACK_MAX_GAP_PIXELS,
+                                             cmdMediator->document().modelSegments().maxGapPixels ()));
 }
 
 QList<Segment*> DigitizeStateAutoCurve::applyFunctionAssumption (const QList<Segment*> &chain,
@@ -238,7 +259,9 @@ QList<Segment*> DigitizeStateAutoCurve::applyFunctionAssumption (const QList<Seg
   return result;
 }
 
-void DigitizeStateAutoCurve::createPointsAlongChain (const QList<Segment*> &chain)
+void DigitizeStateAutoCurve::createPointsAlongChain (const QList<Segment*> &chain,
+                                                     const QPointF &posStart,
+                                                     const QPointF &posEnd)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::createPointsAlongChain"
                               << " pieces=" << chain.count ();
@@ -278,7 +301,28 @@ void DigitizeStateAutoCurve::createPointsAlongChain (const QList<Segment*> &chai
   points = SegmentCenter::centerPoints (points,
                                         context ().mainWindow ().imageFiltered (),
                                         modelSegments.centerStrategy ());
-  if (points.isEmpty ()) {
+  const double xMin = qMin (posStart.x (), posEnd.x ());
+  const double xMax = qMax (posStart.x (), posEnd.x ());
+  QList<QPoint> boundedPoints;
+  for (int index = 0; index < points.count (); index++) {
+    if (points.at (index).x () >= xMin && points.at (index).x () <= xMax) {
+      boundedPoints << points.at (index);
+    }
+  }
+  const QPoint first (qRound (posStart.x ()), qRound (posStart.y ()));
+  const QPoint last (qRound (posEnd.x ()), qRound (posEnd.y ()));
+  if (boundedPoints.isEmpty () || boundedPoints.first () != first) {
+    boundedPoints.prepend (first);
+  }
+  if (boundedPoints.last () != last) {
+    boundedPoints.append (last);
+  }
+  points = boundedPoints;
+  if (points.count () > MAX_POINTS_PER_DETECTION) {
+    QMessageBox::warning (&context().mainWindow(),
+                          context().mainWindow().selectedGraphCurve(),
+                          QObject::tr ("The selected route would create more than %1 points. Select a shorter section.")
+                          .arg (MAX_POINTS_PER_DETECTION));
     return;
   }
 
@@ -321,9 +365,10 @@ void DigitizeStateAutoCurve::createPointsAlongChain (const QList<Segment*> &chai
                               << " points=" << points.count ();
 }
 
-void DigitizeStateAutoCurve::slotMouseClickOnSegment (QPointF posSegmentStart)
+void DigitizeStateAutoCurve::slotMouseClickOnSegmentAt (QPointF posSegmentStart,
+                                                        QPointF posClick)
 {
-  LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::slotMouseClickOnSegment";
+  LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAutoCurve::slotMouseClickOnSegmentAt";
 
   if (m_cmdMediator == nullptr) {
     return;
@@ -343,27 +388,53 @@ void DigitizeStateAutoCurve::slotMouseClickOnSegment (QPointF posSegmentStart)
   }
 
   if (segmentClicked == nullptr) {
-    LOG4CPP_ERROR_S ((*mainCat)) << "DigitizeStateAutoCurve::slotMouseClickOnSegment no segment";
+    LOG4CPP_ERROR_S ((*mainCat)) << "DigitizeStateAutoCurve::slotMouseClickOnSegmentAt no segment";
     return;
   }
 
-  // Follow the chain of touching pieces. The direction gate inside SegmentChain stops the walk at a
-  // sharp angle, which is where a grid line or a glyph branches off.
+  if (m_startSegment == nullptr) {
+    m_startSegment = segmentClicked;
+    m_startPosition = posClick;
+    context().mainWindow().showTemporaryMessage (QObject::tr ("Start selected. Click the curve end (Esc to cancel)."));
+    return;
+  }
+
+  Segment *leftSegment = m_startSegment;
+  Segment *rightSegment = segmentClicked;
+  QPointF leftPosition = m_startPosition;
+  QPointF rightPosition = posClick;
+  if (leftPosition.x () > rightPosition.x ()) {
+    qSwap (leftSegment, rightSegment);
+    qSwap (leftPosition, rightPosition);
+  }
+
   const DocumentModelSegments &modelSegments = m_cmdMediator->document().modelSegments();
-  SegmentChain chain (m_links,
-                      modelSegments.maxGapPixels (),
-                      modelSegments.maxTurnDegrees ());
-  QList<Segment*> pieces = chain.chainFrom (segmentClicked);
+  SegmentChain chain (m_links, modelSegments.maxGapPixels (), modelSegments.maxTurnDegrees ());
+  QList<Segment*> pieces = chain.pathBetween (leftSegment, rightSegment);
 
   if (pieces.isEmpty ()) {
+    // A crossing can leave several blank pixels. Try a wider bridge only when the
+    // configured gap could not connect the selected endpoints.
+    SegmentChain bridge (m_links,
+                         qMax (FALLBACK_MAX_GAP_PIXELS, modelSegments.maxGapPixels ()),
+                         modelSegments.maxTurnDegrees ());
+    pieces = bridge.pathBetween (leftSegment, rightSegment);
+  }
+
+  if (pieces.isEmpty ()) {
+    context().mainWindow().showTemporaryMessage (QObject::tr ("No continuous route found. Click another end or press Esc."));
     return;
   }
 
   // Optional function assumption: cut the chain where x goes backwards in graph coordinates
   if (modelSegments.functionAssumption ()) {
-    pieces = applyFunctionAssumption (pieces,
-                                      m_cmdMediator);
+    const QList<Segment*> functionPieces = applyFunctionAssumption (pieces, m_cmdMediator);
+    if (functionPieces.count () != pieces.count ()) {
+      context().mainWindow().showTemporaryMessage (QObject::tr ("Route reverses in x. Choose another end or turn off function assumption."));
+      return;
+    }
   }
 
-  createPointsAlongChain (pieces);
+  m_startSegment = nullptr;
+  createPointsAlongChain (pieces, leftPosition, rightPosition);
 }

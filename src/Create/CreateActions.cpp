@@ -134,15 +134,14 @@ void CreateActions::createDigitize (MainWindow &mw)
 
   mw.m_actionDigitizeAutoCurve = new QAction (iconAutoCurve, tr ("Auto Curve Detection Tool"), &mw);
   mw.m_actionDigitizeAutoCurve->setCheckable (true);
-  mw.m_actionDigitizeAutoCurve->setStatusTip (tr ("Digitize a whole curve with one click, following the connected curve pieces.")) ;
+  mw.m_actionDigitizeAutoCurve->setStatusTip (tr ("Click the start and end of a curve to trace a continuous route between them.")) ;
   mw.m_actionDigitizeAutoCurve->setWhatsThis (tr ("Auto Curve Detection Tool\n\n"
-                                                  "Digitizes a whole curve with a single click: click any piece of the curve and "
-                                                  "points are created along every connected piece, so gaps where the scanner "
-                                                  "dropped pixels do not have to be filled by hand.\n\n"
-                                                  "The walk stops where a piece meets the next one at a sharp angle (a grid line "
-                                                  "or text branching off) and where the pieces are further apart than the maximum "
-                                                  "gap. When the function assumption is enabled, the walk also stops where the x "
-                                                  "coordinate would go backwards.\n\n"
+                                                  "Click the curve start, then its end. The tool compares routes through crossings "
+                                                  "and places points along the smoothest connected route. Press Escape to clear "
+                                                  "the chosen start.\n\n"
+                                                  "Routes are limited by the maximum gap and turn settings. If no route is found, "
+                                                  "choose another end or adjust those settings. The function assumption rejects "
+                                                  "routes whose x coordinate goes backwards.\n\n"
                                                   "The created points are ordinary points: move, edit or delete them afterwards, "
                                                   "and Delete Automated Points removes them as a group."));
   connect (mw.m_actionDigitizeAutoCurve, SIGNAL (triggered ()), &mw, SLOT (slotDigitizeAutoCurve ()));

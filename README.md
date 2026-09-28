@@ -49,7 +49,7 @@ build fix).
 1. Run the installer, or unzip the portable package and start `Engauge.exe`.
 2. `File > Open` an image of a graph.
 3. Click the four axis points and type their values (`Digitize > Axis Points`).
-4. Pick a tool — `Segment Fill`, `Point Match`, or `Auto Curve Detection` — and click the curve.
+4. Pick a tool — `Segment Fill`, `Point Match`, or `Auto Curve Detection`. With Auto Curve Detection, click the curve's start and end.
 5. `File > Export` the points as CSV, and run `Digitize > Quality Report...` to review them.
 
 ### Requirements
@@ -79,7 +79,7 @@ SmartScreen may ask for confirmation.
 
 | Feature | Where | What it does |
 |---|---|---|
-| **Auto Curve Detection** | `Digitize > Auto Curve Detection Tool` | Click any piece of a curve and points are created along every connected piece — no more filling each scan gap by hand. Two gates keep the chain on the curve: a maximum gap (3 px default) and a maximum turn (45° default), plus an optional "the curve is a function" assumption. A 5000 point limit guards against runaway detections. |
+| **Auto Curve Detection** | `Digitize > Auto Curve Detection Tool` | Click the curve's start and end. The tool compares routes through crossings and creates points along the smoothest connected route. It first uses the configured maximum gap (3 px default), then tries a 12 px bridge if needed; the maximum turn is 45° by default. A 5000 point limit guards against runaway detections. |
 | **Quality report** | `Digitize > Quality Report...` | Lists points that deserve a second look: repeated or reversed x values, sudden slope changes (robust MAD), points that overlap another curve, and points outside the axes. Double click a row to jump to that point. Save as CSV. |
 | **Band centering** | `Settings > Segments` | Moves filled points to the middle of the curve band (pixel run center, or darkness weighted center) instead of the traced path. The default keeps the traced path. |
 | **Axis point review** | `Settings > General` | Warns before a coordinate system is defined from axis points that look wrong: duplicate coordinates, or x/y values that go backwards. |
@@ -112,7 +112,7 @@ the long descriptions.
   [upstream source](https://github.com/akhuettel/engauge-digitizer) for other platforms.
 - The binaries are not code-signed: SmartScreen may require a confirmation, and no automatic update
   is offered.
-- Auto Curve Detection stops at 5000 points per run; use it repeatedly on long curves.
+- Auto Curve Detection rejects a route estimated to exceed 5000 points; select shorter sections of a long curve.
 - Everything is off by default: a fresh installation behaves like the upstream release until an
   option is enabled in `Settings`.
 
@@ -166,7 +166,7 @@ Engauge Digitizer는 그래프 이미지를 숫자로 바꾸는 도구입니다.
 커브를 손으로 찍거나 Segment Fill·Point Match·이 포크의 **자동 곡선 검출** 모드로 디지타이즈합니다.
 
 **네트워크가 없는 Windows 64비트 PC를 위한 바로 쓸 수 있는 빌드**입니다. 설치본과 포터블 zip을
-제공하며, 한 번 클릭으로 곡선 전체를 찍는 자동 곡선 검출 같은 추가 기능은 모두 옵트인입니다.
+제공하며, 시작점과 끝점을 지정해 곡선을 따라가는 자동 곡선 검출 같은 추가 기능은 모두 옵트인입니다.
 
 **[최신 릴리스 다운로드](../../releases/latest)** — `Engauge-Digitizer-<버전>-Windows-x64-Setup.exe`
 또는 `Engauge-Digitizer-<버전>-Windows-x64-Portable.zip` 파일을 고르세요(`SHA256SUMS.txt` 동봉).
@@ -195,7 +195,7 @@ Windows 전용이 아닌 수정·개선은 업스트림 PR로 정리해 되돌�
 1. 설치본을 실행하거나, 포터블 zip을 풀고 `Engauge.exe`를 실행합니다.
 2. `File > Open`으로 그래프 이미지를 엽니다.
 3. 축 점 네 개를 클릭하고 값을 입력합니다(`Digitize > Axis Points`).
-4. 도구를 고르고 — `Segment Fill`, `Point Match`, `Auto Curve Detection` — 커브를 클릭합니다.
+4. 도구를 고릅니다 — `Segment Fill`, `Point Match`, `Auto Curve Detection`. 자동 곡선 검출에서는 커브의 시작점과 끝점을 차례로 클릭합니다.
 5. `File > Export`로 CSV로 내보내고, `Digitize > Quality Report...`로 점을 검토합니다.
 
 ### 요구 사항
@@ -221,7 +221,7 @@ Windows 전용이 아닌 수정·개선은 업스트림 PR로 정리해 되돌�
 
 | 기능 | 위치 | 내용 |
 |---|---|---|
-| **자동 곡선 검출** | `Digitize > Auto Curve Detection Tool` | 커브 아무 곳이나 한 번 클릭하면 연결된 조각 전체를 따라 점이 생성 — 스캔 공백을 일일이 채울 필요가 없습니다. 두 관문(최대 갭 3픽셀, 최대 방향 전환 45°)이 사슬을 커브 위에 유지하고, 선택 가능한 "함수 가정"이 x 역행을 절단합니다. 5000점 상한이 폭주를 막습니다. |
+| **자동 곡선 검출** | `Digitize > Auto Curve Detection Tool` | 커브의 시작점과 끝점을 클릭하면 교차점의 후보 경로를 비교해 가장 매끄러운 연결 경로에 점을 만듭니다. 기본 최대 갭은 3픽셀이고 연결되지 않으면 최대 12픽셀까지 다시 시도합니다. 기본 최대 방향 전환은 45°이며, 5000점 상한이 폭주를 막습니다. |
 | **품질 리포트** | `Digitize > Quality Report...` | 다시 볼 가치가 있는 점을 나열: x 반복·역전, 급격한 기울기 변화(robust MAD), 다른 커브와의 중복, 축 범위 밖. 행을 더블클릭하면 해당 점으로 이동. CSV 저장 지원. |
 | **밴드 중심** | `Settings > Segments` | Segment Fill로 채운 점을 추적 경로 대신 커브 밴드의 중앙(픽셀 런 중심 또는 어두운 정도 가중 중심)으로 이동. 기본값은 추적 경로 유지. |
 | **축 점 검토** | `Settings > General` | 좌표계 정의 전에 의심스러운 축 점(중복 좌표, x/y 역행)을 경고합니다. |
@@ -251,7 +251,7 @@ Windows 전용이 아닌 수정·개선은 업스트림 PR로 정리해 되돌�
 - Windows 전용입니다 — Linux·macOS 바이너리는 이 저장소에서 제공하지 않습니다. 다른 플랫폼은
   [업스트림 소스](https://github.com/akhuettel/engauge-digitizer)를 사용하세요.
 - 코드 서명이 없어 SmartScreen 확인이 뜰 수 있고, 자동 업데이트 기능은 없습니다.
-- 자동 곡선 검출은 한 번에 5000점에서 멈춥니다. 긴 곡선은 여러 번 나눠 찍으세요.
+- 자동 곡선 검출은 예상 점 수가 5000개를 넘는 경로를 거부합니다. 긴 곡선은 구간을 나눠 찍으세요.
 - 모든 추가 기능은 기본 꺼짐입니다: `Settings`에서 켜기 전까지는 업스트림 릴리스와 동일하게 동작합니다.
 
 ### 품질 게이트

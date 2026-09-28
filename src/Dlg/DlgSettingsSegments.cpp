@@ -112,9 +112,9 @@ void DlgSettingsSegments::createControls (QGridLayout *layout,
   m_spinAutoCurveMaxGap = new QSpinBox;
   m_spinAutoCurveMaxGap->setRange (1, 20);
   m_spinAutoCurveMaxGap->setWhatsThis (tr ("Auto Curve Detection Maximum Gap\n\n"
-                                           "Largest distance in pixels between two touching curve pieces that the Auto Curve "
-                                           "Detection tool still treats as one curve. Pieces further apart are treated as "
-                                           "separate curves."));
+                                           "Preferred maximum distance in pixels between curve pieces. If the selected "
+                                           "start and end cannot be connected, Auto Curve Detection retries with a "
+                                           "12 pixel bridge."));
   connect (m_spinAutoCurveMaxGap, SIGNAL (valueChanged (const QString &)), this, SLOT (slotAutoCurveMaxGap (const QString &)));
   layout->addWidget (m_spinAutoCurveMaxGap, row++, 2);
 

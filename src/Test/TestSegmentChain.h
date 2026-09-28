@@ -25,6 +25,11 @@ private slots:
   void testChainAcrossSmallGap ();
   void testGapAboveMaximumStopsChain ();
   void testSharpAngleStopsChain ();
+  void testSmallClockwiseTurnContinues ();
+  void testCrossingChoosesStraighterPiece ();
+  void testEndpointPathChoosesSmoothRoute ();
+  void testEndpointPathRejectsDisconnectedPieces ();
+  void testSameColumnContactIsLinked ();
   void testSingleSegmentChain ();
 
 private:

@@ -128,7 +128,12 @@ QList<SegmentChainLink> SegmentFactory::chainLinks (const QList<Segment*> &segme
       const double dy = startSecond.y () - endFirst.y ();
       const double distance = qSqrt (dx * dx + dy * dy);
 
-      if ((dx > 0) && (distance <= maxGapPixels)) {
+      // A branch can end and restart in the same image column. Keep that contact as
+      // long as the second piece starts further right than the first piece, so the
+      // directed chain graph remains acyclic.
+      if ((dx >= 0) &&
+          (startSecond.x () > segmentFirst->firstPoint ().x ()) &&
+          (distance <= maxGapPixels)) {
 
         SegmentChainLink link;
         link.segmentA = segmentFirst;
