@@ -224,7 +224,9 @@ try {
         "translations\qt_zh_CN.qm",
         "translations\qt_zh_TW.qm",
         "LICENSE",
-        "README.md"
+        "README.md",
+        "THIRD-PARTY-NOTICES.md",
+        "licenses\LGPL-3.0.txt"
     )
     $missingProducts = $requiredProducts | Where-Object {
         -not (Test-Path (Join-Path $stageDirectoryPath $_) -PathType Leaf)

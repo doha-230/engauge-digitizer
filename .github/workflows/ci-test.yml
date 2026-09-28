@@ -272,7 +272,9 @@ jobs:
             'documentation\engauge.qhc',
             'translations\qt_zh_CN.qm',
             'translations\qt_zh_TW.qm',
-            'LICENSE'
+            'LICENSE',
+            'THIRD-PARTY-NOTICES.md',
+            'licenses\LGPL-3.0.txt'
           )
           $missingProducts = $requiredProducts | Where-Object {
             -not (Test-Path (Join-Path $portableRoot $_) -PathType Leaf)
