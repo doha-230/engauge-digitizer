@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21.1)
 
-project(EngaugeDigitizer VERSION 12.11.3 LANGUAGES CXX)
+project(EngaugeDigitizer VERSION 12.11.4 LANGUAGES CXX)
 
 include(CTest)
 include(GNUInstallDirs)

@@ -1,9 +1,9 @@
 #define MyAppName "Engauge Digitizer"
 #ifndef MyAppVersion
-#define MyAppVersion "12.11.3"
+#define MyAppVersion "12.11.4"
 #endif
 #ifndef MyAppFileVersion
-#define MyAppFileVersion "12.11.3.0"
+#define MyAppFileVersion "12.11.4.0"
 #endif
 #ifndef MyAppSourceDir
 #define MyAppSourceDir "..\..\dist\Engauge Digitizer"
