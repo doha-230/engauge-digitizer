@@ -52,6 +52,8 @@ Then insert at the top of both the English and the Korean section:
    - exactly three assets: `Engauge-Digitizer-X.Y.Z-Windows-x64-Setup.exe`,
      `Engauge-Digitizer-X.Y.Z-Windows-x64-Portable.zip`, `SHA256SUMS.txt`
    - `SHA256SUMS.txt` matches the two artifacts (`sha256sum -c`)
+   - unpacking the portable package shows the documents in its root (`LICENSE`, `README.md`,
+     `OFFLINE_UPDATE.md`, `THIRD-PARTY-NOTICES.md`, `licenses/LGPL-3.0.txt`) and `vc_redist.x64.exe`
    - release notes name the features and the upstream commits that came in
 4. Install the `Setup.exe` once by hand: silent install, launch, uninstall all run in CI, but a
    human should see the Start Menu entry and the version in `Help > About`.
