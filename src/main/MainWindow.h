@@ -119,6 +119,7 @@ class MainWindow : public QMainWindow
   /// For unit testing
   friend class TestExport;
   friend class BatchProcessor;
+  friend class DiagnosticsCollector;
   friend class TestGuidelines;
   
 public:
