@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
+#include <QComboBox>
 #include <QWidgetAction>
 #include "Settings.h"
 
