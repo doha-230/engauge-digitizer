@@ -86,7 +86,7 @@ jobs:
           }
 
   cmake-test:
-    name: Windows / CMake build + 27 unit tests
+    name: Windows / CMake build + 26 unit tests
     runs-on: windows-2022
     timeout-minutes: 45
     needs: qmake-build
