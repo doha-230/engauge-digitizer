@@ -259,6 +259,7 @@ HEADERS  += \
     Export/ExportDelimiter.h \
     Export/ExportLayoutFunctions.h \
     Export/ExportPointsIntervalUnits.h \
+    Export/ExportPresetManager.h \
     Export/ExportPointsSelectionFunctions.h \
     Export/ExportPointsSelectionRelations.h \
     Export/ExportDelimiter.h \
@@ -735,6 +736,7 @@ SOURCES += \
     Export/ExportOrdinalsSmooth.cpp \
     Export/ExportOrdinalsStraight.cpp \
     Export/ExportPointsIntervalUnits.cpp \
+    Export/ExportPresetManager.cpp \
     Export/ExportPointsSelectionFunctions.cpp \
     Export/ExportPointsSelectionRelations.cpp \
     Export/ExportToClipboard.cpp \

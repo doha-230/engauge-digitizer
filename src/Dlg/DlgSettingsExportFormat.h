@@ -41,6 +41,9 @@ public:
   virtual void setSmallDialogs (bool smallDialogs);
 
 private slots:
+  void slotPresetRestore (const QString &);
+  void slotPresetSave ();
+  void slotPresetDelete ();
   void slotDelimitersCommas();
   void slotDelimitersSemicolons();
   void slotDelimitersSpaces();
@@ -113,6 +116,9 @@ private:
   QRadioButton *m_btnFunctionsPointsAllCurves;
   QRadioButton *m_btnFunctionsPointsFirstCurve;
   QRadioButton *m_btnFunctionsPointsEvenlySpaced;
+  QComboBox *m_cmbPreset;
+  QPushButton *m_btnPresetSave;
+  QPushButton *m_btnPresetDelete;
   QLineEdit *m_editFunctionsPointsEvenlySpacing;
   QDoubleValidator *m_validatorFunctionsPointsEvenlySpacing;
   QComboBox *m_cmbFunctionsPointsEvenlySpacingUnits;

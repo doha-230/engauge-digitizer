@@ -11,6 +11,7 @@
 # Test names. Specify a single test to run just that test
 testsAvailable=( \
     TestAxisPointsValidator \
+    TestExportPreset \
     TestAutosaveRecovery \
     TestCentipedeEndpoints \
     TestCorrelation  \

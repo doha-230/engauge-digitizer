@@ -326,6 +326,7 @@ HEADERS  += \
     src/Export/ExportOrdinalsSmooth.h \
     src/Export/ExportOrdinalsStraight.h \
     src/Export/ExportPointsIntervalUnits.h \
+    src/Export/ExportPresetManager.h \
     src/Export/ExportPointsSelectionFunctions.h \
     src/Export/ExportPointsSelectionRelations.h \
     src/Export/ExportToClipboard.h \
@@ -797,6 +798,7 @@ SOURCES += \
     src/Export/ExportOrdinalsSmooth.cpp \
     src/Export/ExportOrdinalsStraight.cpp \
     src/Export/ExportPointsIntervalUnits.cpp \
+    src/Export/ExportPresetManager.cpp \
     src/Export/ExportPointsSelectionFunctions.cpp \
     src/Export/ExportPointsSelectionRelations.cpp \
     src/Export/ExportToClipboard.cpp \

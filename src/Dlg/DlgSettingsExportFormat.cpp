@@ -28,6 +28,9 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QInputDialog>
+#include <QMessageBox>
+#include "ExportPresetManager.h"
 #include <QRadioButton>
 #include <QScrollBar>
 #include <QSettings>
@@ -437,6 +440,74 @@ void DlgSettingsExportFormat::createRelationsPointsSelection (QHBoxLayout *layou
   connect (m_btnRelationsPointsRaw, SIGNAL (released()), this, SLOT (slotRelationsPointsRaw()));
 }
 
+void DlgSettingsExportFormat::slotPresetRestore (const QString &presetName)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsExportFormat::slotPresetRestore";
+
+  if (presetName.isEmpty ()) {
+    return;
+  }
+
+  DocumentModelExportFormat restored;
+  if (ExportPresetManager::restorePreset (presetName,
+                                          restored)) {
+
+    *m_modelExportAfter = restored;
+    updateControls ();
+    updatePreview ();
+  }
+}
+
+void DlgSettingsExportFormat::slotPresetSave ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsExportFormat::slotPresetSave";
+
+  bool ok = false;
+  QString presetName = QInputDialog::getText (this,
+                                              tr ("Save Export Format Preset"),
+                                              tr ("Preset name:"),
+                                              QLineEdit::Normal,
+                                              m_cmbPreset->currentText (),
+                                              &ok);
+  if (!ok || presetName.isEmpty ()) {
+    return;
+  }
+
+  ExportPresetManager::savePreset (presetName,
+                                   *m_modelExportAfter);
+
+  // Refresh the combo and select the just saved preset
+  QSignalBlocker blocker (m_cmbPreset);
+  m_cmbPreset->clear ();
+  m_cmbPreset->addItems (ExportPresetManager::presetNames ());
+  m_cmbPreset->setCurrentText (presetName);
+}
+
+void DlgSettingsExportFormat::slotPresetDelete ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsExportFormat::slotPresetDelete";
+
+  const QString presetName = m_cmbPreset->currentText ();
+  if (presetName.isEmpty ()) {
+    return;
+  }
+
+  const QMessageBox::StandardButton answer = QMessageBox::question (this,
+                                                                    tr ("Delete Export Format Preset"),
+                                                                    tr ("Delete the preset %1?").arg (presetName),
+                                                                    QMessageBox::Yes | QMessageBox::No,
+                                                                    QMessageBox::No);
+  if (answer != QMessageBox::Yes) {
+    return;
+  }
+
+  ExportPresetManager::removePreset (presetName);
+
+  QSignalBlocker blocker (m_cmbPreset);
+  m_cmbPreset->clear ();
+  m_cmbPreset->addItems (ExportPresetManager::presetNames ());
+}
+
 QWidget *DlgSettingsExportFormat::createSubPanel ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsExportFormat::createSubPanel";
@@ -451,6 +522,29 @@ QWidget *DlgSettingsExportFormat::createSubPanel ()
                    m_btnWhatsThis,
                    row++,
                    3);
+
+  // Preset row: restore a saved export format, or save the current one under a name. The presets
+  // are application preferences, so they do not touch the document or the .dig format
+  QLabel *labelPreset = new QLabel (QString ("%1:").arg (tr ("Preset")));
+  layout->addWidget (labelPreset, row, 0, 1, 1, Qt::AlignRight);
+
+  m_cmbPreset = new QComboBox;
+  m_cmbPreset->setSizeAdjustPolicy (QComboBox::AdjustToContents);
+  m_cmbPreset->setWhatsThis (tr ("Export Format Presets\n\n"
+                                 "A preset stores the complete export format under a name, so a frequently used "
+                                 "format can be restored in one step. Saving and deleting happens with the two "
+                                 "buttons next to the list."));
+  connect (m_cmbPreset, SIGNAL (currentTextChanged (const QString &)), this, SLOT (slotPresetRestore (const QString &)));
+  layout->addWidget (m_cmbPreset, row, 1, 1, 1, Qt::AlignLeft);
+
+  m_btnPresetSave = new QPushButton (tr ("Save..."));
+  connect (m_btnPresetSave, SIGNAL (released ()), this, SLOT (slotPresetSave ()));
+  layout->addWidget (m_btnPresetSave, row, 2, 1, 1, Qt::AlignLeft);
+
+  m_btnPresetDelete = new QPushButton (tr ("Delete"));
+  connect (m_btnPresetDelete, SIGNAL (released ()), this, SLOT (slotPresetDelete ()));
+  layout->addWidget (m_btnPresetDelete, row, 3, 1, 1, Qt::AlignLeft);
+  row++;
 
   createCurveSelection (layout, row);
 
@@ -613,6 +707,13 @@ void DlgSettingsExportFormat::initializeIntervalConstraints ()
 
 void DlgSettingsExportFormat::load (CmdMediator &cmdMediator)
 {
+  // Populate the preset combo. The signal is blocked while loading, so restoring is user driven only
+  {
+    QSignalBlocker blocker (m_cmbPreset);
+    m_cmbPreset->clear ();
+    m_cmbPreset->addItems (ExportPresetManager::presetNames ());
+  }
+
   LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsExportFormat::load";
 
   setCmdMediator (cmdMediator);
