@@ -1,0 +1,1 @@
+-errorreport ../test/curve_properties_undo.xml -regression -reset

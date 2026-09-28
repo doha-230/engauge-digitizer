@@ -8,6 +8,7 @@
 #define CMD_SETTINGS_CURVE_PROPERTIES_H
 
 #include "CmdAbstract.h"
+#include "CurvesGraphs.h"
 #include "CurveStyles.h"
 #include "LineStyle.h"
 #include "PointStyle.h"
@@ -42,6 +43,8 @@ private:
 
   CurveStyles m_modelCurveStylesBefore;
   CurveStyles m_modelCurveStylesAfter;
+  CurvesGraphs m_curvesGraphsBefore;
+  bool m_hasCurvesGraphsBefore = false;
 };
 
 #endif // CMD_SETTINGS_CURVE_PROPERTIES_H

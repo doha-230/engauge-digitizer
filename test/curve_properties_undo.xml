@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ErrorReport>
+  <Application VersionNumber="12.11.2" />
+  <Document AxesPointsRequired="0" VersionNumber="12.11.2">
+    <Image Height="100" Width="100"><![CDATA[AAAAAYlQTkcNChoKAAAADUlIRFIAAABkAAAAZAgCAAAA/4ACAwAAAOVJREFUeJzt0EENACAMwMD5Nw0W1hchuVPQdA5r8zrgJ2YFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgVmBWYFZgUXLcPBna0888EAAAAASUVORK5CYII=]]></Image>
+    <CoordSystem>
+      <General CursorSize="3" ExtraPrecision="1" />
+      <Coords Coords="0" ScaleXTheta="0" ScaleXThetaString="Linear" ScaleYRadius="0" ScaleYRadiusString="Linear" Type="0" TypeString="Cartesian" UnitsDate="3" UnitsDateString="YYYY/MM/DD" UnitsRadius="0" UnitsRadiusString="Number" UnitsTheta="0" UnitsThetaString="Degrees (DDD.DDDDD)" UnitsTime="2" UnitsTimeString="HH:MM:SS" UnitsX="0" UnitsXString="Number" UnitsY="0" UnitsYString="Number" />
+      <DigitizeCurve CursorInnerRadius="5" CursorLineWidth="2" CursorSize="1" CursorStandardCross="True" />
+      <Export Delimiter="0" DelimiterString="Commas" ExtrapolateOutsideEndpoints="True" Header="1" HeaderString="Simple" LayoutFunctions="0" LayoutFunctionsString="AllPerLine" OverrideCsvTsv="False" PointsIntervalFunctions="10" PointsIntervalRelations="10" PointsIntervalUnitsFunctions="1" PointsIntervalUnitsRelations="1" PointsSelectionFunctions="0" PointsSelectionFunctionsString="InterpolateAllCurves" PointsSelectionRelations="0" PointsSelectionRelationsString="Interpolate" XLabel="x">
+        <CurveNamesNotExported />
+      </Export>
+      <AxesChecker LineColor="6" Mode="1" Seconds="3" />
+      <GridDisplay Color="0" ColorString="Black" CountX="2" CountY="2" DisableX="0" DisableY="0" LineWidth="1" Stable="False" StartX="0" StartY="0" StepX="1" StepY="1" StopX="1" StopY="1" />
+      <GridRemoval CloseDistance="10" CoordDisableX="0" CoordDisableXString="Count" CoordDisableY="0" CoordDisableYString="Count" CountX="2" CountY="2" DefinedGridLines="False" Stable="False" StartX="0" StartY="0" StepX="0" StepY="0" StopX="0" StopY="0" />
+      <Guidelines CreationCircleRadius="20" LineColor="5" LineColorString="Magenta" LineWidthActive="2" LineWidthInactive="1">
+        <GuidelinesX />
+        <GuidelinesY />
+      </Guidelines>
+      <PointMatch ColorAccepted="4" ColorAcceptedString="Green" ColorCandidate="7" ColorCandidateString="Yellow" ColorRejected="6" ColorRejectedString="Red" PointSize="48" />
+      <Segments FillCorners="False" InactiveOpacity="4" LineColor="4" LineColorString="Green" LineWidthActive="6" LineWidthInactive="4" MinLength="2" PointSeparation="25" />
+      <Curve CurveName="Axes">
+        <ColorFilter CurveName="Axes" ForegroundHigh="10" ForegroundLow="0" HueHigh="360" HueLow="180" IntensityHigh="50" IntensityLow="0" Mode="2" ModeString="Intensity" SaturationHigh="100" SaturationLow="50" ValueHigh="50" ValueLow="0" />
+        <CurveStyle CurveName="Axes">
+          <LineStyle Color="8" ColorString="Transparent" ConnectAs="4" ConnectAsString="ConnectSkipForAxisCurve" Width="0" />
+          <PointStyle Color="6" ColorString="Red" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+        </CurveStyle>
+        <CurvePoints />
+      </Curve>
+      <CurvesGraphs>
+        <Curve CurveName="Curve1">
+          <ColorFilter CurveName="Curve1" ForegroundHigh="10" ForegroundLow="0" HueHigh="360" HueLow="180" IntensityHigh="50" IntensityLow="0" Mode="2" ModeString="Intensity" SaturationHigh="100" SaturationLow="50" ValueHigh="50" ValueLow="0" />
+          <CurveStyle CurveName="Curve1">
+            <LineStyle Color="1" ColorString="Blue" ConnectAs="3" ConnectAsString="RelationStraight" Width="1" />
+            <PointStyle Color="1" ColorString="Blue" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+          </CurveStyle>
+          <CurvePoints />
+        </Curve>
+      </CurvesGraphs>
+    </CoordSystem>
+    <LoadViews LoadViewsGridlines="False" LoadViewsGuidelines="False" />
+    <OperatingSystem Endian="LittleEndian" WordSize="64" />
+    <File Imported="True" />
+    <CmdMediator>
+      <Cmd Description="Add axis point" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" GraphX="0" GraphY="0" Identifier="Axes&#09;point&#09;1" IsXOnly="False" Ordinal="1" ScreenX="10" ScreenY="90" Type="CmdAddPointAxis" />
+      <Cmd Description="Add axis point" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" GraphX="1" GraphY="0" Identifier="Axes&#09;point&#09;2" IsXOnly="False" Ordinal="2" ScreenX="90" ScreenY="90" Type="CmdAddPointAxis" />
+      <Cmd Description="Add axis point" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" GraphX="1" GraphY="1" Identifier="Axes&#09;point&#09;3" IsXOnly="False" Ordinal="3" ScreenX="90" ScreenY="10" Type="CmdAddPointAxis" />
+      <Cmd CurveName="Curve1" Description="Add graph points" Type="CmdAddPointsGraph">
+        <Point Identifier="Curve1&#09;point&#09;4" Ordinal="1" ScreenX="40" ScreenY="50" />
+        <Point Identifier="Curve1&#09;point&#09;5" Ordinal="1" ScreenX="50" ScreenY="40" />
+      </Cmd>
+      <Cmd CurveName="Curve1" Description="Add graph points" Type="CmdAddPointsGraph">
+        <Point Identifier="Curve1&#09;point&#09;6" Ordinal="0.5" ScreenX="20" ScreenY="70" />
+        <Point Identifier="Curve1&#09;point&#09;7" Ordinal="0.5" ScreenX="30" ScreenY="60" />
+      </Cmd>
+      <Cmd CurveName="Curve1" Description="Add graph points" Type="CmdAddPointsGraph">
+        <Point Identifier="Curve1&#09;point&#09;8" Ordinal="2.5" ScreenX="70" ScreenY="20" />
+      </Cmd>
+      <Cmd Description="Curve Properties settings" DigitizeState="9" DigitizeStateString="?" Type="CmdSettingsCurveProperties">
+        <CurveStyles>
+          <CurveStyle CurveName="Axes">
+            <LineStyle Color="8" ColorString="Transparent" ConnectAs="4" ConnectAsString="ConnectSkipForAxisCurve" Width="0" />
+            <PointStyle Color="6" ColorString="Red" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+          </CurveStyle>
+          <CurveStyle CurveName="Curve1">
+            <LineStyle Color="1" ColorString="Blue" ConnectAs="3" ConnectAsString="RelationStraight" Width="1" />
+            <PointStyle Color="1" ColorString="Blue" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+          </CurveStyle>
+        </CurveStyles>
+        <CurveStyles>
+          <CurveStyle CurveName="Axes">
+            <LineStyle Color="8" ColorString="Transparent" ConnectAs="4" ConnectAsString="ConnectSkipForAxisCurve" Width="0" />
+            <PointStyle Color="6" ColorString="Red" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+          </CurveStyle>
+          <CurveStyle CurveName="Curve1">
+            <LineStyle Color="1" ColorString="Blue" ConnectAs="1" ConnectAsString="FunctionStraight" Width="1" />
+            <PointStyle Color="1" ColorString="Blue" LineWidth="1" Radius="10" Shape="1" ShapeString="Cross" />
+          </CurveStyle>
+        </CurveStyles>
+      </Cmd>
+      <Cmd Description="UndoForTest" Type="CmdUndoForTest" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" />
+      <Cmd Description="RedoForTest" Type="CmdRedoForTest" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" />
+      <Cmd Description="UndoForTest" Type="CmdUndoForTest" DigitizeState="0" DigitizeStateString="DigitizeStateAxis" />
+    </CmdMediator>
+    <Error Comment="regression" Context="curve properties undo and redo" File="test/curve_properties_undo.xml" Line="0" />
+  </Document>
+</ErrorReport>
