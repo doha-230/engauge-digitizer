@@ -30,7 +30,8 @@
                 <section title="What happened to my image?" ref="answerdiscretizing.html"></section>
                 <section title="Why am I unable to select or edit a point?" ref="answerselecting.html"></section>
                 <section title="The coordinates are wrong, how do I fix them?" ref="fixingaxispoints.html"></section>
-            </section>         
+            </section>
+            <section title="New features in this fork" ref="forkfeatures.html"></section>
         </toc>
         <keywords>
 	  <keyword name="Accuracy" ref="betteraccuracy.html"/> 
@@ -38,7 +39,8 @@
 	  <keyword name="Digitize line" ref="answerlinegraph.html"/> 
 	  <keyword name="Digitize points" ref="answerpointgraph.html"/> 
 	  <keyword name="Discretizing" ref="answerdiscretizing.html"/> 
-	  <keyword name="Export digitized points" ref="dlgexport.html"/> 
+	  <keyword name="Export digitized points" ref="dlgexport.html"/>
+	  <keyword name="Fork features" ref="forkfeatures.html"/> 
 	  <keyword name="Floating axes" ref="answerfloatingaxes.html"/> 
 	  <keyword name="Line graph" ref="answerlinegraph.html"/> 
 	  <keyword name="Multiple coordinate systems" ref="answermultiplecoordsystems.html"/> 
@@ -95,6 +97,7 @@
             <file>dlgsessions.png</file>
             <file>fixingaxispoints.html</file>
             <file>fixingaxispoints.png</file>
+            <file>forkfeatures.html</file>
             <file>glossary.html</file>
             <file>gridremoveafter.png</file>
             <file>gridremovebefore.png</file>

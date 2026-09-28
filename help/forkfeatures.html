@@ -2,8 +2,8 @@
 <HTML>
 <HEAD>
 <TITLE>Engauge Digitizer - New Features in This Fork</TITLE>
-<META NAME="keywords" CONTENT="Engauge Digitizer, fork features, quality report, autosave, automated points, point origin, closed network, offline">
-<META NAME="description" CONTENT="Features added to Engauge Digitizer in this fork">
+<META NAME="keywords" CONTENT="Engauge Digitizer, fork features, auto curve detection, quality report, autosave, recovery, automated points, point origin, band centering, axis points, batch, template, export preset, theme, high dpi, diagnostics, closed network, offline">
+<META NAME="description" CONTENT="Features added to Engauge Digitizer in this fork, and where to turn them on">
 </HEAD>
 <BODY>
 <H2>
@@ -11,9 +11,29 @@
     <IMG SRC="animation.png" ALIGN=MIDDLE ALT="" STYLE="border: 0px"></A>
   Engauge Digitizer - New Features in This Fork</H2>
 <HR WIDTH="100%">
-<P>This fork of Engauge Digitizer adds a few opt-in features on top of the upstream application. Every
-  one of them is off by default, so a fresh installation behaves exactly like the upstream release until
-  each feature is turned on in the settings.</P>
+<P>This fork of Engauge Digitizer adds opt-in features on top of the upstream application. Every one
+  of them is off by default, so a fresh installation behaves exactly like the upstream release until
+  each feature is turned on in the settings. The added menu entries are listed here together with the
+  setting that enables them.</P>
+
+<H3>Auto Curve Detection</H3>
+<P>The <B>Digitize &gt; Auto Curve Detection Tool</B> digitizes a whole curve from a single click.
+  Click any piece of the curve and points are placed along every connected piece of it, which removes
+  the tedious work of filling each scan gap by hand. Two gates keep the chain on the curve and can be
+  tuned in <B>Settings &gt; Segments</B>:</P>
+<UL>
+  <LI><B>Auto Curve Detection maximum gap (pixels)</B> (3 by default) is how far the detection may jump
+    over a break in the curve. Pieces further apart are treated as separate curves.</LI>
+  <LI><B>Auto Curve Detection maximum turn (degrees)</B> (45 by default) is how much the direction may
+    change from one step to the next, which stops the chain from following a grid line, text or an axis
+    that touches the curve.</LI>
+  <LI><B>Auto Curve Detection function assumption</B> cuts the walk where x starts to go backwards, for
+    graphs where every x has exactly one y. Turn it off for relation curves that legitimately loop
+    back.</LI>
+  <LI><B>Auto Curve Detection point placement</B> decides whether a created point stays on the traced
+    path (the upstream behavior) or moves to the middle of the curve band - see below.</LI>
+  <LI>A single detection stops at 5000 points; click again further along a long curve.</LI>
+</UL>
 
 <H3>Digitizing quality report</H3>
 <P>The <B>Digitize &gt; Quality Report...</B> entry lists the digitized points that deserve a second
@@ -27,21 +47,40 @@
     twice.</LI>
   <LI>Points outside the range covered by the axis points.</LI>
 </UL>
-<P>The report can be saved as a comma separated file, which is useful after changing the color filter
-  or the grid removal settings, or before exporting the data.</P>
+<P>Double click a row to jump to that point in the document. The report can be saved as a comma
+  separated file, which is useful after changing the color filter or the grid removal settings, or
+  before exporting the data.</P>
 
 <H3>Point origin, and deleting automated points</H3>
 <P>Two options in <B>Settings &gt; General</B> work together:</P>
 <UL>
   <LI><B>Show which points were placed automatically</B> draws points that were created by the Segment
-    Fill or Point Match tools with a dashed outline, so they can be told apart from the points placed
-    by hand. The curve colors are not changed. The dashed points are exactly the ones that were derived
-    from the filter settings, which makes them the ones to review after the filter changed.</LI>
+    Fill, Point Match or Auto Curve Detection tools with a dashed outline, so they can be told apart
+    from the points placed by hand. The curve colors are not changed. The dashed points are exactly the
+    ones that were derived from the filter settings, which makes them the ones to review after the
+    filter changed.</LI>
   <LI><B>Enable commands that work on automatically placed points</B> adds <B>Edit &gt; Delete Automated
     Points</B>, which removes every automated point while keeping the points placed by hand, in a single
     undoable step. Digitize the affected curves again afterwards. This is the quick way to re-digitize
     after the color filter or the grid removal settings changed.</LI>
 </UL>
+
+<H3>Band centering of filled points</H3>
+<P><B>Auto Curve Detection point placement</B> in <B>Settings &gt; Segments</B> moves created points to
+  the middle of the curve band instead of leaving them on the traced path, which is more accurate on a
+  thick or anti-aliased line:</P>
+<UL>
+  <LI><B>Traced path (upstream behavior)</B> is the default and matches the original application.</LI>
+  <LI><B>Center of the curve pixels</B> moves the point to the middle of the curve pixels in its
+    column.</LI>
+  <LI><B>Darkness weighted center of the curve pixels</B> also moves the point to the middle, but
+    weights the pixels by darkness, which follows the dark middle of a band with soft edges.</LI>
+</UL>
+
+<H3>Axis point review</H3>
+<P>With the option in <B>Settings &gt; General</B>, defining a coordinate system from axis points that
+  look wrong is questioned first: axis points with duplicate coordinates, or with x or y values that
+  go backwards, are reported and can be corrected before the transformation is built from them.</P>
 
 <H3>Auto-save and crash recovery</H3>
 <P>The option <B>Auto-save a recovery file while the document is modified</B> in <B>Settings &gt;
@@ -51,18 +90,73 @@
   does not depend on the original image file. The copy is removed as soon as the document is saved or
   closed normally.</P>
 
+<H3>Batch processing from the command line</H3>
+<P>A folder of images can be digitized from one template document without opening the user interface:</P>
+<PRE>
+  Engauge -batchtemplate &lt;template.dig&gt; [-batchout &lt;dir&gt;] [-batchcontinue] &lt;images...&gt;
+</PRE>
+<P>The template supplies the axis points, the color filter, the grid removal and the export format.
+  <B>-batchout</B> chooses the output directory and <B>-batchcontinue</B> keeps going after a failed
+  image instead of stopping. This is the tool for a measurement series that has to be re-digitized
+  after a filter change.</P>
+
+<H3>New from template</H3>
+<P><B>File &gt; New From Template...</B> starts a new document from a saved template, so a new image is
+  digitized with the same axis points, filters and export format as the template. The most recently
+  used templates are offered in the same menu.</P>
+
+<H3>Export format presets</H3>
+<P><B>Settings &gt; Export Format</B> can save the complete export configuration - format, separators,
+  precision, curve and coordinate system selection - under a name, and restore it later. Useful when
+  several projects use different export layouts.</P>
+
+<H3>Point Match options and keys</H3>
+<P>Two settings in <B>Settings &gt; Point Match</B> control the search:</P>
+<UL>
+  <LI><B>Correlation threshold</B> accepts candidates whose score is above the threshold. Raise it for
+    fewer but safer matches, lower it for hard images.</LI>
+  <LI><B>Search radius multiplier</B> limits how far from the click a candidate may be found. A value of
+    zero keeps the upstream behavior of searching the whole image.</LI>
+</UL>
+<P>While a candidate point is being decided, <B>Down</B> skips it without adding a point, and
+  <B>Escape</B> skips all remaining candidates in this round.</P>
+
+<H3>Arrow key acceleration</H3>
+<P>A selected point still moves one screen pixel per arrow key press, which is the upstream behavior.
+  <B>Shift</B> with an arrow key moves ten pixels, and <B>Control</B> with an arrow key moves fifty
+  pixels, which makes crossing a large image practical.</P>
+
+<H3>Themes, high DPI, zoom and diagnostics</H3>
+<UL>
+  <LI><B>Settings &gt; General</B> offers the themes <B>System</B>, <B>Light</B> and <B>Dark</B>. User
+    curve colors are never changed.</LI>
+  <LI>Icons stay crisp at 150% and 200% display scaling; the high DPI behavior needs no setting.</LI>
+  <LI><B>Compact zoom controls</B> replaces the twenty entry zoom menu with a combo box plus a fill
+    entry.</LI>
+  <LI><B>Digitize &gt; Quality Report...</B> jumps to a listed point by double click (see above).</LI>
+  <LI><B>Help &gt; About</B> shows the version, the Qt runtime and the build date.
+    <B>Help &gt; Copy Diagnostics</B> puts the same information, plus the settings and the loaded
+    document details, on the clipboard or into a file. Nothing is sent anywhere - the text is for a bug
+    report or for the IT department of a closed network.</LI>
+</UL>
+
 <H3>Closed network deployments</H3>
 <P>This fork is built for use on machines without internet access:</P>
 <UL>
   <LI>The installer and the portable package contain every runtime file, including the redistributable,
     the help file and the translations, so nothing is downloaded at run time.</LI>
+  <LI>The network code is compiled out of the Windows build, so the application only ever touches local
+    files.</LI>
   <LI>The quality report, the recovery files and the settings are all local file access. Nothing is
     sent anywhere.</LI>
+  <LI>Updating is a manual procedure, described in the OFFLINE_UPDATE.md file next to the program.</LI>
 </UL>
 
 <H3>Other fixes</H3>
 <UL>
   <LI>The Guidelines tool uses Shift+F9, which no longer collides with the Scale Bar tool.</LI>
+  <LI>The Segment Fill settings are reachable again through the <B>Settings &gt; Segment Fill...</B>
+    entry.</LI>
   <LI>The Help &gt; Language menu switches the user interface language, including Korean.</LI>
 </UL>
 </BODY>
