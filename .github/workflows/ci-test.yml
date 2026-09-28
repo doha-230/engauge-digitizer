@@ -17,8 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows-qmake:
-    name: Windows / Qt 6.8.3 / qmake + CMake
+  qmake-build:
+    name: Windows / qmake build + portable
     runs-on: windows-2022
     timeout-minutes: 45
     env:
@@ -36,7 +36,15 @@ jobs:
       - name: Check for duplicate shortcuts
         run: python3 tools/check_shortcut_conflicts.py
 
+      - name: Cache Qt installation
+        id: cacheQt
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\Qt
+          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+
       - name: Install Qt
+        if: steps.cacheQt.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           python -m pip install --disable-pip-version-check aqtinstall==3.3.0
@@ -61,6 +69,73 @@ jobs:
             -FftwRoot "$env:RUNNER_TEMP\fftw" `
             -BuildDirectory "$env:GITHUB_WORKSPACE\build-windows-ci" `
             -CompileTranslations
+
+      - name: Verify build products
+        shell: pwsh
+        run: |
+          Get-Item build-windows-ci\bin\Engauge.exe
+          $expectedTranslations = @(
+            'ar', 'cs', 'de', 'en', 'es', 'fa_IR', 'fr', 'hi', 'it',
+            'ja', 'kk', 'ko', 'nb', 'nl', 'pt', 'ru', 'zh_CN', 'zh_TW'
+          )
+          $missingTranslations = $expectedTranslations | Where-Object {
+            -not (Test-Path "translations\engauge_$_.qm")
+          }
+          if ($missingTranslations) {
+            throw "Missing compiled translations: $($missingTranslations -join ', ')."
+          }
+
+  cmake-test:
+    name: Windows / CMake build + 27 unit tests
+    runs-on: windows-2022
+    timeout-minutes: 45
+    needs: qmake-build
+    env:
+      QT_VERSION: 6.8.3
+      QT_ARCH: win64_msvc2022_64
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Qt installation
+        id: cacheQt
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\Qt
+          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+
+      - name: Install Qt
+        if: steps.cacheQt.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check aqtinstall==3.3.0
+          python -m aqt install-qt windows desktop $env:QT_VERSION $env:QT_ARCH --outputdir "$env:RUNNER_TEMP\Qt"
+
+      - name: Prepare FFTW 3.3.5 baseline
+        shell: pwsh
+        run: |
+          $fftwRoot = "$env:RUNNER_TEMP\fftw"
+          $rawRoot = "$env:RUNNER_TEMP\fftw-raw"
+          Expand-Archive dev/windows/appveyor/fftw-3.3.5-dll64.zip $rawRoot
+          New-Item -ItemType Directory -Force "$fftwRoot\include", "$fftwRoot\lib" | Out-Null
+          Copy-Item "$rawRoot\fftw3.h" "$fftwRoot\include\fftw3.h"
+          Copy-Item "$rawRoot\libfftw3-3.def" "$fftwRoot\lib\libfftw3-3.def"
+          Copy-Item "$rawRoot\libfftw3-3.dll" "$fftwRoot\lib\libfftw3-3.dll"
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+          path: cmake-build\windows-msvc-release
+          # The key contains every source and build file hash, so a changed file recompiles while
+          # untouched files reuse their objects from the restored cache
+          key: cmake-build-${{ runner.os }}-${{ hashFiles('src/**', 'CMakeLists.txt', 'CMakePresets.json') }}
+          restore-keys: |
+            cmake-build-${{ runner.os }}-
 
       - name: Build parallel CMake application target
         shell: pwsh
@@ -131,21 +206,9 @@ jobs:
             }
           }
 
-      - name: Verify build products
+      - name: Verify CMake build products
         shell: pwsh
         run: |
-          Get-Item build-windows-ci\bin\Engauge.exe
-          $expectedTranslations = @(
-            'ar', 'cs', 'de', 'en', 'es', 'fa_IR', 'fr', 'hi', 'it',
-            'ja', 'kk', 'ko', 'nb', 'nl', 'pt', 'ru', 'zh_CN', 'zh_TW'
-          )
-          $missingTranslations = $expectedTranslations | Where-Object {
-            -not (Test-Path "translations\engauge_$_.qm")
-          }
-          if ($missingTranslations) {
-            throw "Missing compiled translations: $($missingTranslations -join ', ')."
-          }
-
           Get-Item cmake-build\windows-msvc-release\bin\Engauge.exe
           Get-Item cmake-build\windows-msvc-release\bin\libfftw3-3.dll
           $cmakeTranslations = Get-ChildItem `
