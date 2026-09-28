@@ -149,6 +149,9 @@ void DlgSettingsSegments::createControls (QGridLayout *layout,
   connect (m_cmbAutoCurveCenterStrategy, SIGNAL (currentIndexChanged (const QString &)), this, SLOT (slotAutoCurveCenterStrategy (const QString &)));
   layout->addWidget (m_cmbAutoCurveCenterStrategy, row++, 2);
 
+  QLabel *labelAutoCurveFunctionAssumption = new QLabel (QString ("%1:").arg (tr ("Auto Curve Detection function assumption")));
+  layout->addWidget (labelAutoCurveFunctionAssumption, row, 1);
+
   m_chkAutoCurveFunctionAssumption = new QCheckBox;
   m_chkAutoCurveFunctionAssumption->setWhatsThis (tr ("Auto Curve Detection Function Assumption\n\n"
                                                       "Assume the curve is a function, which means the x coordinate in graph coordinates never "
