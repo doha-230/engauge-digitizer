@@ -34,9 +34,17 @@ QString modelToXml (const DocumentModelExportFormat &modelExport)
 
 DocumentModelExportFormat modelFromXml (const QString &asXml)
 {
-  QXmlStreamReader reader (asXml);
   DocumentModelExportFormat modelExport;
-  modelExport.loadXml (reader);
+
+  // loadXml reads the attributes of the CURRENT element, so the reader has to be advanced onto the
+  // exported <export> element first
+  QXmlStreamReader reader (asXml);
+  while (!reader.atEnd () && !reader.hasError ()) {
+    if (reader.readNext () == QXmlStreamReader::StartElement) {
+      modelExport.loadXml (reader);
+      break;
+    }
+  }
 
   return modelExport;
 }
