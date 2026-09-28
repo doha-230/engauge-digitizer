@@ -98,6 +98,14 @@ void DlgSettingsGeneral::createControls (QGridLayout *layout,
   connect (m_chkAxisValidation, SIGNAL (toggled (bool)), this, SLOT (slotAxisValidation (bool)));
   layout->addWidget (m_chkAxisValidation, row++, 1, 1, 2);
 
+  m_chkCompactZoom = new QCheckBox (tr ("Compact zoom controls"));
+  m_chkCompactZoom->setWhatsThis (tr ("Compact Zoom Controls\n\n"
+                                      "Replaces the twenty entry zoom list in the View menu with a compact zoom "
+                                      "combo plus fill, zoom in and zoom out. Mouse wheel zooming, panning and the "
+                                      "keyboard shortcuts work the same in both layouts."));
+  connect (m_chkCompactZoom, SIGNAL (toggled (bool)), this, SLOT (slotCompactZoom (bool)));
+  layout->addWidget (m_chkCompactZoom, row++, 1, 1, 2);
+
   QLabel *labelTheme = new QLabel (QString ("%1:").arg (tr ("Theme")));
   layout->addWidget (labelTheme, row, 0);
 
@@ -220,6 +228,8 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
     m_chkAxisValidation->setChecked (settings.value (SETTINGS_GENERAL_AXIS_VALIDATION,
                                                      QVariant (false)).toBool ());
+    m_chkCompactZoom->setChecked (settings.value (SETTINGS_MAIN_WINDOW_COMPACT_ZOOM,
+                                                  QVariant (false)).toBool ());
     m_cmbTheme->setCurrentText (settings.value (SETTINGS_MAIN_WINDOW_THEME,
                                                 QVariant ("System")).toString ());
     m_chkAutosave->setChecked (settings.value (SETTINGS_GENERAL_AUTOSAVE_ENABLED,
@@ -240,6 +250,17 @@ void DlgSettingsGeneral::load (CmdMediator &cmdMediator)
 
 void DlgSettingsGeneral::setSmallDialogs(bool /* smallDialogs */)
 {
+}
+
+void DlgSettingsGeneral::slotCompactZoom (bool compact)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "DlgSettingsGeneral::slotCompactZoom";
+
+  QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+  settings.beginGroup (SETTINGS_GROUP_MAIN_WINDOW);
+  settings.setValue (SETTINGS_MAIN_WINDOW_COMPACT_ZOOM,
+                     compact);
+  settings.endGroup ();
 }
 
 void DlgSettingsGeneral::slotTheme (const QString &theme)

@@ -100,7 +100,23 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuViewStatus->addAction (mw.m_actionStatusAlways);
   mw.m_menuView->addMenu (mw.m_menuViewStatus);
   mw.m_menuViewZoom = new QMenu (tr ("Zoom"));
-  mw.m_menuViewZoom->addAction (mw.m_actionZoomOut);
+  {
+    // Compact zoom (opt-in): a combo with every factor plus Fill replaces the 20 entry list. Wheel
+    // zoom, pan and the keyboard shortcuts are untouched
+    QSettings settings (SETTINGS_ENGAUGE, SETTINGS_DIGITIZER);
+    settings.beginGroup (SETTINGS_GROUP_MAIN_WINDOW);
+    const bool compactZoom = settings.value (SETTINGS_MAIN_WINDOW_COMPACT_ZOOM,
+                                             QVariant (false)).toBool ();
+    settings.endGroup ();
+
+    if (compactZoom) {
+      mw.m_menuViewZoom->addAction (mw.m_actionZoomOut);
+      mw.m_menuViewZoom->addAction (mw.m_actionZoomIn);
+      mw.m_menuViewZoom->addSeparator ();
+      mw.m_menuViewZoom->addWidget (mw.createZoomComboForMenu (mw.m_menuViewZoom));
+      mw.m_menuViewZoom->addAction (mw.m_actionZoomFill);
+    } else {
+      mw.m_menuViewZoom->addAction (mw.m_actionZoomOut);
   mw.m_menuViewZoom->addAction (mw.m_actionZoomIn);
   mw.m_menuViewZoom->insertSeparator (mw.m_actionZoom16To1);
   mw.m_menuViewZoom->addAction (mw.m_actionZoom16To1);
@@ -128,7 +144,9 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuViewZoom->addAction (mw.m_actionZoom1To8Farther);
   mw.m_menuViewZoom->addAction (mw.m_actionZoom1To16Closer);
   mw.m_menuViewZoom->addAction (mw.m_actionZoom1To16);
-  mw.m_menuViewZoom->addAction (mw.m_actionZoomFill);
+      mw.m_menuViewZoom->addAction (mw.m_actionZoomFill);
+    }
+  }
   mw.m_menuView->addMenu (mw.m_menuViewZoom);
 
   mw.m_menuSettings = mw.menuBar()->addMenu(tr ("Settings"));

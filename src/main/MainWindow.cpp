@@ -3753,6 +3753,53 @@ void MainWindow::slotViewZoomFactorInt (int zoom)
   slotViewZoomFactor (static_cast<ZoomFactor> (zoom));
 }
 
+QComboBox *MainWindow::createZoomComboForMenu (QObject *parent)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::createZoomComboForMenu";
+
+  QComboBox *combo = new QComboBox (parent);
+  combo->setSizeAdjustPolicy (QComboBox::AdjustToContents);
+  combo->setFocusPolicy (Qt::StrongFocus);
+
+  // The entries are the same actions the classic menu lists, in the same order, so the wording and
+  // the order cannot drift apart. Fill is appended like it is in the classic menu
+  for (int ordinal = ZOOM_16_TO_1; ordinal <= ZOOM_1_TO_16_CLOSER; ordinal++) {
+
+    ZoomFactor factor = static_cast<ZoomFactor> (ordinal);
+
+    // m_zoomMapToAction holds exactly one action per factor, with the localized text
+    QAction *action = m_zoomMapToAction [factor];
+    ENGAUGE_CHECK_PTR (action);
+
+    combo->addItem (action->text (),
+                    QVariant (ordinal));
+  }
+
+  combo->addItem (m_actionZoomFill->text (),
+                  QVariant ((int) ZOOM_FILL));
+
+  connect (combo, SIGNAL (activated (int)), this, SLOT (slotZoomComboActivated (int)));
+
+  return combo;
+}
+
+void MainWindow::slotZoomComboActivated (int index)
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotZoomComboActivated";
+
+  QComboBox *combo = dynamic_cast<QComboBox*> (sender ());
+  if (!combo) {
+    return;
+  }
+
+  const QVariant data = combo->itemData (index);
+  if (!data.isValid ()) {
+    return;
+  }
+
+  slotViewZoom (data.toInt ());
+}
+
 void MainWindow::slotViewZoomIn ()
 {
   LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotViewZoomIn";

@@ -34,6 +34,7 @@ public:
 private slots:
   void slotAutosave (bool);
   void slotTheme (const QString &);
+  void slotCompactZoom (bool);
   void slotAutosaveInterval (int);
   void slotAxisValidation (bool);
   void slotCursorSize (int);
@@ -54,6 +55,7 @@ private:
 
   ButtonWhatsThis *m_btnWhatsThis;
   
+  QCheckBox *m_chkCompactZoom;
   QComboBox *m_cmbTheme;
   QSpinBox *m_spinCursorSize;
   QSpinBox *m_spinExtraPrecision;
