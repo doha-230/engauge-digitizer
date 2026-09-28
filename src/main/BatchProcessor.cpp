@@ -11,6 +11,7 @@
 #include "Document.h"
 #include "ExportToFile.h"
 #include "Logger.h"
+#include "TemplateManager.h"
 #include "MainWindow.h"
 #include "Point.h"
 #include <QDir>
@@ -23,61 +24,6 @@
 
 BatchProcessor::BatchProcessor ()
 {
-}
-
-void BatchProcessor::applyTemplate (MainWindow &mainWindow,
-                                    const QString &templateFile)
-{
-  // The template knowledge lives in a normal document, so it is loaded like any other document and
-  // its models and axis points are copied onto the current document
-  CmdMediator cmdTemplate (mainWindow,
-                           templateFile);
-  if (!cmdTemplate.successfulRead ()) {
-    LOG4CPP_ERROR_S ((*mainCat)) << "BatchProcessor::applyTemplate cannot read template"
-                                 << templateFile.toLatin1().data();
-    return;
-  }
-
-  Document &document = mainWindow.cmdMediator()->document();
-
-  // Digitizing knowledge: models
-  document.setModelCoords (cmdTemplate.document().modelCoords ());
-  document.setModelColorFilter (cmdTemplate.document().modelColorFilter ());
-  document.setModelGridRemoval (cmdTemplate.document().modelGridRemoval ());
-  document.setModelSegments (cmdTemplate.document().modelSegments ());
-  document.setModelExport (cmdTemplate.document().modelExport ());
-  document.setModelPointMatch (cmdTemplate.document().modelPointMatch ());
-
-  // Axis points: the template graph coordinates are copied onto the axis points of the current
-  // document, in ordinal order, since the coordinates define the coordinate system
-  QList<Point> axisPointsTemplate;
-  {
-    CallbackCollectAxisPoints ftor (axisPointsTemplate);
-    Functor2wRet<const QString &, const Point &, CallbackSearchReturn> ftorWithCallback = functor_ret (ftor,
-                                                                                                       &CallbackCollectAxisPoints::callback);
-    cmdTemplate.document().curveAxes ().iterateThroughCurvePoints (ftorWithCallback);
-  }
-
-  QList<Point> axisPointsCurrent;
-  {
-    CallbackCollectAxisPoints ftor (axisPointsCurrent);
-    Functor2wRet<const QString &, const Point &, CallbackSearchReturn> ftorWithCallback = functor_ret (ftor,
-                                                                                                       &CallbackCollectAxisPoints::callback);
-    document.curveAxes ().iterateThroughCurvePoints (ftorWithCallback);
-  }
-
-  const int count = qMin (axisPointsTemplate.count (), axisPointsCurrent.count ());
-  for (int index = 0; index < count; index++) {
-
-    const Point &pointTemplate = axisPointsTemplate.at (index);
-    Point &pointCurrent = axisPointsCurrent [index];
-
-    // The template graph coordinates define the coordinate system. The screen position of the
-    // template is copied as well, so the axis point stays where the user digitized it in the template
-    // image, which is the position that lines up with a new image of the same layout.
-    pointCurrent.setPosGraph (pointTemplate.posGraph ());
-    pointCurrent.setPosScreen (pointTemplate.posScreen ());
-  }
 }
 
 bool BatchProcessor::process (MainWindow &mainWindow,
@@ -107,8 +53,8 @@ bool BatchProcessor::process (MainWindow &mainWindow,
         // Import, apply the template knowledge, export
         mainWindow.fileImport (inputFile,
                                MainWindow::IMPORT_TYPE_SIMPLE);
-        applyTemplate (mainWindow,
-                       templateFile);
+        TemplateManager::applyTemplateToCurrentDocument (mainWindow,
+                                                         templateFile);
 
         const QString outputBase = outputDirectory.isEmpty () ?
                                    inputInfo.absolutePath () :

@@ -80,6 +80,7 @@ const QString SETTINGS_GENERAL_CURSOR_SIZE ("cursorSize");
 const QString SETTINGS_GENERAL_AUTOSAVE_ENABLED ("autosaveEnabled");
 const QString SETTINGS_GENERAL_AUTOSAVE_INTERVAL_MINUTES ("autosaveIntervalMinutes");
 const QString SETTINGS_GENERAL_AXIS_VALIDATION ("axisValidation");
+const QString SETTINGS_GENERAL_RECENT_TEMPLATES ("recentTemplates");
 const QString SETTINGS_GENERAL_ENABLE_REDIGITIZE ("enableRedigitize");
 const QString SETTINGS_GENERAL_EXTRA_PRECISION ("extraPrecision");
 const QString SETTINGS_GENERAL_SHOW_POINT_ORIGIN ("showPointOrigin");

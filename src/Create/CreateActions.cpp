@@ -275,6 +275,16 @@ void CreateActions::createFile (MainWindow &mw)
                                                    "the axis points and other settings from an existing document to a different image."));
   connect (mw.m_actionImportImageReplace, SIGNAL (triggered ()), &mw, SLOT (slotFileImportImageReplace ()));
 
+  mw.m_actionFileNewFromTemplate = new QAction (tr ("New From Template..."), &mw);
+  mw.m_actionFileNewFromTemplate->setStatusTip (tr ("Digitize a new image using the axis points, filters and settings of a template document"));
+  mw.m_actionFileNewFromTemplate->setWhatsThis (tr ("New From Template\n\n"
+                                                    "Digitizes a new image using a template document. Pick the template (a normal "
+                                                    "document that holds the axis points, the color filter and the export format), "
+                                                    "then pick the image. The coordinate system and the settings of the template are "
+                                                    "copied onto the new document, so digitizing can start right away.\n\n"
+                                                    "This is the interactive version of the -batchtemplate command line option."));
+  connect (mw.m_actionFileNewFromTemplate, SIGNAL (triggered ()), &mw, SLOT (slotFileNewFromTemplate ()));
+
   mw.m_actionOpen = new QAction(tr ("&Open..."), &mw);
   mw.m_actionOpen->setShortcut (QKeySequence::Open);
   mw.m_actionOpen->setStatusTip (tr ("Opens an existing document."));

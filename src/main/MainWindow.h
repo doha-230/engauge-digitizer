@@ -347,6 +347,7 @@ private slots:
   void slotFileImportDraggedImage(QImage);
   void slotFileImportDraggedImageUrl(QUrl);
   void slotFileImportImage(QString, QImage);
+  void slotFileNewFromTemplate();
   void slotFileImportImageReplace();
   void slotFileOpen();
   void slotFileOpenDraggedDigFile (QString);
@@ -543,6 +544,7 @@ private:
   MainTitleBarFormat m_titleBarFormat;
 
   QMenu *m_menuFile;
+  QAction *m_actionFileNewFromTemplate;
   QAction *m_actionImport;
   QAction *m_actionImportImageReplace;
   QAction *m_actionOpen;

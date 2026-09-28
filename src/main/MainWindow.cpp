@@ -16,6 +16,7 @@
 #include "CallbackCollectAxisPoints.h"
 #include "DocumentHashGenerator.h"
 #include "AutosaveRecovery.h"
+#include "TemplateManager.h"
 #include "CmdDelete.h"
 #include "CmdGuidelineAddXT.h"
 #include "CmdGuidelineAddYR.h"
@@ -2924,6 +2925,47 @@ void MainWindow::slotFileImportImage(QString fileName, QImage image)
 
   loadImageWithCoordinateSetup (fileName,
                                 image);
+}
+
+void MainWindow::slotFileNewFromTemplate ()
+{
+  LOG4CPP_INFO_S ((*mainCat)) << "MainWindow::slotFileNewFromTemplate";
+
+  if (!maybeSave ()) {
+    return;
+  }
+
+  // Pick the template document
+  QStringList recent = TemplateManager::recentTemplates ();
+  QString recentDir = recent.isEmpty () ? QDir::homePath () : QFileInfo (recent.first ()).absolutePath ();
+
+  QString filter = QString ("%1 (*.%2);; All Files (*.*)")
+                   .arg (ENGAUGE_FILENAME_DESCRIPTION)
+                   .arg (ENGAUGE_FILENAME_EXTENSION);
+  QString templateFile = QFileDialog::getOpenFileName (this,
+                                                       tr ("New From Template"),
+                                                       recentDir,
+                                                       filter);
+  if (templateFile.isEmpty ()) {
+    return;
+  }
+
+  TemplateManager::rememberTemplate (templateFile);
+
+  // Pick the image to digitize
+  QString imageFile = QFileDialog::getOpenFileName (this,
+                                                    tr ("Select the image to digitize"),
+                                                    QFileInfo (templateFile).absolutePath (),
+                                                    "");
+  if (imageFile.isEmpty ()) {
+    return;
+  }
+
+  // Import the image as a new document, then copy the template knowledge onto it
+  fileImport (imageFile,
+              IMPORT_TYPE_SIMPLE);
+  TemplateManager::applyTemplateToCurrentDocument (*this,
+                                                   templateFile);
 }
 
 void MainWindow::slotFileImportImageReplace ()

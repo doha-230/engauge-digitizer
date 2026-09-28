@@ -25,6 +25,7 @@ void CreateMenus::create(MainWindow &mw)
   mw.m_menuFile = mw.menuBar()->addMenu(tr("&File"));
   mw.m_menuFile->addAction (mw.m_actionImport);
   mw.m_menuFile->addAction (mw.m_actionImportImageReplace);
+  mw.m_menuFile->addAction (mw.m_actionFileNewFromTemplate);
   mw.m_menuFile->addAction (mw.m_actionOpen);
 #if !defined(OSX_DEBUG) && !defined(OSX_RELEASE)
   mw.m_menuFileOpenRecent = new QMenu (tr ("Open &Recent"));
