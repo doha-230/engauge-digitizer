@@ -112,7 +112,7 @@ void DigitizeStateAxis::handleCurveChange(CmdMediator * /* cmdMediator */)
 
 void DigitizeStateAxis::handleKeyPress (CmdMediator *cmdMediator,
                                         Qt::Key key,
-                                        bool atLeastOneSelectedItem
+                                        bool atLeastOneSelectedItem,
                                                                                   Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateAxis::handleKeyPress"

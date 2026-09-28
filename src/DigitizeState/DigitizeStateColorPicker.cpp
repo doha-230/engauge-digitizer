@@ -254,7 +254,7 @@ void DigitizeStateColorPicker::handleCurveChange(CmdMediator * /* cmdMediator */
 
 void DigitizeStateColorPicker::handleKeyPress (CmdMediator * /* cmdMediator */,
                                                Qt::Key key,
-                                               bool /* atLeastOneSelectedItem */
+                                               bool /* atLeastOneSelectedItem */,
                                                                                          Qt::KeyboardModifiers /* modifiers */)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateColorPicker::handleKeyPress"

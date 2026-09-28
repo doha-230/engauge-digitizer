@@ -307,7 +307,7 @@ void DigitizeStateSelect::handleCurveChange(CmdMediator * /* cmdMediator */)
 
 void DigitizeStateSelect::handleKeyPress (CmdMediator *cmdMediator,
                                           Qt::Key key,
-                                          bool atLeastOneSelectedItem
+                                          bool atLeastOneSelectedItem,
                                                                                     Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateSelect::handleKeyPress"

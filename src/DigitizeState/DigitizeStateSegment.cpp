@@ -126,7 +126,7 @@ void DigitizeStateSegment::handleCurveChange(CmdMediator *cmdMediator)
 
 void DigitizeStateSegment::handleKeyPress (CmdMediator *cmdMediator,
                                            Qt::Key key,
-                                           bool atLeastOneSelectedItem
+                                           bool atLeastOneSelectedItem,
                                                                                      Qt::KeyboardModifiers modifiers)
 {
   LOG4CPP_INFO_S ((*mainCat)) << "DigitizeStateSegment::handleKeyPress"
